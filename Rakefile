@@ -1,0 +1,49 @@
+require_relative 'build/build'
+APP_FILE  = 'build/app.rb'
+APP_CLASS = 'Sinatra::Application'
+
+require 'sinatra/export/rake'
+
+desc 'Build all the static files'
+task :build do
+  Generator.generate
+end
+
+desc 'Clean all the compiled things'
+task :clean do
+  Pathname(__FILE__).dirname.join('target/compiled').rmtree
+  Pathname(__FILE__).dirname.join('target/bin').rmtree
+end
+
+desc 'Copies all the files to ita.skanev.com'
+task :deploy => :build do
+  system 'scp -r target/compiled/* ita.skanev.com:~/www'
+end
+
+namespace :test do
+  desc 'Run the tests for an exercise'
+  task :exercise, :chapter, :section, :number do |t, args|
+    exercise = Exercise.new ChapterNumber.new(args[:chapter]), args[:section], args[:number]
+    exercise.run_tests
+  end
+
+  desc 'Run the tests of a problem'
+  task :problem, :chapter, :number do |t, args|
+    problem = Problem.new ChapterNumber.new(args[:chapter]), args[:number]
+    problem.run_tests
+  end
+end
+
+namespace :run do
+  desc 'Run the code of an exercise'
+  task :exercise, :chapter, :section, :number do |t, args|
+    exercise = Exercise.new ChapterNumber.new(args[:chapter]), args[:section], args[:number]
+    exercise.run_all
+  end
+
+  desc 'Run the code of a problem'
+  task :problem, :chapter, :number do |t, args|
+    problem = Problem.new ChapterNumber.new(args[:chapter]), args[:number]
+    problem.run_all
+  end
+end
