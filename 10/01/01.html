@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 10.1.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 10.1.1</h1>
+<blockquote>
+<p>Using figure 10.1 as a model, illustrate the result of each operation in the
+sequence <code>PUSH(S, 4)</code>, <code>PUSH(S, 1)</code>, <code>PUSH(S, 3)</code>, <code>POP(S)</code>, <code>PUSH(S, 8)</code>,
+and <code>POP(S)</code> on an initially empty stack <code>S</code> stored in array <code>S[1..6]</code>.</p>
+</blockquote>
+
+<p>Well, ASCII art to the rescue.</p>
+
+<pre><code>  +---+---+---+---+---+---+
+  |   |   |   |   |   |   |
+  +---+---+---+---+---+---+
+^
+S.top = 0
+
+PUSH(S, 4)
+  +---+---+---+---+---+---+
+  | 4 |   |   |   |   |   |
+  +---+---+---+---+---+---+
+    ^
+    S.top = 1
+
+PUSH(S, 1)
+  +---+---+---+---+---+---+
+  | 4 | 1 |   |   |   |   |
+  +---+---+---+---+---+---+
+        ^
+        S.top = 2
+
+PUSH(S, 3)
+  +---+---+---+---+---+---+
+  | 4 | 1 | 3 |   |   |   |
+  +---+---+---+---+---+---+
+            ^
+            S.top = 3
+
+POP(S)
+  +---+---+---+---+---+---+
+  | 4 | 1 | 3 |   |   |   |
+  +---+---+---+---+---+---+
+        ^
+        S.top = 2
+
+PUSH(S, 8)
+  +---+---+---+---+---+---+
+  | 4 | 1 | 8 |   |   |   |
+  +---+---+---+---+---+---+
+            ^
+            S.top = 3
+
+POP(S)
+  +---+---+---+---+---+---+
+  | 4 | 1 | 8 |   |   |   |
+  +---+---+---+---+---+---+
+        ^
+        S.top = 3
+</code></pre>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

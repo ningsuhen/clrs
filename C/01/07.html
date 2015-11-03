@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.1.7 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.1.7</h1>
+<blockquote>
+<p>To choose $k$ objects from $n$, you can make one of the objects distinguished
+and consider whether the distinguished object is chosen. Use this approach to
+prove that:</p>
+
+<p>$$ \binom{n}{k} = \binom{n-1}{k} + \binom{n-1}{k-1} $$</p>
+</blockquote>
+
+<p>Given the distinguished object is chosen, there are $\binom{n-1}{k-1}$ ways to
+choose the others. If it is not chosen, there are $\binom{n-1}{k}$ ways to
+choose the objects. Adding those together yields the equality above.</p>
+
+<p>$$ \begin{align}
+   \binom{n-1}{k} + \binom{n-1}{k-1}
+     &amp;= \frac{(n-1)!}{k!(n-1-k)!} + \frac{(n-1)!}{(k-1)!(n-1-k+1)!} \\
+     &amp;= \frac{(n-1-k+1)(n-1)!}{k!(n-1-k+1)!} + \frac{k(n-1)!}{k!(n-1-k+1)!} \\
+     &amp;= \frac{(n-1-k+1+k)(n-1)!}{k!(n-1-k+1)!} \\
+     &amp;= \frac{n!}{k!(n-k)!} \\
+     &amp;= \binom{n}{k}
+   \end{align} $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

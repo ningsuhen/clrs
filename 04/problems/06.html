@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 4.6 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 4.6</h1>
+<h2>Monge arrays</h2>
+
+<blockquote>
+<p>An $m \times n$ array $A$ of real numbers is a <strong><em>Monge array</em></strong> if for all
+$i$, $j$, $k$, and $l$ such that $1 \le i &lt; k \le m$ and $1 \le j &lt; l \le n$,
+we have</p>
+
+<p>$$ A[i, j] + a[k, l] \le A[i, l] + A[k, j] $$</p>
+
+<p>In other words, whenever we pick two rows and two columns of a Monge array
+and consider the four elements at the intersections of the rows and columns,
+the sum of the upper-left and lower-right elements is less than or equal to
+the sum of the lower-left and upper-right elements. For example, the
+following array is Monge:</p>
+
+<p>$$ \begin{matrix}
+   10 &amp; 17 &amp; 13 &amp; 28 &amp; 23 \\
+   17 &amp; 22 &amp; 16 &amp; 29 &amp; 23 \\
+   24 &amp; 28 &amp; 22 &amp; 34 &amp; 24 \\
+   11 &amp; 13 &amp;  6 &amp; 17 &amp;  7 \\
+   45 &amp; 44 &amp; 32 &amp; 37 &amp; 23 \\
+   36 &amp; 33 &amp; 19 &amp; 21 &amp;  6 \\
+   75 &amp; 66 &amp; 51 &amp; 53 &amp; 34
+   \end{matrix} $$</p>
+
+<ol>
+<li><p>Prove that an array is Monge if and only i for all $i = 1,2,\ldots, m-1$,
+and $j = 1,2,\ldots,n-1$ we have
+$$ A[i,j] + A[i+1,j+1] \le A[i,j+1] + A[i+1,j] $$
+(Hint: For the "if" part, use induction seperately on rows and columns)</p></li>
+<li><p>The following array is not Monge. Change one element in order to make it
+Monge. (Hint: Use part (a).)
+$$ \begin{matrix}
+  37 &amp; 23 &amp; 22 &amp; 32 \\
+  21 &amp;  6 &amp;  7 &amp; 10 \\
+  53 &amp; 34 &amp; 30 &amp; 31 \\
+  32 &amp; 13 &amp;  9 &amp;  6 \\
+  43 &amp; 21 &amp; 15 &amp;  8 \\
+  \end{matrix} $$</p></li>
+<li><p>Let $f(i)$ be the index of the column containing the leftmost minimum
+element of the row $i$. Prove that $f(1) \le f(2) \le \dots f(m)$ for
+any $m \times n$ Monge array.</p></li>
+<li><p>Here is a description of a divide-and-conquer algorithm that computes the
+leftmost minimum element in each row of an $m \times n$ Monge array $A$:</p></li>
+</ol>
+
+<blockquote>
+<p>Construct a submatrix $A'$ of $A$ consisting of the even-numbered rows
+of $A$. Recursively determine the leftmost minimum for each row in $A'$.
+Then compute the leftmost minimum in the odd-numbered rows of $A$.</p>
+</blockquote>
+
+<p>Explain how to compute the leftmost minimum in the odd-numbered rows of
+   $A$ (given that the leftmost minimum of the even-numbered rows is known)
+   in $O(m+n)$ time.</p>
+
+<ol>
+<li>Write the recurrence describing the running time of the algorithm described
+in part (d). Show that its solution is $O(m + n\log{m})$.</li>
+</ol>
+</blockquote>
+
+<h3>Part one</h3>
+
+<p>The "only if" part is trivial -- it follows form the definition of Monge array.</p>
+
+<p>As for the "if" part, let's first prove that:</p>
+
+<p>$$ A[i,j] + A[i+1, j+1] \le A[i,j+1] + A[i+1, j] \\
+   \Downarrow \\
+   A[i,j] + A[k, j+1] \le A[i, j+1] + A[k,j] $$</p>
+
+<p>Where $i &lt; k$.</p>
+
+<p>Let's prove it by induction. The base case of $k = i + 1$ is given. As for the
+inductive step, we assume it holds for $k = i + n$ and we want to prove it for
+$k + 1= i + n + 1$. If we add the given to the assumption, we get:</p>
+
+<p>$$
+   A[i, j] + A[k, j+1] \le A[i, j+1] + A[k, j] \quad (assumption) \\
+   A[k, j] + A[k+1, j+1] \le A[k, j+1] + A[k+1, j] \quad (given) \\
+   \Downarrow \\
+   A[i, j] + A[k, j+1] + A[k, j] + A[k+1, j+1] \le
+   A[i, j+1] + A[k, j] + A[k, j+1] + A[k+1, j] \\
+   \Downarrow \\
+   A[i, j] + A[k+1, j+1] \le A[i, j+1] + A[k+1, j]
+   $$</p>
+
+<h3>Part two</h3>
+
+<p>$$ \begin{matrix}
+   37 &amp; 23 &amp; \mathbf{24} &amp; 32 \\
+   21 &amp;  6 &amp;  7 &amp; 10 \\
+   53 &amp; 34 &amp; 30 &amp; 31 \\
+   32 &amp; 13 &amp;  9 &amp;  6 \\
+   43 &amp; 21 &amp; 15 &amp;  8 \\
+   \end{matrix} $$</p>
+
+<h3>Part three</h3>
+
+<p>Let $a_i$ and $b_j$ be the leftmost minimal elements on rows $a$ and $b$ and
+let's assume that $i &gt; j$. Then we have:</p>
+
+<p>$$ A[j, a] + A[i, b] \le A[i, a] + A[j, b] $$</p>
+
+<p>But:</p>
+
+<p>$$ \begin{align}
+   &amp; A[j, a] \ge A[i, a] &amp; (a_i \text{ is minimal}) \\
+   &amp; A[i, b] \ge A[j, b] &amp; (b_j \text{ is minimal}) \\
+   \end{align} $$</p>
+
+<p>Which implies that:</p>
+
+<p>$$ A[j, a] + A[i, b] \ge A[i, a] + A[j, b] \\
+   \Downarrow \\
+   A[j, a] + A[i, b] = A[i, a] + A[j, b] $$</p>
+
+<p>Which in turn implies that either:</p>
+
+<p>$$ \begin{align}
+   &amp;A[j, b] &lt; A[i, b] \Rightarrow A[i, a] &gt; A[j, a] &amp;&amp; \Rightarrow a_i \text{ is not minimal} \\
+   &amp;A[j, b] = A[i, b] &amp;&amp; \Rightarrow b_j \text{ is not the leftmost minimal}
+   \end{align} $$</p>
+
+<h3>Part four</h3>
+
+<p>If $\mu_i$ is the index of the $i$-th row's leftmost minimum, then we have:</p>
+
+<p>$$ \mu_{i-1} \le \mu_i \le \mu_{i+1} $$</p>
+
+<p>For $i = 2k + 1$, $k \ge 0$, finding $\mu_i$ takes $\mu_{i+1}-\mu_{i-1} + 1$
+steps at most, since we only need to compare with those numbers. Thus:</p>
+
+<p>$$ \begin{align}
+   T(m, n) &amp;= \sum_{i=0}^{m/2-1}\Big(\mu_{2i + 2} - \mu_{2i} + 1\Big) \\
+           &amp;= \sum_{i=0}^{m/2-1}\mu_{2i+2} - \sum_{i=0}^{m/2-1}\mu_{2i} + m/2 \\
+           &amp;= \sum_{i=1}^{m/2}\mu{2i} - \sum_{i=0}^{m/2-1}\mu{2i} + m/2 \\
+           &amp;= \mu_m - \mu_0 + m/2 \\
+           &amp;= n + m/2 \\
+           &amp;= O(m + n)
+   \end{align} $$</p>
+
+<h3>Part five</h3>
+
+<p>The divide time is $O(1)$, the conquer part is $T(m/2)$ and the merge part is
+$O(m+n)$. Thus:</p>
+
+<p>$$ \begin{align}
+   T(m) &amp;= T(m/2) + cn + dm \\
+        &amp;= cn + dm + cn + dm/2 + cn + dm/4 + \ldots \\
+        &amp;= \sum_{i=0}^{\lg{m}-1}cn + \sum_{i=0}^{\lg{m}-1}\frac{dm}{2^i} \\
+        &amp;= cn\lg{m} + dm\sum_{i=0}^{\lg{m} - 1} \\
+        &amp;&lt; cn\lg{m} + 2dm \\
+        &amp;= O(n\lg{m} + m)
+   \end{align} $$</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> array {
+    <span style="color:#0a8;font-weight:bold">int</span> m;
+    <span style="color:#0a8;font-weight:bold">int</span> n;
+    <span style="color:#0a8;font-weight:bold">int</span> step;
+    <span style="color:#0a8;font-weight:bold">int</span> *data;
+} array;
+
+<span style="color:#0a8;font-weight:bold">int</span> get(array A, <span style="color:#0a8;font-weight:bold">int</span> i, <span style="color:#0a8;font-weight:bold">int</span> j) {
+    <span style="color:#080;font-weight:bold">return</span> A.data[((i + <span style="color:#00D">1</span>) * A.step - <span style="color:#00D">1</span>) * A.n + j];
+}
+
+array half(array a) {
+    array result = { a.m, a.n, a.step * <span style="color:#00D">2</span>, a.data };
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> height(array array) {
+    <span style="color:#080;font-weight:bold">return</span> array.m / array.step;
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> min_index(array A, <span style="color:#0a8;font-weight:bold">int</span> row, <span style="color:#0a8;font-weight:bold">int</span> left, <span style="color:#0a8;font-weight:bold">int</span> right) {
+    <span style="color:#0a8;font-weight:bold">int</span> min = left;
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = left; i &lt; right; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (get(A, row, i) &lt; get(A, row, min)) {
+            min = i;
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> min;
+}
+
+<span style="color:#088;font-weight:bold">void</span> find_minimums(array A, <span style="color:#0a8;font-weight:bold">int</span> *mins) {
+    <span style="color:#080;font-weight:bold">if</span> (height(A) == <span style="color:#00D">1</span>) {
+        mins[<span style="color:#00D">0</span>] = min_index(A, <span style="color:#00D">0</span>, <span style="color:#00D">0</span>, A.n);
+    } <span style="color:#080;font-weight:bold">else</span> {
+        array evens = half(A);
+        <span style="color:#0a8;font-weight:bold">int</span> even_minimums[height(evens)];
+
+        find_minimums(evens, even_minimums);
+
+        <span style="color:#0a8;font-weight:bold">int</span> leftmost = <span style="color:#00D">0</span>;
+
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; height(evens); i++) {
+            leftmost = min_index(A, <span style="color:#00D">2</span> * i, leftmost, even_minimums[i] + <span style="color:#00D">1</span>);
+
+            mins[<span style="color:#00D">2</span> * i]     = leftmost;
+            mins[<span style="color:#00D">2</span> * i + <span style="color:#00D">1</span>] = even_minimums[i];
+        }
+
+        <span style="color:#080;font-weight:bold">if</span> (height(A) % <span style="color:#00D">2</span>) {
+            mins[height(A) - <span style="color:#00D">1</span>] = min_index(A, height(A) - <span style="color:#00D">1</span>, leftmost, A.n);
+        }
+    }
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

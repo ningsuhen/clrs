@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.5.6 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.5.6</h1>
+<blockquote>
+<p>$\star$ Consider a sequence of $n$ Bernoulli trials, where in the $i$th
+trial, for $i = 1, 2, \ldots, n$, success occurs with probability $p_i$ and
+failure occurs with probability $q_i = 1 - p_i$. Let $X$ be the random
+variable describing the total number of successes, and let $\mu = \E[X]$.
+Show that for $r \ge 0$,</p>
+
+<p>$$ \Pr\{X - \mu \ge r\} \le e^{-r^2/2n} $$</p>
+
+<p>(Hint: Prove that $p_i e^{\alpha q_i} + q_i e^{-\alpha p_i} \le e^{\alpha^2/2}$.
+Then follow the outline of the proof of Theorem C.8, using this inequality in
+place of inequality (C.45).)</p>
+</blockquote>
+
+<p>This is tricky. I spent quite a while and I don't like it. Anyway, let's first
+prove the hint.</p>
+
+<p>Let:</p>
+
+<p>$$ f(x) = e^{x^2/2} - (pe^{qx} + qe^{-px}) $$</p>
+
+<p>We want to prove that it is monotoneously increasing when $x \ge 0$. It is not
+very easy to show that $f'(x) &gt; 0$, so let's show that $f'(x)$ is also
+monotoneously increasing by solving $f''(x) &gt; 0$.</p>
+
+<p>$$ f'(x) = xe^{x^2/2} - pq(qe^{qx} - pe^{-px}) \\
+   f''(x) = e^{x^2/2} + x^2 e^{x^2/2} - pq(qe^{qx} + pe^{-px}) &gt; 0 \\
+   \Downarrow \\
+   \text{(} x^2 e^{x^2/2} \text{ is positive)} \\
+   \Downarrow \\
+   e^{x^2/2} &gt; pq(qe^{qx} + pe^{-px}) \\
+   \Downarrow \\
+   \text{(} pq &lt; \frac{1}{4} \text{ from } x(1-x) - 1/4 &lt; 0 \text{)} \\
+   \Downarrow \\
+   e^{x^2/2} &gt; \frac{1}{4}(qe^{qx} + pe^{-px}) \\
+   \Downarrow \\
+   \text{(} p &lt; 1, q &lt; 1 \text{)} \\
+   \Downarrow \\
+   4e^{x^2/2} &gt; e^{qx} + e^{-px} \\
+   \Downarrow \\
+   \text{(} e^{qx} + e^{-px} = e^{-px} (e^x + 1) &lt; e^x + 1 \text{)} \\
+   \Downarrow \\
+   4e^{x^2/2} &gt; e^x + 1 \\
+   \Downarrow \\
+   (e^{x^2/2} &gt; 1) \\
+   \Downarrow \\
+   3e^{x^2/2} &gt; e^x \\
+   \Downarrow \\
+   3e^{x^2/2 - x} &gt; 1 \\
+   \Downarrow \\
+   3e^{\frac{(x-1)^2}{2} - \frac{1}{2}} &gt; 1 \\
+   \Downarrow \\
+   3 &gt; \sqrt{e}
+$$</p>
+
+<p>Since $f''(0) = 0$, then $f'(x)$ is increasing for $x \ge 0$.</p>
+
+<p>Since $f'(0) = 0$, then $f(x)$ is increasing for $x \ge 0$.</p>
+
+<p>Since $f(0) = 0$, then $f(x) \ge 0$, hence the inequality holds.</p>
+
+<p>We can just substitute it in the expectation:</p>
+
+<p>$$ \begin{align}
+   \E[e^{\alpha (X_i - p_i)}] &amp;=   e^{\alpha(1-p_i)}p_i + e^{\alpha(0-p_i)}q_i \\
+                              &amp;=   p_i e^{\alpha q_i} + q_i e^{- \alpha p_i} \\
+                              &amp;\le e^{\alpha^2/2}
+   \end{align} $$</p>
+
+<p>Then:</p>
+
+<p>$$ \begin{align}
+   \E[e^{\alpha(X - \mu)}] &amp;=  \prod_{i=1}^n \E[e^{\alpha(X_i - p_i)}] \\
+                           &amp;\le \prod_{i=1}^n \exp(\alpha^2 / 2) \\
+                           &amp;= \exp(n \alpha^2/2)
+   \end{align} $$</p>
+
+<p>And:</p>
+
+<p>$$ \begin{align}
+   \Pr\{X - \mu \ge r\} &amp;\le \exp(n \alpha^2/2)/\exp(- \alpha r) \\
+                          &amp;=   \exp(n\alpha^2/2 - \alpha r) \\
+                          &amp;=   \exp\bigg(\frac{n r^2}{2 n^2} - \frac{r^2}{n}\bigg) \\
+                          &amp;=   \exp\bigg(-\frac{r^2}{2n}\bigg)
+   \end{align} $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

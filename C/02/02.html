@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.2.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.2.2</h1>
+<blockquote>
+<p>Prove <strong>Boole's inequality</strong>: For any finite or countably infinte sequence of
+events $A_1, A_2, \ldots$,</p>
+
+<p>$$ \Pr\{A_1 \cup A_2 \cup \ldots \} \le \Pr\{A_1\} + \Pr\{A_2\} + \ldots $$</p>
+</blockquote>
+
+<p>$$ \begin{align}
+   \Pr\{A_1 \cup A_2 \cup \cdots\} &amp;=
+                             \Pr\{A_1\} +
+                             \Pr\{A_2 \cup A_3 \cup \cdots\} -
+                             \Pr\{A_1 \cap (A_2 \cup A_3 \cup \cdots)\} \\
+                       &amp; \le \Pr\{A_1\} + \Pr\{A_2 \cup A_3 \cup \cdots\} \\
+                       &amp; \le \Pr\{A_1\} + \Pr\{A_2\} + \Pr\{A_3 \cup A_4 \cup \cdots\}
+   \end{align} $$</p>
+
+<p>Strictly speaking, we should use some induction, but you get the idea.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

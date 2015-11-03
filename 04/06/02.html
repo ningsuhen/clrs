@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 4.6.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 4.6.2</h1>
+<blockquote>
+<p>$\star$ Show that if $f(n) = \Theta(n^{\log_b{a}}\lg^k{n})$, where $k \ge 0$,
+then the master recurrence has solution $T(n) = \Theta(n^{\log_b{a}}\lg^{k+1}n)$.
+For simplicity, confine your analysis to exact powers of $b$.</p>
+</blockquote>
+
+<p>$$ g(n) = \sum_{j=0}^{\log_b{n}-1}a^jf(n/b^j) \\
+   f(n/b^j) = \Theta\Big((n/b^j)^{\log_b{a}}\lg^k(n/b^j)\Big) \\
+   g(n) = \Theta\Big(\sum_{j=0}^{\log_b{n}-1}a^j\big(\frac{n}{b^j}\big)^{\log_b{a}}\lg^k\big(\frac{n}{b^j}\big)\Big) = \Theta(A) \\
+   A = \sum_{j=0}^{\log_b{n}-1}a^j\big(\frac{n}{b^j}\big)^{\log_b{a}}\lg^k\frac{n}{b^j}
+   = n^{\log_b{a}}\sum_{j=0}^{\log_b{n}-1}\Big(\frac{a}{b^{\log_b{a}}}\Big)^j\lg^k\frac{n}{b^j}
+   = n^{\log_b{a}}\sum_{j=0}^{\log_b{n}-1}\lg^k\frac{n}{b^j} 
+   = n^{\log_b{a}}B\\
+   \lg^k\frac{n}{d} = (\lg{n} - \lg{d})^k = \lg^k{n} + o(\lg^k{n}) \\
+   B = \sum_{j=0}^{\log_b{n}-1}\lg^k\frac{n}{b^j}
+     = \sum_{j=0}^{\log_b{n}-1}\Big(\lg^k{n} - o(\lg^k{n})\Big)
+     = \log_b{n}\lg^k{n} + \log_b{n} \cdot o(\lg^k{n})
+     = \Theta(\log_b{n}\lg^k{n})
+     = \Theta(\lg^{k+1}{n}) \\
+   g(n) = \Theta(A) = \Theta(n^{\log_b{a}}B) = \Theta(n^{\log_b{a}}\lg^{k+1}{n})
+   $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

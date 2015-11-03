@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 4.4.7 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 4.4.7</h1>
+<blockquote>
+<p>Draw the recursion tree for $T(n) = 4T(\lfloor n/2 \rfloor) + cn$, where $c$
+is a constant, and provide a tight asymptotic bound on its solution. Verify
+your answer with the substitution method.</p>
+</blockquote>
+
+<p>Let's ignore the floor. Previous exercises illustrate how this can be handled.</p>
+
+<p>The depth of the tree is $\lg{n}$, each level is $2^icn$ and there are
+$4^{\lg{n}} = n^2$ leaves.</p>
+
+<p>Thus:</p>
+
+<p>$$ T(n) = \sum_{i=0}^{\lg{n}- 1}2^icn + \Theta(n^2)
+        = cn \sum_{i=0}^{\lg{n}-1}2^i + \Theta(n^2)
+        = cn \frac{2^{\lg{n}} - 1}{2 - 1} + \Theta(n^2)
+        = \Theta(n^2) $$</p>
+
+<p>Let's guess $T(n) \le cn^2 + 2cn$:</p>
+
+<p>$$ T(n) \le 4c(n/2)^2 + 2cn/2 + cn
+        \le cn^2 + 2cn $$</p>
+
+<p>Let's guess $T(n) \ge cn^2 + 2cn$:</p>
+
+<p>$$ T(n) \ge 4c(n/2)^2 + 2cn/2 + cn
+        \ge cn^2 + 2cn $$</p>
+  <hr />
+  <img src="07.png" />
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

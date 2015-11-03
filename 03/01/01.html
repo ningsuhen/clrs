@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 3.1.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 3.1.1</h1>
+<blockquote>
+<p>Let $f(n)$ + $g(n)$ be asymptotically nonnegative functions. Using the basic
+definition of $\Theta$-notation, prove that $\max(f(n), g(n)) = \Theta(f(n) + g(n))$.</p>
+</blockquote>
+
+<p>From "asymptotically nonnegative", we can assume that</p>
+
+<p>$$\begin{align}
+    \exists n_1, n_2: &amp; f(n) \geq 0 &amp; \text{for } n &gt; n_1 \\
+                      &amp; g(n) \geq 0 &amp; \text{for } n &gt; n_2
+   \end{align}$$</p>
+
+<p>Let $n_0 = max(n_1, n_2)$. Some obvious things for $n &gt; n_0$:</p>
+
+<p>$$
+   f(n) \leq \max(f(n), g(n)) \\
+   g(n) \leq \max(f(n), g(n)) \\
+   \big(f(n) + g(n)\big)/2 \leq \max(f(n), g(n)) \\
+   \max(f(n), g(n)) \leq f(n) + g(n)
+$$</p>
+
+<p>From the last two inequalities, we get:</p>
+
+<p>$$ 0 \leq \frac{1}{2}\big(f(n) + g(n)\big) \leq \min\big(f(n), g(n)\big)
+     \leq f(n) + g(n) \quad \text{for } n &gt; n_0 $$</p>
+
+<p>Which is the definition of $\Theta(f(n) + g(n))$ with $c_1 = 1/2, c_2 = 1$.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

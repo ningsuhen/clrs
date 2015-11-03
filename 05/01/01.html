@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 5.1.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 5.1.1</h1>
+<blockquote>
+<p>Show that the assumption that we are always able to determine which candidate
+is best, in line 4 of procedure <code>HIRE-ASSISTANT</code>, implies that we know a
+total order of the ranks of the candidates.</p>
+</blockquote>
+
+<p>A total order is a partial order that is a total relation ($\forall a,b \in A:
+a R b \text{ or } b R a$). A relation is a partial order if it is reflexive,
+antisymmetric and transitive.</p>
+
+<p>Let's assume that the relation is "is as good or better".</p>
+
+<ul>
+<li>
+<em>Reflexive</em>: This is a bit trivial, but everybody is as good or better as
+themselves.</li>
+<li>
+<em>Transitive</em>: If A is better than B and B is better than C, then A is better
+than C - that's also obvious.</li>
+<li>
+<em>Antisymmetric</em>: If A is better than B, then B is not better than A.</li>
+</ul>
+
+<p>So far we have a partial order.</p>
+
+<p>Since we assume we can compare any two candidates, then comparison must be a
+total relation and thus we have a total order.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

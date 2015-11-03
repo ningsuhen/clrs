@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 4.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 4.4</h1>
+<h2>Fibonacci numbers</h2>
+
+<blockquote>
+<p>This problem develops properties of the Fibonacci numbers, which are defined
+by recurrence (3.22). We shall use the technique of generating functions to
+solve the Fibonacci recurrence. Define the generating function (or formal
+power series) $\mathcal{F}$ as</p>
+
+<p>$$ \begin{align}
+   \mathcal{F}(z) &amp;= \sum_{i=0}^{\infty}F_iz^i \\
+                  &amp;= 0 + z + z^2 + 2z^3 + 3z^4 + 5z^5 + 8z^6 + 13z^7 + 21z^8 + \ldots,
+   \end{align} $$
+where $F_i$ is the $i$th Fibonacci number.</p>
+
+<ol>
+<li>Show that $\mathcal{F}(z) = z + z\mathcal{F}(z) + z^2\mathcal{F}$.</li>
+<li>Show that
+$$ \begin{align}
+  \mathcal{F}(z) &amp;= \frac{z}{1 - z - z^2} \\
+                 &amp;= \frac{z}{(1 - \phi z)(1 - \hat\phi z)} \\
+                 &amp;= \frac{1}{\sqrt5}\Big(\frac{1}{1 - \phi z} - \frac{1}{1 - \hat{\phi} z}\Big)
+  \end{align} $$
+where
+$$ \phi = \frac{1 + \sqrt5}{2} = 1.61803\ldots \\
+  \hat\phi = \frac{1 - \sqrt5}{2} = -0.61803\ldots $$</li>
+<li>Show that
+$$ \mathcal{F}(z) = \sum_{i=0}^{\infty}\frac{1}{\sqrt5}(\phi^i - \hat{\phi}^i)z^i $$</li>
+<li>Use part (c) to prove that $F_i = \phi^i / \sqrt5$ for $i &gt; 0$, rounded to the nearest
+integer. (Hint: Observe that $|\hat{\phi}| &lt; 1$.)</li>
+</ol>
+</blockquote>
+
+<h3>Part 1</h3>
+
+<p>$$ \begin{align}
+   &amp; z + z\mathcal{F}(z) + z^2\mathcal{F}(Z) = \\
+   &amp; = z + z\sum_{i=0}^{\infty}F_iz^i + z^2\sum_{i=0}^{\infty}F_iz^i \\
+   &amp; = z + \sum_{i=1}^{\infty}F_{i-1}z^i + \sum_{i=2}^{\infty}F_{i-2}z^i \\
+   &amp; = z + F_1z + \sum_{i=2}^{\infty}(F_{i-1} + F_{i-2})z^i \\
+   &amp; = z + F_1z + \sum_{i=2}^{\infty}F_iz^i \\
+   &amp; = \mathcal{F}(z)
+   \end{align} $$</p>
+
+<h3>Part 2</h3>
+
+<p>Let's just note that $\phi - \hat\phi = \sqrt5$,  $\phi + \hat\phi = 1$ and $\phi\hat\phi = - 1$ (just calculate them):</p>
+
+<p>$$ \begin{align}
+   \mathcal{F}(z) &amp;= \frac{\mathcal{F}(z)(1 - z - z^2)}{1 - z - z^2} \\
+        &amp;= \frac{\mathcal{F}(z) - z\mathcal{F}(z) - z^2\mathcal{F}(z) - z + z}{1 - z - z^2} \\
+        &amp;= \frac{\mathcal{F}(z) - \mathcal{F}(z) + z}{1 - z - z^2} \\
+        &amp;= \frac{z}{1 - z - z^2} \\
+        &amp;= \frac{z}{1 - (\phi + \hat\phi)z + \phi\hat\phi z^2} \\
+        &amp;= \frac{z}{(1 - \phi z)(1 - \hat\phi z)} \\
+        &amp;= \frac{\sqrt5 z}{\sqrt5 (1 - \phi z)(1 - \hat\phi z)} \\
+        &amp;= \frac{(\phi - \hat\phi)z + 1 - 1}{\sqrt5 (1 - \phi z)(1 - \hat\phi z)} \\
+        &amp;= \frac{(1 - \hat\phi z) - (1 - \phi z)}{\sqrt5 (1 - \phi z)(1 - \hat\phi z)} \\
+        &amp;= \frac{1}{\sqrt5}\Big(\frac{1}{1 - \phi z} - \frac{1}{1 - \hat\phi z}\Big) \\
+   \end{align} $$</p>
+
+<h3>Part 3</h3>
+
+<p>We have that:</p>
+
+<p>$$ \frac{1}{1 - x} = \sum_{k=0}^{\infty}x^k \quad\text{when } |x| &lt; 1 $$</p>
+
+<p>Thus:</p>
+
+<p>$$ \begin{align}
+   \mathcal{F}(n) &amp;= \frac{1}{\sqrt5}\Big(\frac{1}{1 - \phi z} - \frac{1}{1 - \hat\phi z}\Big) \\
+                  &amp;= \frac{1}{\sqrt5}\Big(\sum_{i=0}^{\infty}\phi^i z^i - \sum_{i=0}^{\infty}\hat{\phi}^i z^i\Big) \\
+                  &amp;= \sum_{i=0}^{\infty}\frac{1}{\sqrt5}(\phi^i - \hat{\phi}^i) z^i
+   \end{align} $$</p>
+
+<h3>Part 4</h3>
+
+<p>$$ \mathcal{F}(z) = \sum_{i=0}^{\infty}\alpha_iz^i \quad\text{ where } \alpha_i = \frac{\phi^i - \hat{\phi}^i}{\sqrt5} $$</p>
+
+<p>From this follows that $\alpha_i = F_i$, that is:</p>
+
+<p>$$ F_i = \frac{\phi^i - \hat{\phi}^i}{\sqrt5}  = \frac{\phi^i}{\sqrt5} - \frac{\hat{\phi}^i}{\sqrt5} $$</p>
+
+<p>For $i = 0$, $\phi/\sqrt5 = (\sqrt5 + 5)/10 &gt; 0.5$. For $i &gt; 2$, $|\hat{\phi}^i| &lt; 0.5$.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 6.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 6.2</h1>
+<h2>Analysis of d-ary heaps</h2>
+
+<blockquote>
+<p>A <strong>d-ary heap</strong> is like a binary heap, but (with one possible exception)
+non-leaf nodes have $d$ children instead of 2 children.</p>
+
+<ol>
+<li>How would you represent a $d$-ary heap in an array?</li>
+<li>What is the height of a $d$-ary heap of $n$ elements in terms of $n$ and
+$d$?</li>
+<li>Give an efficient implementation of <code>EXTRACT-MAX</code> in a $d$-ary max-heap.
+Analyze its running time in terms of $d$ and $n$.</li>
+<li>Give an efficient implementation of <code>INSERT</code> in $d$-ary max-heap. Analyze
+its running time in terms of $d$ and $n$.</li>
+<li>Give an efficient implementation of <code>INCREASE-KEY(A, i, k)</code>, which flags
+an error if $k &lt; A[i]$, but otherwise sets $A[i] = k$ and then updates the
+$d$-ary max-heap structure appropriately. Analyze its running time in
+terms of $d$ and $n$.</li>
+</ol>
+</blockquote>
+
+<h3>Representation</h3>
+
+<p>We just modify <code>LEFT</code>, <code>RIGHT</code> and <code>PARENT</code>. We can get the $k$-th child of the
+$i$th node with $d i + k - 1$ and the parent with $\lfloor i/d \rfloor$ (when
+indexing is 1-based).</p>
+
+<h3>Height</h3>
+
+<p>Of course it's $\log_dn$.</p>
+
+<h3>Implementation</h3>
+
+<p>The implementation is below. The complexity of <code>EXTRACT-MAX</code> is
+$\O(d\log_dn)$, while the other two are $\O(\log_dn)$.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;limits.h&gt;</span>
+
+<span style="color:#579">#define</span> PARENT(i,d) ((i - <span style="color:#00D">1</span>) / d)
+<span style="color:#579">#define</span> CHILD(i,c,d) (<span style="color:#00D">3</span> * i + c + <span style="color:#00D">1</span>)
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> *elements;
+    <span style="color:#0a8;font-weight:bold">int</span> d;
+    <span style="color:#0a8;font-weight:bold">int</span> heap_size;
+    <span style="color:#0a8;font-weight:bold">int</span> length;
+} heap_t;
+
+<span style="color:#088;font-weight:bold">void</span> max_heapify(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> i) {
+    <span style="color:#0a8;font-weight:bold">int</span> largest = i;
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> k = <span style="color:#00D">0</span>; k &lt; heap-&gt;d; k++) {
+        <span style="color:#0a8;font-weight:bold">int</span> child = CHILD(i, k, heap-&gt;d);
+        <span style="color:#080;font-weight:bold">if</span> (child &lt; heap-&gt;heap_size &amp;&amp; heap-&gt;elements[child] &gt; heap-&gt;elements[largest])
+            largest = child;
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (largest != i) {
+        <span style="color:#0a8;font-weight:bold">int</span> tmp = heap-&gt;elements[i];
+        heap-&gt;elements[i] = heap-&gt;elements[largest];
+        heap-&gt;elements[largest] = tmp;
+
+        max_heapify(heap, largest);
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> extract_max(heap_t *heap) {
+    <span style="color:#0a8;font-weight:bold">int</span> max = heap-&gt;elements[<span style="color:#00D">0</span>];
+    heap-&gt;elements[<span style="color:#00D">0</span>] = heap-&gt;elements[heap-&gt;heap_size - <span style="color:#00D">1</span>];
+    heap-&gt;heap_size--;
+    max_heapify(heap, <span style="color:#00D">0</span>);
+    <span style="color:#080;font-weight:bold">return</span> max;
+};
+
+<span style="color:#088;font-weight:bold">void</span> increase_key(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> i, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    <span style="color:#080;font-weight:bold">if</span> (key &lt; heap-&gt;elements[i]) {
+        exit(<span style="color:#00D">0</span>);
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">new key is smaller than current key</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+    }
+
+    <span style="color:#080;font-weight:bold">while</span> (i &gt; <span style="color:#00D">0</span> &amp;&amp; heap-&gt;elements[PARENT(i,heap-&gt;d)] &lt; key) {
+        heap-&gt;elements[i] = heap-&gt;elements[PARENT(i,heap-&gt;d)];
+        i = PARENT(i,heap-&gt;d);
+    }
+
+    heap-&gt;elements[i] = key;
+}
+
+<span style="color:#088;font-weight:bold">void</span> insert(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    heap-&gt;heap_size++;
+    heap-&gt;elements[heap-&gt;heap_size - <span style="color:#00D">1</span>] = INT_MIN;
+    increase_key(heap, heap-&gt;heap_size - <span style="color:#00D">1</span>, key);
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

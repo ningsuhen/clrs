@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 8.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 8.3</h1>
+<h2>Sorting variable-length items</h2>
+
+<blockquote>
+<ol>
+<li>You are given an array of integers, where different integers may have
+different number of digits, but the total number of digits over <em>all</em> the
+integers in the array is $n$. Show how to sort the array in $\O(n)$ time.</li>
+<li>You are given an array of strings, where different strings may have
+different numbers of characters, but the total number of characters over
+all the strings is $n$. Show how to sort the strings in $\O(n)$ time.<br>
+(Note that the desired order here is the standard alphabetical order; for
+example; $\mathrm{a} &lt; \mathrm{ab} &lt; \mathrm{b}$.)</li>
+</ol>
+</blockquote>
+
+<h3>The numbers</h3>
+
+<p>For the numbers, we can do this:</p>
+
+<ol>
+<li>Group the numbers by number of digits and order the groups</li>
+<li>Radix sort each group</li>
+</ol>
+
+<p>Let's analyze the number of steps. Let $G_i$ be the group of numbers with $i$
+digits and $c_i = |G_i|$. Thus:</p>
+
+<p>$$ T(n) = \sum_{i=1}{n}c_i \cdot i = n $$</p>
+
+<h3>The strings</h3>
+
+<p>For the strings, we can do this:</p>
+
+<ol>
+<li>Groups the strings by length and order the groups</li>
+<li>Starting $i$ on the maximum length and going down to 1, perform counting
+sort on the $i$th character. Make sure to include only groups that have an
+$i$th character.</li>
+</ol>
+
+<p>If the groups are subsequent subarrays in the original array, we're performing
+counting sort on a subarray ending on the last index of the original array.</p>
+
+<h3>The implementation</h3>
+
+<p>The C code is a bit clever, but this is an exercise, not a production system.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;math.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;string.h&gt;</span>
+
+<span style="color:#579">#define</span> MAX_LENGTH <span style="color:#00D">10</span>
+
+<span style="color:#777">// --- Structs and typedefs ---------------------------------------------------</span>
+
+<span style="color:#777">// In order to simplify everything, both numbers and strings are meshed in a</span>
+<span style="color:#777">// single union called key_t. The key does not know whether it is a number or a</span>
+<span style="color:#777">// string - the handling code already knows it instead.</span>
+
+<span style="color:#080;font-weight:bold">union</span> key_t {
+    <span style="color:#0a8;font-weight:bold">int</span> number;
+    <span style="color:#0a8;font-weight:bold">char</span> string[MAX_LENGTH + <span style="color:#00D">1</span>];
+};
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#080;font-weight:bold">union</span> key_t key;
+    <span style="color:#0a8;font-weight:bold">int</span> value;
+} item;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> (*key_f)(item, <span style="color:#0a8;font-weight:bold">int</span>);
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> (*dimension_f)(item);
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> (*compare_f)(item, item);
+
+<span style="color:#777">// --- Prototypes -------------------------------------------------------------</span>
+
+<span style="color:#777">// Various sorting functinos</span>
+
+<span style="color:#088;font-weight:bold">void</span> partition(item *A, <span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> digits, <span style="color:#0a8;font-weight:bold">int</span> *groups, dimension_f dimension);
+<span style="color:#088;font-weight:bold">void</span> radix_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> left, <span style="color:#0a8;font-weight:bold">int</span> right, <span style="color:#0a8;font-weight:bold">int</span> digits, key_f key);
+<span style="color:#088;font-weight:bold">void</span> counting_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> left, <span style="color:#0a8;font-weight:bold">int</span> right, <span style="color:#0a8;font-weight:bold">int</span> dimension, key_f key, <span style="color:#0a8;font-weight:bold">int</span> key_index);
+
+<span style="color:#777">// Functions to work on numbers</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> item_nth_digit(item i, <span style="color:#0a8;font-weight:bold">int</span> d);
+<span style="color:#0a8;font-weight:bold">int</span> item_digits(item i);
+
+<span style="color:#777">// Functions to work on strings</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> item_string_length(item i);
+<span style="color:#0a8;font-weight:bold">int</span> item_nth_char(item i, <span style="color:#0a8;font-weight:bold">int</span> d);
+
+<span style="color:#777">// --- The solutions ----------------------------------------------------------</span>
+
+<span style="color:#088;font-weight:bold">void</span> sort_numbers(item *A, <span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> max_digits) {
+    <span style="color:#0a8;font-weight:bold">int</span> groups[max_digits + <span style="color:#00D">1</span>];
+
+    partition(A, size, max_digits, groups, item_digits);
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">1</span>; i &lt; max_digits + <span style="color:#00D">1</span>; i++) {
+        radix_sort(A, groups[i - <span style="color:#00D">1</span>], groups[i], i, item_nth_digit);
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> sort_strings(item *A, <span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> max_length) {
+    <span style="color:#0a8;font-weight:bold">int</span> groups[max_length + <span style="color:#00D">1</span>];
+
+    partition(A, size, max_length, groups, item_string_length);
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> len = max_length; len &gt; <span style="color:#00D">0</span>; len--) {
+        counting_sort(A, groups[len - <span style="color:#00D">1</span>], size, <span style="color:#00D">26</span>, item_nth_char, len - <span style="color:#00D">1</span>);
+    }
+}
+
+<span style="color:#777">// --- Auxiliary sorting functions --------------------------------------------</span>
+
+<span style="color:#777">// Performs counting sort on a dimension (number of digits or string length)</span>
+<span style="color:#777">// and populates a table (groups) with the position of each dimension.</span>
+
+<span style="color:#088;font-weight:bold">void</span> partition(item *A, <span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> max_dimension, <span style="color:#0a8;font-weight:bold">int</span> *groups, dimension_f dimension) {
+    <span style="color:#0a8;font-weight:bold">int</span> counts[max_dimension + <span style="color:#00D">1</span>];
+    item temp[size];
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; max_dimension + <span style="color:#00D">1</span>; i++) { groups[i] = <span style="color:#00D">0</span>; }
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size;              i++) { groups[dimension(A[i])]++; }
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">1</span>; i &lt; max_dimension + <span style="color:#00D">1</span>; i++) { groups[i] += groups[i - <span style="color:#00D">1</span>]; }
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; max_dimension + <span style="color:#00D">1</span>; i++) { counts[i] = groups[i]; }
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size;              i++) { temp[i] = A[i]; }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = size - <span style="color:#00D">1</span>; i &gt;= <span style="color:#00D">0</span>; i--) {
+        <span style="color:#0a8;font-weight:bold">int</span> d = dimension(temp[i]);
+        <span style="color:#0a8;font-weight:bold">int</span> count = counts[d];
+
+        A[count - <span style="color:#00D">1</span>] = temp[i];
+        counts[d]--;
+    }
+}
+
+<span style="color:#777">// A simple radix sort</span>
+
+<span style="color:#088;font-weight:bold">void</span> radix_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> left, <span style="color:#0a8;font-weight:bold">int</span> right, <span style="color:#0a8;font-weight:bold">int</span> digits, key_f key) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; digits; i++) {
+        counting_sort(A, left, right, <span style="color:#00D">10</span>, key, i);
+    }
+}
+
+<span style="color:#777">// A slightly generalized counting sort</span>
+
+<span style="color:#088;font-weight:bold">void</span> counting_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> left, <span style="color:#0a8;font-weight:bold">int</span> right, <span style="color:#0a8;font-weight:bold">int</span> dimension, key_f key, <span style="color:#0a8;font-weight:bold">int</span> key_index) {
+    <span style="color:#0a8;font-weight:bold">int</span> size = right - left;
+    <span style="color:#0a8;font-weight:bold">int</span> counts[dimension];
+    item temp[size];
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>;    i &lt; dimension; i++) { counts[i] = <span style="color:#00D">0</span>; }
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = left; i &lt; right;     i++) { counts[key(A[i], key_index)]++; }
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">1</span>;    i &lt; dimension; i++) { counts[i] += counts[i - <span style="color:#00D">1</span>]; }
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>;    i &lt; size;      i++) { temp[i] = A[left + i]; }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = size - <span style="color:#00D">1</span>; i &gt;= <span style="color:#00D">0</span>; i--) {
+        <span style="color:#0a8;font-weight:bold">int</span> n = key(temp[i], key_index);
+        <span style="color:#0a8;font-weight:bold">int</span> count = counts[n];
+
+        A[left + count - <span style="color:#00D">1</span>] = temp[i];
+        counts[n]--;
+    }
+}
+
+<span style="color:#777">// --- Key handling -----------------------------------------------------------</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> count_digits(<span style="color:#0a8;font-weight:bold">int</span> n) {
+    <span style="color:#080;font-weight:bold">if</span> (n == <span style="color:#00D">0</span>) {
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#00D">1</span>;
+    } <span style="color:#080;font-weight:bold">else</span> {
+        <span style="color:#080;font-weight:bold">return</span> (<span style="color:#0a8;font-weight:bold">int</span>) log10(n) + <span style="color:#00D">1</span>;
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> nth_digit(<span style="color:#0a8;font-weight:bold">int</span> n, <span style="color:#0a8;font-weight:bold">int</span> d) {
+    <span style="color:#0a8;font-weight:bold">int</span> magnitude = (<span style="color:#0a8;font-weight:bold">int</span>) pow(<span style="color:#00D">10</span>, d);
+
+    <span style="color:#080;font-weight:bold">return</span> (n / magnitude) % <span style="color:#00D">10</span>;
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> item_nth_digit(item i, <span style="color:#0a8;font-weight:bold">int</span> d) {
+    <span style="color:#080;font-weight:bold">return</span> nth_digit(i.key.number, d);
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> item_digits(item i) {
+    <span style="color:#080;font-weight:bold">return</span> count_digits(i.key.number);
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> item_string_length(item a) {
+    <span style="color:#080;font-weight:bold">return</span> strlen(a.key.string);
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> item_nth_char(item a, <span style="color:#0a8;font-weight:bold">int</span> n) {
+    <span style="color:#080;font-weight:bold">return</span> a.key.string[n] - <span style="color:#D20">'a'</span>;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 8.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 8.1</h1>
+<h2>Probabilistic lower bounds on comparison sorting</h2>
+
+<blockquote>
+<p>In this problem, we prove a probabilistic $\Omega(n\lg{n})$ on the running
+time of any deterministic or randomized comparison sort on $n$ distinct input
+elements. We begin by examining a deterministic comparison sort $A$ with
+decision tree $T_A$. We assume that every permutation of $A$'s inputs is
+equally likely.</p>
+
+<ol>
+<li>Suppose that each leaf of $T_A$ is labeled with the probability that it is
+reached given a random input. Prove that exactly $n!$ leaves are labeled
+$1/n!$ and the rest are labeled $0$.</li>
+<li>Let $D(T)$ denote the external path length of a decision tree $T$; that
+is, $D(T)$ is the sum of the depths of all the leaves of $T$. Let $T$ be a
+decision tree with $k &gt; 1$ leaves, and let $LT$ and $RT$ be the left and
+right subtrees of $T$. Show that $D(T) = D(LT) + D(RT) + k$</li>
+<li>Let $d(k)$ be the minimum value of $D(T)$ over all decision trees $T$ with
+$k &gt; 1$ leaves. Show that $d(k) = \min_{1 \le i \le k - 1} \{d(i) +
+d(k-i) + k\}$. (<i>Hint</i>: Consider a decision tree $T$ with $k$
+leaves that achieves the minimum. Let $i_0$ be the number of leaves in
+$LT$ and $k - i_0$ the number of leaves in $RT$.)</li>
+<li>Prove that for a given value of $k &gt; 1$ and $i$ in the range $i \le i \le
+k - 1$, the function $i\lg{i} + (k-i)\lg(k-i)$ is minimized at $i = k/2$.
+Conclude that $d(k) = \Omega(k\lg{k})$.</li>
+<li>Prove that $D(T_A) = \Omega(n!\lg(n!))$, and conclude that the
+average-case time to sort $n$ elements is $\Omega(n\lg{n})$.</li>
+</ol>
+
+<p>Now consider a <em>randomized</em> comparison sort $B$. We can extend the
+decision-tree model to handle randomization by incorporating two kinds of
+nodes: ordinary comparison nodes and "randomization" nodes. A randomization
+node models a random choice of the form <code>RANDOM(1,r)</code> made by algorithm $B$;
+the node has $r$ children, each of which is equally likely to be chosen
+during an execution of the algorithm.</p>
+
+<ol>
+<li>Show that for any randomized comparison sort $B$, there exists a deterministic
+comparison sort $A$ whose expected number of comparisons is no more than
+those made by $B$.</li>
+</ol>
+</blockquote>
+
+<h3>Probability labels</h3>
+
+<p>There are $n!$ permutations that the algorithm can perform and each
+corresponds to one of the $n!$ possible inputs. Each permutation will be a
+leaf in this tree and since the inputs are equally likely, the probability of
+reaching one will be $1/n!$. If the decision tree has more leaves, they will
+be unreachable.</p>
+
+<p>This is an intuitive argument. It's easy to see that it is so if you think
+about it, but a formal proof seems tricky to me.</p>
+
+<h3>External path length</h3>
+
+<p>If we take a node in the tree, all paths go either through the left or the
+right child. Both children have the same paths as the node itself, except that
+they are shorter by one. Thus, $D(T) = D(LT) + D(RT) +
+\mathrm{LEAVES}(LT) + \mathrm{LEAVES}(RT) = D(LT) + D(RT) + k$.</p>
+
+<h3>Minimal external path length</h3>
+
+<p>If we take a tree with $k$ leaves that achieves the minimal external path,
+we know from the previous point that:</p>
+
+<p>$$ D(T) = D(LT) + D(RT) + k $$</p>
+
+<p>There are $k - 1$ possible pairs of left-right children and one of them is the
+minimum. That is:</p>
+
+<p>$$ d(k) = D(T) = D(LT) + D(RT) + k = \min_{1 \le i \le k-1}\{d(i) + d(k-i) + k\} $$</p>
+
+<h3>Minimal value</h3>
+
+<p>Let:</p>
+
+<p>$$ \begin{align}
+      f(i) &amp;= i\lg{i} + (k-i)\lg(k-i) \\
+     f'(i) &amp;= \lg{i} + 1 - \lg(k-i) - 1 = \lg\frac{i}{k-i} \\
+     f'(i) = 0 &amp; \Leftrightarrow \lg\frac{i}{k-i} = 0 \Rightarrow i/(k-i) = 1 \Rightarrow i = \frac k 2
+   \end{align} $$</p>
+
+<p>Since $f'(i)$ is monotonously increasing, $i = k/2$ is a local minimum.</p>
+
+<p>Intuitively said, the minimum is reached when the tree is balanced (as in the
+way merge sort halves is decision-tree on each step.</p>
+
+<h3>Average-case time</h3>
+
+<p>In $T_A$ there are $n!$ leaves, thus $D(n) &gt; d(k) = \Omega(n!\lg(n!))$. Each
+permutation has an equal probability of $1/n!$, thus the expected time to sort
+it is:</p>
+
+<p>$$ \frac{\Omega(n!\lg(n!))}{n!} = \Omega(n\lg(n!)) = \Omega(n\lg{n}) $$</p>
+
+<h3>The randomized algorithm</h3>
+
+<p>A deterministic algorithm $A$ corresponding to $B$ would be one that has made
+its "random" choices in advance. To construct it we just remove the randomized
+nodes by replacing them by a child we pick. The new result is a subtree (in
+respect to the non-randomized nodes) and its number of choices is less than or
+equal to the one of the randomized algorithm. Since any subtree we pick is
+$\Omega(n\lg{n})$, this implies that $B$ is $\Omega(n\lg{n})$.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

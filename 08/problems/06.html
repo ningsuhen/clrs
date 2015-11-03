@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 8.6 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 8.6</h1>
+<h2>Lower bound on merging sorted lists</h2>
+
+<blockquote>
+<p>The problem of merging two sorted lists arises frequently. We have seen a
+procedure for it as the subroutine <code>MERGE</code> in Section 2.3.1. In this
+problem, we will prove a lower bound of $2n - 1$ on the worst-case number of
+comparisons required to merge two sorted lists, each containing $n$ items.</p>
+
+<p>First we will show a lower bound of $2n - o(n)$ comparisons by using a
+decision tree.</p>
+
+<ol type="a">
+  <li>Given $2n$ numbers, compute the number of possible ways to divide them
+      into two sorted lists, each with $n$ numbers.
+  </li>
+<li>Using a decision tree and your answer to part (a), show that any
+      algorithm that correctly merges two sorted lists must perform $2n -
+      o(n)$ comparisons.
+</li>
+</ol>
+
+<p>Now we will show a slightly tighter $2n - 1$ bound.</p>
+
+<ol type="a" start="3">
+  <li>Show that if two elements are consecutive in the sorted order and from
+  different lists, then they must be compared.
+  </li>
+<li>Use your answers to the previous part to show a lower bound of $2n -
+      1$ comparisons for merging two sorted lists.
+</li>
+</ol>
+</blockquote>
+
+<h3>The first bound</h3>
+
+<p>This can be reduced to a counting problem: in how many ways can we pick $n$
+items out of $2n$ items? That way we pick the first sorted list and each such
+pick determines a single, unique second list. In <a href="../../C/01/13.html">exercise C.1-13</a> we already
+proved that:</p>
+
+<p>$$ \binom{2n}{n} = \frac{2^{2n}}{\sqrt{\pi n}}(1 + \O(1/n)) $$</p>
+
+<p>Using the familiar reasoning, if there are $l$ leaves in the decision tree and
+its height is $h$, the following inequality must hold:</p>
+
+<p>$$ \frac{2^{2n}}{\sqrt{\pi n}}(1 + \O(1/n)) \le l \le 2^h $$</p>
+
+<p>Taking the logarithm of the leftmost and rightmost parts (and inverting their
+positions) we get;</p>
+
+<p>$$ \begin{align}
+   h &amp; \ge \lg\bigg(\frac{2^{2n}}{\sqrt{\pi n}}(1 + \O(1/n))\bigg) \\
+     &amp; = \lg{2^{2n}} - \lg\sqrt{\pi n} + \lg(1 + O(1/n)) \\
+     &amp; = 2n - \o(n)
+   \end{align} $$</p>
+
+<h3>The tighter bound</h3>
+
+<p>If we don't compare two consecutive elements, we don't know which one comes
+first. They are completely indistinguishable when comparing to the other
+elements. We have no way in determining which one should come first. (Note
+that if they were in the same sorted list, we don't need to compare them,
+since we already have that information).</p>
+
+<p>If the sorted order of the elements is $\langle a_1, b_2, a_2, b_2, \ldots,
+a_n, b_n \rangle$ and we have the two lists $\langle a_1, a_2, \ldots, a_n
+\rangle$ and $\langle b_1, b_2, \ldots, b_n \rangle$, then there are $2n - 1$
+pairs of elements that need to be compared. Any algorithm that handles this
+case must perform $2n - 1$ comparisons in the worst case.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

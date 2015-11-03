@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.3.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.3.1</h1>
+<blockquote>
+<p>Suppose we roll two ordinary, 6-sided dice. What is the expectation of the
+sum of two values showing? What is the expectation of the maximum of two
+values showing?</p>
+</blockquote>
+
+<p>The expectation of the sum is:</p>
+
+<p>$$ \begin{align}
+     \E[X] &amp;= \sum_{x=2}^{12}x\Pr\{X = x\} \\
+           &amp;=  2 \cdot \frac 1 36 +
+               3 \cdot \frac 2 36 +
+               4 \cdot \frac 3 36 +
+               5 \cdot \frac 4 36 +
+               6 \cdot \frac 5 36 +
+               7 \cdot \frac 6 36 +
+               8 \cdot \frac 5 36 +
+               9 \cdot \frac 4 36 +
+              10 \cdot \frac 3 36 +
+              11 \cdot \frac 2 36 +
+              12 \cdot \frac 1 36 \\
+           &amp;= 7
+   \end{align}$$</p>
+
+<p>The result is as expected, the probabilities are obtained by just counting them.</p>
+
+<p>As for the maximum, a table helps illustrate the probabilities:</p>
+
+<table class="table table-bordered table-striped table-compact">
+<thead>
+<tr>
+<th style="text-align: center"></th>
+<th style="text-align: center">1</th>
+<th style="text-align: center">2</th>
+<th style="text-align: center">3</th>
+<th style="text-align: center">4</th>
+<th style="text-align: center">5</th>
+<th style="text-align: center">6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center"><strong>1</strong></td>
+<td style="text-align: center">1</td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">6</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>2</strong></td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">6</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>3</strong></td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">6</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>4</strong></td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">4</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">6</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>5</strong></td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">5</td>
+<td style="text-align: center">6</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>6</strong></td>
+<td style="text-align: center">6</td>
+<td style="text-align: center">6</td>
+<td style="text-align: center">6</td>
+<td style="text-align: center">6</td>
+<td style="text-align: center">6</td>
+<td style="text-align: center">6</td>
+</tr>
+</tbody>
+</table>
+
+<p>There is a nice geometrical interpretation here. In any case, the chance of $n$
+being the maximum of two dice is $(2n-1)/36$. Thus:</p>
+
+<p>$$ \E[Y]
+   = \sum_{i=1}^{6}i\Pr\{Y = i\}
+   = \sum_{i=1}^{6}\Bigg(i \cdot \frac{2i - 1}{36}\Bigg)
+   = \frac{2\sum{i^2} - \sum{i}}{36}
+   = \frac{(6 \cdot 7 \cdot 13)/6 - (6 \cdot 7)/2}{36}
+   = \frac{161}{36} = 4.47\ldots $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

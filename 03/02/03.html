@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 3.2.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 3.2.3</h1>
+<blockquote>
+<p>Prove equation (3.19). Also prove that $n! = \omega(2^n)$ and $n! = o(n^n)$.</p>
+
+<p>$$ \lg(n!) = \Theta(n\lg{n}) \tag{3.19} $$</p>
+</blockquote>
+
+<p>We use <strong>Stirling's approximation</strong>:</p>
+
+<p>$$ \begin{align}
+   \lg(n!) &amp;= \lg\Bigg(\sqrt{2\pi{n}}\Big(\frac{n}{e}\Big)^n\Big(1+\Theta(\frac{1}{n})\Big)\Bigg)
+      = \lg\sqrt{2\pi{n}} + \lg\Big(\frac{n}{e}\Big)^n + \lg\Big(1+\Theta(\frac{1}{n})\Big) = \\
+     &amp;= \Theta(\sqrt{n}) + n\lg{\frac{n}{e}} + \lg\Big(\Theta(1) + \Theta(\frac{1}{n})\Big)
+      = \Theta(\sqrt{n}) + \Theta(n\lg{n}) + \Theta(\frac{1}{n}) = \\
+     &amp;= \Theta(n\lg{n})
+   \end{align}
+$$</p>
+
+<p>The other two are kind of obvious:</p>
+
+<p>$$
+  \forall n &gt; 3:
+  2^n = \underbrace{2 \cdot 2 \cdot \cdots \cdot 2}_\text{n times} &lt;
+        1 \cdot 2 \cdot \cdots \cdot n = n!
+        \quad\Rightarrow\quad n! = \omega(2^n)
+$$</p>
+
+<p>And:</p>
+
+<p>$$
+  \forall n &gt; 1 :
+  n! = 1 \cdot 2 \cdot \cdots n &lt; \underbrace{n \cdot n \cdot \cdots \cdot n}_\text{n times}
+     = n^n \quad \text{for }
+     \quad\Rightarrow\quad n! = o(n^n)
+$$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

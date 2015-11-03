@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 7.4.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 7.4.5</h1>
+<blockquote>
+<p>We can improve the running time of quicksort in practice by taking advantage
+of the fast running time of insertion sort when its input is "nearly" sorted.
+Upon calling quicksort on a subarray with fewer than $k$ elements, let it
+simply return without sorting the subarray. After the top-level call to
+quicksort returns, run insertion sort on the entire array to finish the
+sorting process. Argue that this sorting algorithm runs in $\O(nk + n\lg(n/k))$
+expected time. How should we pick $k$, both in theory and practice?</p>
+</blockquote>
+
+<p>In the quicksort part of the proposed algorithm, the recursion stops at level
+$\lg(n/k)$, which makes the expected running time $\O(n\lg(n/k))$. However,
+this leaves $n/k$ non-sorted, non-intersecting subarrays of (maximum) length
+$k$.</p>
+
+<p>Because of the nature of the insertion sort algorithm, it will first sort fully
+one such subarray before consider the next one. Thus, it has the same
+complexity as sorting each of those arrays, that is $\frac{n}{k}\O(k^2) = \O(nk).$</p>
+
+<p>In theory, if we ignore the constant factors, we need to solve:</p>
+
+<p>$$ n\lg{n} \ge nk + n\lg{n/k} \\
+   \Downarrow \\
+   \lg{n} \ge k + \lg{n} - \lg{k} \\
+   \Downarrow \\
+   \lg{k} \ge k $$</p>
+
+<p>Which is not possible.</p>
+
+<p>If we add the constant factors, we get:</p>
+
+<p>$$ c_qn\lg{n} \ge c_ink + c_qn\lg(n/k) \\
+   \Downarrow \\
+   c_q\lg{n} \ge c_ik + c_q\lg{n} - c_q\lg{k} \\
+   \Downarrow \\
+   \lg{k} \ge \frac{c_i}{c_q}k $$</p>
+
+<p>Which indicates that there might be a good candidate. Furthermore, the
+lower-order terms should be taken into consideration too.</p>
+
+<p>In practice, $k$ should be chosed by experiment.</p>
+  <hr />
+  <h3>C runner output</h3>
+  <pre>n = 400000, k = 550
+-----------------------------
+quicksort          = 0.377467
+modified-quicksort = 0.040907
+</pre>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#define</span> K <span style="color:#00D">550</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> partition(<span style="color:#0a8;font-weight:bold">int</span>[], <span style="color:#0a8;font-weight:bold">int</span>, <span style="color:#0a8;font-weight:bold">int</span>);
+<span style="color:#088;font-weight:bold">void</span> limited_quicksort(<span style="color:#0a8;font-weight:bold">int</span>[], <span style="color:#0a8;font-weight:bold">int</span>, <span style="color:#0a8;font-weight:bold">int</span>, <span style="color:#0a8;font-weight:bold">int</span>);
+<span style="color:#088;font-weight:bold">void</span> insertion_sort(<span style="color:#0a8;font-weight:bold">int</span>[], <span style="color:#0a8;font-weight:bold">int</span>, <span style="color:#0a8;font-weight:bold">int</span>);
+
+<span style="color:#088;font-weight:bold">void</span> quicksort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &lt; r - <span style="color:#00D">1</span>) {
+        <span style="color:#0a8;font-weight:bold">int</span> q = partition(A, p, r);
+        quicksort(A, p, q);
+        quicksort(A, q + <span style="color:#00D">1</span>, r);
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> modified_quicksort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    limited_quicksort(A, p, r, K);
+    insertion_sort(A, p, r);
+}
+
+<span style="color:#088;font-weight:bold">void</span> limited_quicksort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r, <span style="color:#0a8;font-weight:bold">int</span> treshold) {
+    <span style="color:#080;font-weight:bold">if</span> (r - p &gt; treshold) {
+        <span style="color:#0a8;font-weight:bold">int</span> q = partition(A, p, r);
+        limited_quicksort(A, p, q, treshold);
+        limited_quicksort(A, q + <span style="color:#00D">1</span>, r, treshold);
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> partition(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> x, i, j, tmp;
+
+    x = A[r - <span style="color:#00D">1</span>];
+    i = p;
+
+    <span style="color:#080;font-weight:bold">for</span> (j = p; j &lt; r - <span style="color:#00D">1</span>; j++) {
+        <span style="color:#080;font-weight:bold">if</span> (A[j] &lt;= x) {
+            tmp = A[i];
+            A[i] = A[j];
+            A[j] = tmp;
+            i++;
+        }
+    }
+
+    tmp = A[i];
+    A[i] = A[r - <span style="color:#00D">1</span>];
+    A[r - <span style="color:#00D">1</span>] = tmp;
+
+    <span style="color:#080;font-weight:bold">return</span> i;
+}
+
+<span style="color:#088;font-weight:bold">void</span> insertion_sort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> i, j, key;
+
+    <span style="color:#080;font-weight:bold">for</span> (j = p + <span style="color:#00D">1</span>; j &lt; r; j++) {
+        key = A[j];
+        <span style="color:#080;font-weight:bold">for</span> (i = j - <span style="color:#00D">1</span>; i &gt;= p &amp;&amp; A[i] &gt; key; i--) {
+            A[i + <span style="color:#00D">1</span>] = A[i];
+        }
+        A[i + <span style="color:#00D">1</span>] = key;
+    }
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

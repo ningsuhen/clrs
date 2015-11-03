@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 9.3.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 9.3.1</h1>
+<blockquote>
+<p>In the algorithm <code>SELECT</code>, the input elements are divided into groups of 5.
+Will the algorithm work in linear time if they are divided into groups of 7?
+Argue that <code>SELECT</code> does not run in linear time if groups of 3 are used.</p>
+</blockquote>
+
+<h3>Groups of 7</h3>
+
+<p>The algorithm will work if the elements are divided in groups of 7. On each
+partitioning, the minimum number of elements that are less than (or greater
+than) $x$ will be:</p>
+
+<p>$$ 4 \bigg(\bigg\lceil \frac{1}{2} \Big\lceil \frac{n}{7} \Big\rceil \bigg\rceil
+           - 2 \bigg) \ge \frac{2n}{7} - 8 $$</p>
+
+<p>The partitioning will reduce the subproblem to size at most $5n/7 + 8$. This
+yields the following recurrence:</p>
+
+<p>$$ T(n) = \begin{cases}
+            \O(1) &amp; \text{ if } n &lt; n_0 \\
+            T(\lceil n/7 \rceil) + T(5n/7 + 8) + \O(n) &amp; \text{ if } n \ge n_0
+          \end{cases} $$</p>
+
+<p>We guess $T(n) \le cn$ and bound the non-recursive term with $an$:</p>
+
+<p>$$ \begin{align}
+   T(n) &amp; \le c\lceil n/7 \rceil + c(5n/7 + 8) + an \\
+        &amp; \le cn/7 + c + 5cn/7 + 8c + an \\
+        &amp; = 6cn/7 + 9c + an \\
+        &amp; = cn + (-cn/7 + 9c + an) \\
+        &amp; \le cn \\
+        &amp; = \O(n)
+   \end{align} $$</p>
+
+<p>The last step holds when $(-cn/7 + 9c + an) \le 0$. That is:</p>
+
+<p>$$ -cn/7 + 9c + an \le 0 \\
+   \Downarrow \\
+   c(n/7 - 9) \ge an \\
+   \Downarrow \\
+   \frac{c(n - 63)}{7} \ge an \\
+   \Downarrow \\
+   c \ge \frac{7an}{n - 63}
+$$</p>
+
+<p>By picking $n_0 = 126$ and $n \le n_0$, we get that $n/(n - 63) \le 2$. Then
+we just need $c \ge 14a$.</p>
+
+<h3>Groups of 3</h3>
+
+<p>The algorithm will not work for groups of three. The number of elements that
+are less than (or greater than) the median-of-medians is:</p>
+
+<p>$$ 2 \bigg(\bigg\lceil \frac{1}{2} \Big\lceil \frac{n}{3} \Big\rceil \bigg\rceil
+           - 2 \bigg) \ge \frac{n}{3} - 4 $$</p>
+
+<p>The recurrence is thus:</p>
+
+<p>$$ T(n) = T(\lceil n/3 \rceil) + T(2n/3 + 4) + \O(n) $$</p>
+
+<p>We're going to prove that $T(n) = \omega(n)$ using the substitution method. We
+guess that $T(n) &gt; cn$ and bound the non-recursive term with $an$.</p>
+
+<p>$$ \begin{align}
+   T(n) &amp; &gt; c\lceil n/3 \rceil + c(2n/3 + 2) + an \\
+        &amp; &gt; cn/3 + c + 2cn/3 + 2c + an \\
+        &amp; = cn + 3c + an &amp; (c &gt; 0, a &gt; 0, n &gt; 0)\\
+        &amp; &gt; cn \\
+        &amp; = \omega(n)
+   \end{align} $$</p>
+
+<p>The calculation above holds for any $c &gt; 0$.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 2.3.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 2.3.5</h1>
+<blockquote>
+<p>Referring back to the searching problem (see <a href="../01/03.html">Exercise 2.1-3</a>), observe that
+if the sequence A is sorted, we can check the midpoint of the sequence
+against $\nu$ and eliminate half of the sequence from further consideration.
+The <strong>binary search</strong> algorithm repeats this procedure, halving the size of
+the remaining portion of the sequence each time. Write pseudocode, either
+iterative or recursive, for binary search. Argue that the worst-case running
+time of binary search is $\Theta(\lg{n})$.</p>
+</blockquote>
+
+<p>Here's the presudocode:</p>
+
+<pre><code>BINARY-SEARCH(A, v):
+  low = 1
+  high = A.length
+
+  while low &lt;= high
+      mid = (low + high) / 2
+      if A[mid] == v
+          return mid
+      if A[mid] &lt; v
+          low = mid + 1
+      else
+          high = mid - 1
+
+  return NIL
+</code></pre>
+
+<p>The argument is fairly straightforward and I will make it brief:</p>
+
+<p>$$ T(n+1) = T(n/2) + c $$</p>
+
+<p>This is the recurrence shown in the chapter text, and we know, that this is
+logarithmic time.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#777">// Indices in the C code are different</span>
+<span style="color:#0a8;font-weight:bold">int</span> binary_search(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> length, <span style="color:#0a8;font-weight:bold">int</span> v) {
+    <span style="color:#0a8;font-weight:bold">int</span> low  = <span style="color:#00D">0</span>;
+    <span style="color:#0a8;font-weight:bold">int</span> high = length;
+
+    <span style="color:#0a8;font-weight:bold">int</span> mid;
+    <span style="color:#080;font-weight:bold">while</span> (low &lt; high) {
+        mid = (low + high) / <span style="color:#00D">2</span>;
+
+        <span style="color:#080;font-weight:bold">if</span> (A[mid] == v)
+            <span style="color:#080;font-weight:bold">return</span> mid;
+        <span style="color:#080;font-weight:bold">else</span> <span style="color:#080;font-weight:bold">if</span> (A[mid] &lt; v)
+            low = mid + <span style="color:#00D">1</span>;
+        <span style="color:#080;font-weight:bold">else</span>
+            high = mid;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> -<span style="color:#00D">1</span>;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

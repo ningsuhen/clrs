@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 3.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 3.1</h1>
+<h2>Asymptotic behavior of polynomials</h2>
+
+<blockquote>
+<p>Let</p>
+
+<p>$$ p(n) = \sum_{i=0}^da_in^i $$</p>
+
+<p>where $a_d &gt; 0$, be a degree-$d$ polynomial in $n$, and let $k$ be a
+constant. Use the definitions of the asymptotic notations to prove the
+following properties.</p>
+
+<ol>
+<li>If $k \geq d$, then $p(n) = O(n^k)$.</li>
+<li>If $k \leq d$, then $p(n) = \Omega(n^k)$.</li>
+<li>If $k = d$, then $p(n) = \Theta(n^k)$.</li>
+<li>If $k &gt; d$, then $p(n) = o(n^k)$.</li>
+<li>If $k &lt; d$, then $p(n) = \omega(n^k)$.</li>
+</ol>
+</blockquote>
+
+<p>This is very boring. I'm just going to examine half of one case, since
+everything else follows easliy from it.</p>
+
+<p>Let's see that $p(n) = O(n^d)$. We need do pick $c = a_d + b$, such that:</p>
+
+<p>$$ \sum_{i=0}^d = a_dn^d + a_{d-1}n^{d-1} + \ldots + a_1n + a_0 \leq cn^d $$</p>
+
+<p>When we divide by $n^d$, we get:</p>
+
+<p>$$ c = a_d + b \geq a_d + \frac{a_{d-1}}n + \frac{a_{d-2}}{n^2} + \ldots + \frac{a_0}{n^d} $$</p>
+
+<p>Or:</p>
+
+<p>$$  b \geq \frac{a_{d-1}}n + \frac{a_{d-2}}{n^2} + \ldots + \frac{a_0}{n^d} $$</p>
+
+<p>If we choose $b = 1$, then we can choose $n_0$ to be:</p>
+
+<p>$$ n_0 = \max(da_{d-1}, d\sqrt{a_{d-2}}, \ldots, d\sqrt[d]{a_0}) $$</p>
+
+<p>Now we have $n_0$ and $c$, such that:</p>
+
+<p>$$ p(n) \leq cn^d \quad \text{for } n \geq n_0 $$</p>
+
+<p>Which is the definition of $O(n^d)$. By chosing $b = -1$ we can prove the
+$\Omega(n^d)$ inequality and thus the $\Theta(n^d)$ inequality.</p>
+
+<p>It's very similar to proove the other inequalities.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

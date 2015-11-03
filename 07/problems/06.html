@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 7.6 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 7.6</h1>
+<h2>Fuzzy sorting of intervals</h2>
+
+<blockquote>
+<p>Consider the problem in which we do not know the numbers exactly. Instead,
+for each number, we know an interval on the real line to which it belongs.
+That is, we are given $n$ closed intervals of the form $[a_i, b_i]$, where
+$a_i \le b_i$. We wish to <strong>fuzzy-sort</strong> these intervals, i.e., to produce a
+permutation $\langle i_1, i_2, \ldots, i_n \rangle$ of the intervals such
+that for $j = 1, 2, \ldots, n$, there exists $c_j \in [a_{i_j}, b_{i_j}]$
+satisfying $c_1 \le c_2 \le \cdots \le c_n$.</p>
+
+<ol>
+<li>Design a randomized algorithm for fuzzy-sorting $n$ intervals. Your
+algorithm should have the general structure of an algorithm that
+quicksorts the left endpoints (the $a_i$ values), but it should take
+advantage of overlapping intervals to improve the running time. (As the
+intervals overlap more and more, the problem of fuzzy-sorting the
+intervals becoes progressively easier. Your algorithm should take
+advantage of such overlapping, to the extend that it exists).</li>
+<li>Argue that your algorithm runs in expected time $\Theta(n\lg{n})$ in
+general, but runs in expected time $\Theta(n)$ when all of the intervals
+overlap (i.e., when there exists a value $x$ such that $x \in [a_i, b_i]$
+for all $i$). Your algorithm should not be checking for this case
+explicitly; rather, its performance should naturally improve as the amount
+of overlap increases.</li>
+</ol>
+</blockquote>
+
+<h3>The algorithm</h3>
+
+<p>The approach is very similar to <a href="02.html">problem 7.2</a>. After we (randomly) choose a pivot
+interval, we check if it intersects with the other intervals. More precisely,
+we accumulate an intersection of the pivot and the other intervals. Afterwards
+we use this interval for comparison instead of the pivot.</p>
+
+<p>When comparing, we can treat intervals containing the intersection as equal to
+each other. Thus after we have arranged all the smaller intervals on the left
+of the pivot, we can put all the equal ones immediatelly to the right of the
+pivot. Like in <a href="02.html">problem 7.2</a>, we return two points (an interval) to use as a for
+recursive calls.</p>
+
+<p>Even if partition does (worst-case) three passes over the array, it is still
+linear.</p>
+
+<h3>Expected time</h3>
+
+<p>If we assume that no two intervals have intersections, the analysis is
+identical to quicksort. If, however, all the intervals share a common point,
+the partitioning function would solve it in one go.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdbool.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> left;
+    <span style="color:#0a8;font-weight:bold">int</span> right;
+} interval;
+
+<span style="color:#0a8;font-weight:bold">bool</span> intersects(interval a, interval b) { <span style="color:#080;font-weight:bold">return</span> a.left &lt;= b.right &amp;&amp; b.left &lt;= a.right; }
+<span style="color:#0a8;font-weight:bold">bool</span> before(interval a, interval b)     { <span style="color:#080;font-weight:bold">return</span> a.right &lt; b.left; }
+<span style="color:#0a8;font-weight:bold">bool</span> after(interval a, interval b)      { <span style="color:#080;font-weight:bold">return</span> a.left &gt; b.right; }
+
+<span style="color:#579">#define</span> EXCHANGE(a, b) tmp = a; a = b; b = tmp;
+
+interval partition(interval A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> pick, s, t, i;
+    interval intersection, tmp;
+
+    <span style="color:#777">// Pick a random interval as a pivot</span>
+    pick = p + rand() % (r - p);
+    EXCHANGE(A[pick], A[r-<span style="color:#00D">1</span>]);
+    intersection = A[r-<span style="color:#00D">1</span>];
+
+    <span style="color:#777">// Find an intersection of the pivot and other intervals</span>
+    <span style="color:#080;font-weight:bold">for</span> (i = p; i &lt; r - <span style="color:#00D">1</span>; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (intersects(intersection, A[i])) {
+            <span style="color:#080;font-weight:bold">if</span> (A[i].left &gt; intersection.left)
+                intersection.left = A[i].left;
+            <span style="color:#080;font-weight:bold">if</span> (A[i].right &lt; intersection.right)
+                intersection.right = A[i].right;
+        }
+    }
+
+    <span style="color:#777">// Classic partition around the intersection</span>
+    <span style="color:#080;font-weight:bold">for</span> (i = s = p; i &lt; r - <span style="color:#00D">1</span>; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (before(A[i], intersection)) {
+            EXCHANGE(A[i], A[s]);
+            s++;
+        }
+    }
+    EXCHANGE(A[r-<span style="color:#00D">1</span>], A[s]);
+
+    <span style="color:#777">// Group intervals including the intersection</span>
+    <span style="color:#080;font-weight:bold">for</span> (t = s + <span style="color:#00D">1</span>, i = r - <span style="color:#00D">1</span>; t &lt;= i;) {
+        <span style="color:#080;font-weight:bold">if</span> (intersects(A[i], intersection)) {
+            EXCHANGE(A[t], A[i]);
+            t++;
+        } <span style="color:#080;font-weight:bold">else</span> {
+            i--;
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> (interval) {s, t};
+}
+
+<span style="color:#088;font-weight:bold">void</span> fuzzy_sort(interval array[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &lt; r - <span style="color:#00D">1</span>) {
+        interval pivot = partition(array, p, r);
+        fuzzy_sort(array, p, pivot.left);
+        fuzzy_sort(array, pivot.right, r);
+    }
+}
+
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

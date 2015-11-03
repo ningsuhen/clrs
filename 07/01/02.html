@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 7.1.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 7.1.2</h1>
+<blockquote>
+<p>What value of $q$ does <code>PARTITION</code> return when all elements in the array $A[p
+\ldots r]$ have the same value? Modify <code>PARTITION</code> so that $q = \lfloor
+(p+r)/2 \rfloor$ when all elements in the array $A[p \ldots r]$ have the same
+value.</p>
+</blockquote>
+
+<p>It returns $r$.</p>
+
+<p>We can modify <code>PARTITION</code> by counting the number of comparisons in which $A[j]
+= A[r]$ and then subtracting half that number from the pivot index.</p>
+  <hr />
+  <h3>Python code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">partition</span>(numbers, start = <span style="color:#00D">0</span>, end = <span style="color:#069">None</span>):
+    last = end - <span style="color:#00D">1</span> <span style="color:#080;font-weight:bold">if</span> end <span style="color:#080;font-weight:bold">else</span> <span style="color:#369;font-weight:bold">len</span>(numbers) - <span style="color:#00D">1</span>
+
+    pivot_value = numbers[last]
+    pivot       = start
+    repetitions = <span style="color:#00D">0</span>
+
+    <span style="color:#080;font-weight:bold">for</span> i <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(start, last):
+        value = numbers[i]
+
+        <span style="color:#080;font-weight:bold">if</span> value == pivot_value:
+            repetitions += <span style="color:#00D">1</span>
+
+        <span style="color:#080;font-weight:bold">if</span> value &lt;= pivot_value:
+            numbers[pivot], numbers[i] = numbers[i], numbers[pivot]
+            pivot += <span style="color:#00D">1</span>
+
+    numbers[pivot], numbers[last] = numbers[last], numbers[pivot]
+    <span style="color:#080;font-weight:bold">return</span> pivot - repetitions // <span style="color:#00D">2</span>
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">quicksort</span>(numbers, start = <span style="color:#00D">0</span>, end = <span style="color:#069">None</span>):
+    end = end <span style="color:#080;font-weight:bold">if</span> end <span style="color:#080;font-weight:bold">else</span> <span style="color:#369;font-weight:bold">len</span>(numbers)
+
+    <span style="color:#080;font-weight:bold">if</span> start &lt; end - <span style="color:#00D">1</span>:
+        pivot = partition(numbers, start, end)
+        quicksort(numbers, start, pivot)
+        quicksort(numbers, pivot + <span style="color:#00D">1</span>, end)
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

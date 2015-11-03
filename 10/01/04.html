@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 10.1.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 10.1.4</h1>
+<blockquote>
+<p>Rewrite <code>ENQUEUE</code> and `DEQUEUE to detect underflow and overflow of a queue.</p>
+</blockquote>
+
+<p>I shall go with the pseudo-code version, since I'm too lazy to bother figuring
+out how to test it in C.</p>
+
+<p>We need to do a slight modification, since the current version provides no way
+to tell whether a queue is empty or full. We should have <code>Q.head == NIL</code> when
+the queue is empty and <code>Q.head == Q.tail</code> when the queue is full. An empty
+queue is initializes with <code>NIL</code> in its head and <code>Q.tail =</code>. We need to update
+<code>Q.head</code> when a <code>DEQUEUE</code> operation causes the queue to become empty.</p>
+
+<pre><code>ENQUEUE(Q, x)
+  if Q.head == Q.tail
+      error "Queue overflow"
+
+  Q[Q.tail] = x
+
+  if Q.head == NIL
+      Q.head = Q.tail
+
+  if Q.tail == Q.length
+      Q.tail = 1
+  else
+      Q.tail = Q.tail + 1
+
+DEQUEUE(Q)
+  if Q.head == NIL
+      error "Queue underflow"
+
+  x = Q[Q.head]
+
+  if Q.head == Q.length
+      Q.head = 1
+  else
+      Q.head = Q.head + 1
+
+  if Q.head == Q.tail
+      Q.head = NIL
+  return x
+</code></pre>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

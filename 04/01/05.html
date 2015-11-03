@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 4.1.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 4.1.5</h1>
+<blockquote>
+<p>Use the following ideas to develop a nonrecursive, linear-time algorithm for
+the maximum-subarray problem. Start at the left end of the array, and
+progress toward the right, keeping track of the maximum subarray seen so
+far. Knowing a maximum subarray $A[1..j]$, extend the answer to find a
+maximum subarray ending at index $j + 1$ by using the following observation:
+a maximum subarray $A[i..j+1]$, for some $1 \leq i \leq j + 1$. Determine a
+maximum subarray of the form $A[i..j+1]$ in constant time based on knowing a
+maximum subarray ending at index $j$.</p>
+</blockquote>
+
+<p>We need to build an array $S$ that holds the maximum subarrays ending on each
+index of $A$. That is, $S[j]$ holds information about the maximum subarray
+ending on $j$.</p>
+
+<p>We first loop through the input to build $S$. Afterwards, we do what they
+suggest in the text. This is $n + n = 2n = \Theta(n)$.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">unsigned</span> left;
+    <span style="color:#0a8;font-weight:bold">unsigned</span> right;
+    <span style="color:#0a8;font-weight:bold">int</span> sum;
+} max_subarray;
+
+max_subarray find_maximum_subarray(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">unsigned</span> low, <span style="color:#0a8;font-weight:bold">unsigned</span> high) {
+    max_subarray suffixes[high - low];
+
+    suffixes[<span style="color:#00D">0</span>].left = low;
+    suffixes[<span style="color:#00D">0</span>].right = low + <span style="color:#00D">1</span>;
+    suffixes[<span style="color:#00D">0</span>].sum = A[low];
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = low + <span style="color:#00D">1</span>; i &lt; high; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (suffixes[i - <span style="color:#00D">1</span>].sum &lt; <span style="color:#00D">0</span>) {
+            suffixes[i].left = i;
+            suffixes[i].right = i + <span style="color:#00D">1</span>;
+            suffixes[i].sum = A[i];
+        } <span style="color:#080;font-weight:bold">else</span> {
+            max_subarray *previous = &amp;suffixes[i - <span style="color:#00D">1</span>];
+            suffixes[i].left = previous-&gt;left;
+            suffixes[i].right = i + <span style="color:#00D">1</span>;
+            suffixes[i].sum = previous-&gt;sum + A[i];
+        }
+    }
+
+    max_subarray *max = &amp;suffixes[<span style="color:#00D">0</span>];
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = low + <span style="color:#00D">1</span>; i &lt; high; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (max-&gt;sum &lt; suffixes[i].sum) {
+            max = &amp;suffixes[i];
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> *max;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

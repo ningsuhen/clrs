@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 7.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 7.1</h1>
+<h2>Hoare partition correctness</h2>
+
+<blockquote>
+<p>The version of <code>PARTITION</code> given in this chapter is not the original
+partitioning algorithm. Here is the original partition algorithm, which is
+due to C.A.R. Hoare:</p>
+
+<pre><code>HOARE-PARTITION(A, p, r)
+  x = A[p]
+  i = p - 1
+  j = r + 1
+  while TRUE
+      repeat
+          j = j - 1
+      until A[j] ≤ x
+      repeat
+          i = i + 1
+      until A[i] ≥ x
+      if i &lt; j
+          exchange A[i] with A[j]
+      else return j
+</code></pre>
+
+<ol>
+<li>Demonstrate the operation of <code>HOARE-PARTITION</code> on the array $A = \langle
+13, 19, 9, 5, 12, 8, 7, 4, 11, 2, 6, 21 \rangle$, showing the values of
+the array and auxiliary values after each iteration of the <strong>while</strong> loop
+in lines 4-13.</li>
+</ol>
+
+<p>The next three questions ask you to give a careful argument that the
+procedure <code>HOARE-PARTITION</code> is correct. Assuming that the subarray $A[p..r]$
+contains at least two elements, prove the following:</p>
+
+<ol>
+<li>The indices $i$ and $j$ are such that we never access an element of $A$
+outside the subarray $A[p..r]$.</li>
+<li>When <code>HOARE-PARTITION</code> terminates, it returns a value $j$ such that $p \le
+j &lt; r$.</li>
+<li>Every element of $A[p..j]$ is less than or equal to every element of
+$A[j + 1..r]$ when <code>HOARE-PARTITION</code> terminates.</li>
+</ol>
+
+<p>The <code>PARTITION</code> procedure in section 7.1 separates the pivot value
+(originally in $A[r]$) from the two partitions it forms. The
+<code>HOARE-PARTITION</code> procedure, on the other hand, always places the pivot value
+(originally in $A[p]$) into one of the two parititions $A[p..j]$ and
+$A[j + 1..r]$. Since $p \le j &lt; r$, this split is always nontrivial.</p>
+
+<ol>
+<li>Rewrite the <code>QUICKSORT</code> procedure to use <code>HOARE-PARTITION</code>.</li>
+</ol>
+</blockquote>
+
+<h3>Demonstration</h3>
+
+<p>At the end of the loop, the variables have the following values:</p>
+
+<pre><code>x = 13
+j = 9
+i = 10
+</code></pre>
+
+<h3>Correctness</h3>
+
+<p>The indices will not walk of the array. At the first check $i &lt; j$, $i = p$ and
+$j \ge p$ (because $A[p] = x$). If $i = j$, the algorithm will terminate
+without accessing "invalid" elements. If $i &lt; j$, the next loop will also have
+indices $i$ and $j$ within the array, (because $i \le r$ and $j \ge p$). Note
+that if one of the indices gets to the end of the array, then $i$ won't be less
+or equal to $j$ any more.</p>
+
+<p>As for the return value, it will be at least one less than $j$. At the first
+iteration, either (1) $A[p]$ is the maximum element and then $i = p$ and $j = p
+&lt; r$ or (2) it is not and $A[p]$ gets swapped with $A[j]$ where $j \le r$. The
+loop will not terminate and on the next iteration, $j$ gets decremented (before
+eventually getting returned). Combining those two cases we get $p \le j &lt; r$.</p>
+
+<p>Finally, it's easy to observe the following invariant:</p>
+
+<blockquote>
+<p>Before the condition comparing $i$ to $j$, all elements $A[p..i-1] \le x$ and
+all elements $A[j+1..r] \ge x$.</p>
+</blockquote>
+
+<p><strong>Initialization</strong>. The two <strong>repeat</strong> blocks establish just this condition.</p>
+
+<p><strong>Maintenance</strong>. By exchanging $A[i]$ and $A[j]$ we make the $A[p..i] \le x$
+and $A[j..r] \ge x$. Incrementing $i$ and decrementing $j$ maintain this
+invariant.</p>
+
+<p><strong>Termination</strong>. The loop terminates when $i \ge j$. The invariant still holds
+at termination.</p>
+
+<p>The third bit follows directly from this invariant.</p>
+
+<h3>Implementation</h3>
+
+<p>There's some C code below.</p>
+  <hr />
+  <img src="01.png.html" />
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdbool.h&gt;</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> hoare_partition(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> x = A[p],
+        i = p - <span style="color:#00D">1</span>,
+        j = r,
+        tmp;
+
+    <span style="color:#080;font-weight:bold">while</span>(<span style="color:#069">true</span>) {
+        <span style="color:#080;font-weight:bold">do</span> { j--; } <span style="color:#080;font-weight:bold">while</span> (!(A[j] &lt;= x));
+        <span style="color:#080;font-weight:bold">do</span> { i++; } <span style="color:#080;font-weight:bold">while</span> (!(A[i] &gt;= x));
+
+        <span style="color:#080;font-weight:bold">if</span> (i &lt; j) {
+            tmp = A[i]; A[i] = A[j]; A[j] = tmp;
+        } <span style="color:#080;font-weight:bold">else</span> {
+            <span style="color:#080;font-weight:bold">return</span> j;
+        }
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> quicksort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &lt; r - <span style="color:#00D">1</span>) {
+        <span style="color:#0a8;font-weight:bold">int</span> q = hoare_partition(A, p, r);
+        quicksort(A, p, q + <span style="color:#00D">1</span>);
+        quicksort(A, q + <span style="color:#00D">1</span>, r);
+    }
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

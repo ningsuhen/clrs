@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 2.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 2.1</h1>
+<h2>Insertion sort on small arrays in merge sort</h2>
+
+<blockquote>
+<p>Although merge sort runs in $\Theta(\lg{n})$ worst-case time and insertion
+sort runs in $\Theta(n^2)$ worst-case time, the constant factors in
+insertion sort can make it faster in practice for small problem sizes on
+many machines. Thus, it makes sense to <strong>coarsen</strong> the leaves of the
+recursion by using insertion sort within merge sort when subproblems become
+sufficiently small. Consider a modification to merge sort in which $n/k$
+sublists of length $k$ are sorted using insertion sort and then merged using
+the standard merging mechanism, where $k$ is a value to be determined.</p>
+
+<ol>
+<li>Show that insertion sort can sort the $n/k$ sublists, each of length $k$,
+in $\Theta(nk)$ worst-case time.</li>
+<li>Show how to merge the sublists in $\Theta(n\lg(n/k))$ worst-case time.</li>
+<li>Given that the modified algorithm runs in $\Theta(nk + n\lg(n/k))$
+worst-case time, what is the largest value of $k$ as a function of $n$
+for which the modified algorithm has the same running time as standard
+merge sort, in terms of $\Theta$-notation?</li>
+<li>How should we choose $k$ in practice?</li>
+</ol>
+</blockquote>
+
+<h3>1. Sorting sublists</h3>
+
+<p>This is simple enough. We know that sorting each list takes $ak^2 + bk + c$
+for some constants $a$, $b$ and $c$. We have $n/k$ of those, thus:</p>
+
+<p>$$ \frac{n}{k}(ak^2 + bk + c) = ank + bn + \frac{cn}{k} = \Theta(nk) $$</p>
+
+<h3>2. Merging sublists</h3>
+
+<p>This is a bit trickier. Sorting $a$ sublists of length $k$ each takes:</p>
+
+<p>$$ T(a) = \begin{cases}
+     0            &amp; \text{if } a = 1, \\
+     2T(a/2) + ak &amp; \text{if } a = 2^p, \text{if } p &gt; 0.
+  \end{cases} $$</p>
+
+<p>This makes sense, since merging one sublist is trivial and merging $a$
+sublists means splitting dividing them in two groups of $a/2$ lists, merging
+each group recursively and then combining the results in $ak$ steps, since
+have two arrays, each of length $\frac{a}{2}k$.</p>
+
+<p>I don't know the master theorem yet, but it seems to me that the recurrence is
+actually $ak\lg{a}$. Let's try to prove this via induction:</p>
+
+<p><strong>Base</strong>. Simple as ever:</p>
+
+<p>$$ T(1) = 1k\lg1 = k \cdot 0 = 0 $$</p>
+
+<p><strong>Step</strong>. We assume that $T(a) = ak\lg{a}$ and we calculate $T(2a)$:</p>
+
+<p>$$ \begin{align}
+     T(2a) &amp;= 2T(a) + 2ak = 2(T(a) + ak) = 2(ak\lg{a} + ak) = \\
+           &amp;= 2ak(\lg{a} + 1) = 2ak(\lg{a} + \lg{2}) = 2ak\lg(2a)
+   \end{align} $$</p>
+
+<p>This proves it. Now if we substitue the number of sublists $n/k$ for $a$:</p>
+
+<p>$$ T(n/k) = \frac{n}{k}k\lg{\frac{n}{k}} = n\lg(n/k) $$</p>
+
+<p>While this is exact only when $n/k$ is a power of 2, it tells us that the
+overall time complexity of the merge is $\Theta(n\lg(n/k))$.</p>
+
+<h3>3. The largest value of k</h3>
+
+<p>The largest value is $k = \lg{n}$. If we substitute, we get:</p>
+
+<p>$$ \Theta(n\lg{n} + n\lg{\frac{n}{\lg{n}}}) = \Theta(n\lg{n}) $$</p>
+
+<p>If $k = f(n) &gt; \lg{n}$, the complexity will be $\Theta(nf(n))$, which is
+larger running time than merge sort.</p>
+
+<h3>4. The value of k in practice</h3>
+
+<p>It's constant factors, so we just figure out when insertion sort beats merge
+sort, exactly as we did in <a href="../../01/02/02.html">exercise 1.2.2</a>, and pick that number for $k$.</p>
+
+<h3>Runtime comparison</h3>
+
+<p>I'm implemented this in C and in Python. I added selection for completeness
+sake in the C version. I ran two variants, depending on whether <code>merge()</code>
+allocates its arrays on the stack or on the heap (stack won't work for huge
+arrays). Here are the results:</p>
+
+<pre><code>STACK ALLOCATION
+================
+merge-sort      = 0.173352
+mixed-insertion = 0.150485
+mixed-selection = 0.165806
+
+HEAP ALLOCATION
+===============
+merge-sort      = 1.731111
+mixed-insertion = 0.903480
+mixed-selection = 1.017437
+</code></pre>
+
+<p>Here's the results I got from Python:</p>
+
+<pre><code>merge-sort = 2.6207s
+mixed-sort = 1.4959s
+</code></pre>
+
+<p>I can safely conclude that this approach is faster.</p>
+  <hr />
+  <h3>C runner output</h3>
+  <pre>merge-sort      = 0.146884
+merge-insertion = 0.065682
+merge-selection = 0.074603
+</pre>
+  <hr />
+  <h3>Python runner output</h3>
+  <pre>sh: python3: command not found
+</pre>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;string.h&gt;</span>
+
+<span style="color:#579">#define</span> INSERTION_SORT_TRESHOLD <span style="color:#00D">20</span>
+<span style="color:#579">#define</span> SELECTION_SORT_TRESHOLD <span style="color:#00D">15</span>
+
+<span style="color:#088;font-weight:bold">void</span> merge(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> q, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> i, j, k;
+
+    <span style="color:#0a8;font-weight:bold">int</span> n1 = q - p + <span style="color:#00D">1</span>;
+    <span style="color:#0a8;font-weight:bold">int</span> n2 = r - q;
+
+<span style="color:#579">#ifdef</span> MERGE_HEAP_ALLOCATION
+    <span style="color:#0a8;font-weight:bold">int</span> *L = calloc(n1, <span style="color:#080;font-weight:bold">sizeof</span>(<span style="color:#0a8;font-weight:bold">int</span>));
+    <span style="color:#0a8;font-weight:bold">int</span> *R = calloc(n2, <span style="color:#080;font-weight:bold">sizeof</span>(<span style="color:#0a8;font-weight:bold">int</span>));
+<span style="color:#579">#else</span>
+    <span style="color:#0a8;font-weight:bold">int</span> L[n1];
+    <span style="color:#0a8;font-weight:bold">int</span> R[n2];
+<span style="color:#579">#endif</span>
+
+    memcpy(L, A + p, n1 * <span style="color:#080;font-weight:bold">sizeof</span>(<span style="color:#0a8;font-weight:bold">int</span>));
+    memcpy(R, A + q + <span style="color:#00D">1</span>, n2 * <span style="color:#080;font-weight:bold">sizeof</span>(<span style="color:#0a8;font-weight:bold">int</span>));
+
+    <span style="color:#080;font-weight:bold">for</span>(i = <span style="color:#00D">0</span>, j = <span style="color:#00D">0</span>, k = p; k &lt;= r; k++) {
+        <span style="color:#080;font-weight:bold">if</span> (i == n1) {
+            A[k] = R[j++];
+        } <span style="color:#080;font-weight:bold">else</span> <span style="color:#080;font-weight:bold">if</span> (j == n2) {
+            A[k] = L[i++];
+        } <span style="color:#080;font-weight:bold">else</span> <span style="color:#080;font-weight:bold">if</span> (L[i] &lt;= R[j]) {
+            A[k] = L[i++];
+        } <span style="color:#080;font-weight:bold">else</span> {
+            A[k] = R[j++];
+        }
+    }
+
+<span style="color:#579">#ifdef</span> MERGE_HEAP_ALLOCATION
+    free(L);
+    free(R);
+<span style="color:#579">#endif</span>
+}
+
+<span style="color:#088;font-weight:bold">void</span> merge_sort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &lt; r) {
+        <span style="color:#0a8;font-weight:bold">int</span> q = (p + r) / <span style="color:#00D">2</span>;
+        merge_sort(A, p, q);
+        merge_sort(A, q + <span style="color:#00D">1</span>, r);
+        merge(A, p, q, r);
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> insertion_sort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> i, j, key;
+
+    <span style="color:#080;font-weight:bold">for</span> (j = p + <span style="color:#00D">1</span>; j &lt;= r; j++) {
+        key = A[j];
+        i = j - <span style="color:#00D">1</span>;
+        <span style="color:#080;font-weight:bold">while</span> (i &gt;= p &amp;&amp; A[i] &gt; key) {
+            A[i + <span style="color:#00D">1</span>] = A[i];
+            i = i - <span style="color:#00D">1</span>;
+        }
+        A[i + <span style="color:#00D">1</span>] = key;
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> selection_sort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> min, temp;
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = p; i &lt; r; i++) {
+        min = i;
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = i + <span style="color:#00D">1</span>; j &lt;= r; j++)
+            <span style="color:#080;font-weight:bold">if</span> (A[j] &lt; A[min])
+                min = j;
+        temp = A[i];
+        A[i] = A[min];
+        A[min] = temp;
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> mixed_sort_insertion(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &gt;= r) <span style="color:#080;font-weight:bold">return</span>;
+
+    <span style="color:#080;font-weight:bold">if</span> (r - p &lt; INSERTION_SORT_TRESHOLD) {
+        insertion_sort(A, p, r);
+    } <span style="color:#080;font-weight:bold">else</span> {
+        <span style="color:#0a8;font-weight:bold">int</span> q = (p + r) / <span style="color:#00D">2</span>;
+        mixed_sort_insertion(A, p, q);
+        mixed_sort_insertion(A, q + <span style="color:#00D">1</span>, r);
+        merge(A, p, q, r);
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> mixed_sort_selection(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &gt;= r) <span style="color:#080;font-weight:bold">return</span>;
+
+    <span style="color:#080;font-weight:bold">if</span> (r - p &lt; SELECTION_SORT_TRESHOLD) {
+        selection_sort(A, p, r);
+    } <span style="color:#080;font-weight:bold">else</span> {
+        <span style="color:#0a8;font-weight:bold">int</span> q = (p + r) / <span style="color:#00D">2</span>;
+        mixed_sort_selection(A, p, q);
+        mixed_sort_selection(A, q + <span style="color:#00D">1</span>, r);
+        merge(A, p, q, r);
+    }
+}
+</pre></div>
+</div>
+
+  <hr />
+  <h3>Python code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#080;font-weight:bold">from</span> <span style="color:#B44;font-weight:bold">itertools</span> <span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">repeat</span>
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">insertion_sort</span>(A, p, r):
+    <span style="color:#080;font-weight:bold">for</span> j <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(p + <span style="color:#00D">1</span>, r + <span style="color:#00D">1</span>):
+        key = A[j]
+        i = j - <span style="color:#00D">1</span>
+        <span style="color:#080;font-weight:bold">while</span> i &gt;= p <span style="color:#080;font-weight:bold">and</span> A[i] &gt; key:
+            A[i + <span style="color:#00D">1</span>] = A[i]
+            i = i - <span style="color:#00D">1</span>
+        A[i + <span style="color:#00D">1</span>] = key
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">merge</span>(A, p, q, r):
+    n1 = q - p + <span style="color:#00D">1</span>
+    n2 = r - q
+
+    L = <span style="color:#369;font-weight:bold">list</span>(repeat(<span style="color:#069">None</span>, n1))
+    R = <span style="color:#369;font-weight:bold">list</span>(repeat(<span style="color:#069">None</span>, n2))
+
+    <span style="color:#080;font-weight:bold">for</span> i <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(n1):
+        L[i] = A[p + i]
+
+    <span style="color:#080;font-weight:bold">for</span> j <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(n2):
+        R[j] = A[q + j + <span style="color:#00D">1</span>]
+
+    i = <span style="color:#00D">0</span>
+    j = <span style="color:#00D">0</span>
+    <span style="color:#080;font-weight:bold">for</span> k <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(p, r + <span style="color:#00D">1</span>):
+        <span style="color:#080;font-weight:bold">if</span> i == n1:
+            A[k] = R[j]
+            j += <span style="color:#00D">1</span>
+        <span style="color:#080;font-weight:bold">elif</span> j == n2:
+            A[k] = L[i]
+            i += <span style="color:#00D">1</span>
+        <span style="color:#080;font-weight:bold">elif</span> L[i] &lt;= R[j]:
+            A[k] = L[i]
+            i += <span style="color:#00D">1</span>
+        <span style="color:#080;font-weight:bold">else</span>:
+            A[k] = R[j]
+            j += <span style="color:#00D">1</span>
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">merge_sort</span>(A, p, r):
+    <span style="color:#080;font-weight:bold">if</span> p &lt; r:
+        q = <span style="color:#369;font-weight:bold">int</span>((p + r) / <span style="color:#00D">2</span>)
+        merge_sort(A, p, q)
+        merge_sort(A, q + <span style="color:#00D">1</span>, r)
+        merge(A, p, q, r)
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">mixed_sort</span>(A, p, r):
+    <span style="color:#080;font-weight:bold">if</span> p &gt;= r: <span style="color:#080;font-weight:bold">return</span>
+
+    <span style="color:#080;font-weight:bold">if</span> r - p &lt; <span style="color:#00D">20</span>:
+        insertion_sort(A, p, r)
+    <span style="color:#080;font-weight:bold">else</span>:
+        q = <span style="color:#369;font-weight:bold">int</span>((p + r) / <span style="color:#00D">2</span>)
+        mixed_sort(A, p, q)
+        mixed_sort(A, q + <span style="color:#00D">1</span>, r)
+        merge(A, p, q, r)
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

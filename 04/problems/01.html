@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 4.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 4.1</h1>
+<h2>Recurrence examples</h2>
+
+<blockquote>
+<p>Give asymptotic upper and lower bound for $T(n)$ in each of the following
+recurrences. Assume that $T(n)$ is constant for $n \le 2$. Make your bounds
+as tight as possible, and justify your answers.</p>
+
+<ol>
+<li>$T(n) = 2T(n/2) + n^4$</li>
+<li>$T(n) = T(7n/10) + n$</li>
+<li>$T(n) = 16T(n/4) + n^2$</li>
+<li>$T(n) = 7T(n/3) + n^2$</li>
+<li>$T(n) = 7T(n/2) + n^2$</li>
+<li>$T(n) = 2T(n/4) + \sqrt{n}$</li>
+<li>$T(n) = T(n - 2) + n^2$</li>
+</ol>
+</blockquote>
+
+<ol>
+<li>$\Theta(n^4)$ (master method)</li>
+<li>$\Theta(n)$ (master method, $\log_{10/7}1 = 0$)</li>
+<li>$\Theta(n^2\lg{n})$ (master method)</li>
+<li>$\Theta(n^2)$ (master method)</li>
+<li>$\Theta(n^{\log_2{7}})$ (master method)</li>
+<li>$\Theta(\sqrt{n}\lg_{n})$ (master method)</li>
+<li>$\Theta(n^3)$ by the following:</li>
+</ol>
+
+<p>$$ \begin{align}
+   T(n) &amp;= n^2 + T(n - 2) \\
+   &amp;= n^2 + (n - 2)^2 + T(n - 4) \\
+   &amp;= \sum_{i=0}^{n/2}(n -2i)^2 \\
+   &amp;= n^2 \sum_{i=0}^{n/2} 1 + 4 \sum_{i=0}^{n/2} i^2 - 4n \sum_{i=0}^{n/2} i \\
+\end{align}$$</p>
+
+<p>For the three sums above:</p>
+
+<p>$$n^2 \sum_{i=0}^{n/2} 1 = \frac{n^3}{2}$$</p>
+
+<p>$$4 \sum_{i=0}^{n/2} i^2 = \frac{4}{6} \left[\frac{n}{2}\left(\frac{n+2}{2}(n+1)\right)\right] = \frac{1}{3}(2n^3 + 6n^2 + 4n)$$</p>
+
+<p>$$4n \sum_{i=0}^{n/2} i = 4n\left[\frac{1}{2}\frac{n}{2}\left(\frac{n+2}{2}\right)\right] = \frac{1}{2}(n^3 + 2n^2)$$</p>
+
+<p>Now substitute back in these 3 simplifications:</p>
+
+<p>$$ \begin{align}
+   T(n) &amp;= n^2 \sum_{i=0}^{n/2} 1 + 4 \sum_{i=0}^{n/2} i^2 - 4n \sum_{i=0}^{n/2} i \\
+   &amp;= \frac{n^3}{2} + \frac{1}{3}(2n^3 + 6n^2 + 4n) - \frac{1}{2}(n^3 + 2n^2) \\
+   &amp;= \frac{2}{3}n^3 + n^2 + \frac{4}{3}n \\
+   &amp;= \Theta(n^3)
+\end{align}$$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

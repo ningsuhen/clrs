@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 6.3.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 6.3.3</h1>
+<blockquote>
+<p>Show that there are at most $\lceil n/2^{h+1} \rceil$ nodes of height $h$ in
+any $n$-element heap.</p>
+</blockquote>
+
+<p>First, let's observe that the number of leaves in a heap is $\lceil n/2 \rceil$
+(<a href="../01/07.html">exercise 6.1-7</a>). Let's prove it by induction on $h$.</p>
+
+<p><strong>Base</strong>: $h = 0$. The number of leaves is $\lceil n/2 \rceil = \lceil n/2^{0+1} \rceil$.</p>
+
+<p><strong>Step</strong>: Let's assume it holds for nodes of height $h-1$. Let's take a tree
+and remove all it's leaves. We get a new tree with $n - \lceil n/2 \rceil =
+\lfloor n/2 \rfloor$ elements. Note that the nodes with height $h$ in the old
+tree have height $h-1$ in the new one.</p>
+
+<p>We will calculate the number of such nodes in the new tree.  By the inductive
+assumption we have that $T$, the number of nodes with height $h-1$ in the new
+tree, is:</p>
+
+<p>$$ T = \bigg\lceil \lfloor n/2 \rfloor / 2^{h-1+1} \bigg\rceil
+     &lt; \bigg\lceil (n/2)/2^h \bigg\rceil
+     = \bigg\lceil \frac{n}{2^{h+1}} \bigg\rceil $$</p>
+
+<p>As mentioned, this is also the number of nodes with height $h$ in the old tree.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

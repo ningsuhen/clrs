@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 7.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 7.3</h1>
+<h2>Alternative quicksort analysis</h2>
+
+<blockquote>
+<p>An alternative analysis of the running time of randomized quicksort focuses
+on the expected running time of each individual recursive call to
+<code>RANDOMIZED-QUICKSORT</code>, rather than on the number of comparisons performed.</p>
+
+<ol>
+<li>Argue that, given an array of size $n$, the probability that any
+particular element is chosen as the pivot is $1/n$. Use this to define
+indicator random variables $X_i = I\{i\text{th smallest element is chosen
+as the pivot}\}$. What is $\E[X_i]$?</li>
+<li>Let $T(n)$ be a random variable denoting the running time of quicksort on
+an array of size $n$. Argue that
+$$ \E[T(n)] = \E\bigg[\sum_{q=1}^nX_q(T(q-1) + T(n-q) + \Theta(n))\bigg] \tag{7.5} $$</li>
+<li>Show that we can rewrite equation (7.5) as
+$$ \E[T(n)] = \frac{2}{n}\sum_{q=2}^{n-1}\E[T(q)] + \Theta(n) \tag{7.6} $$</li>
+<li>Show that
+$$ \sum_{k=2}^{n-1}k\lg{k} \le \frac{1}{2}n^2\lg{n} - \frac{1}{8}n^2 \tag{7.7} $$
+(<i>Hint</i>: Split the summation into two parts, one for $k = 2, 3,
+\ldots, \lceil n/2 \rceil - 1$ and one for $k = \lceil n/2 \rceil, \ldots,
+n - 1$.</li>
+<li>Using the bound from equation (7.7), show that the recurrence in equation
+(7.6) has the solution $\E[T(n)] = \Theta(n\lg{n})$. (<i>Hint</i>: Show,
+by substitution, that $\E[T(n)] \le an\lg{n}$ for sufficiently large $n$
+and for some positive constant $a$.)</li>
+</ol>
+</blockquote>
+
+<h3>Choosing a pivot</h3>
+
+<p><code>PARTITION</code> is equally likely to pick any element as a pivot. Since there are
+$n$ elements, the probability of one being picked is $1/n$. For the same
+reason, $\E[X_i] = 1/n$.</p>
+
+<h3>Running time of quicksort</h3>
+
+<p>Let the $q$th smallest element be the pivot. There are $n$ possible choices for
+it, each with chance $X_q$. Each will solve the problem by breaking it down in
+two parts of size $q - 1$ and $n - q$ and adding a linear factor. The formula
+in (7.5) follows by the definition of expectation.</p>
+
+<h3>The rewrite</h3>
+
+<p>$$ \begin{align}
+   \E[T(n)] &amp;= \E\bigg[\sum_{q=1}^nX_q(T(q-1) + T(n-q) + \Theta(n))\bigg] \\
+            &amp;= \sum_{q=1}^n\frac{1}{n}(\E[T(q-1)] + \E[T(n-q)] + \Theta(n))\bigg] \\
+            &amp;= \frac{1}{n}\sum_{q=1}^n\E[T(q-1)]
+             + \frac{1}{n}\sum_{q=1}^n\E[T(n - q)]
+             + \frac{1}{n}\sum_{q=1}^n\Theta(n) \\
+            &amp;= \frac{1}{n}\sum_{q=0}^{n-1}\E[T(q)]
+             + \frac{1}{n}\sum_{q=0}^{n-1}\E[T(n - q + 1)]
+             + \Theta(n) \\
+            &amp;= \frac{1}{n}\sum_{q=0}^{n-1}\E[T(q)]
+             + \frac{1}{n}\sum_{q=0}^{n-1}\E[T(q)]
+             + \Theta(n) \\
+            &amp;= \frac{2}{n}\sum_{q=0}^{n-1}\E[T(q)] + \Theta(n) \\
+            &amp;= \frac{2}{n}\sum_{q=2}^{n-1}\E[T(q)]
+             + \frac{2\E[T(0)]}{n}
+             + \frac{2\E[T(1)]}{n}
+             + \Theta(n) \\
+            &amp;= \frac{2}{n}\sum_{q=2}^{n-1}\E[T(q)] + \Theta(n)
+   \end{align} $$</p>
+
+<h3>The bound</h3>
+
+<p>$$ \begin{align}
+   \sum_{k=2}^{n-1}k\lg{k}
+   &amp;=   \sum_{k=2}^{\lceil n/2 \rceil - 1}k\lg{k} + \sum_{k=\lceil n/2 \rceil}^{n - 1}k\lg{k} \\
+   &amp;\le \sum_{k=2}^{n/2}k\lg{k} + \sum_{k=n/2 + 1}^{n}k\lg{k} \\
+   &amp;\le \sum_{k=2}^{n/2}k\lg(n/2) + \sum_{k=n/2 + 1}^{n}k\lg{n} \\
+   &amp;=   \lg(n/2)\sum_{k=2}^{n/2}k\ + \lg{n}\sum_{k=n/2 + 1}^{n}k \\
+   &amp;=   (\lg{n} - \lg{2})\bigg(\frac{(n/2)(n/2 + 1)}{2}\bigg) +
+          \lg{n}\bigg(\frac{n(n+1)}{2} - \frac{(n/2)(n/2 + 1)}{2}\bigg) \\
+   &amp;=   \lg{n}\frac{n(n+1)}{2} - \frac{(n/2)(n/2 + 1)}{2} \\
+   &amp;=   \frac{1}{2}\lg{n}(n^2 + 2n + 1) - \frac{1}{8}(n^2 + 2n + 1/8) \\
+   &amp;=   \frac{1}{2}n^2\lg{n} - \frac{1}{8}n^2 - \frac{8n\lg{n} + 4\lg{n} - 2n - 1/8}{8} \\
+   &amp;\le \frac{1}{2}n^2\lg{n} - \frac{1}{8}n^2
+   \end{align} $$</p>
+
+<h3>The solution</h3>
+
+<p>We guess $\E[T(n)] \le an\lg{n}$:</p>
+
+<p>$$ \begin{align}
+   \E[T(n)] &amp;=   \frac{2}{n}\sum_{q=2}^{n-1}\E[T(q)] + \Theta(n) \\
+            &amp;\le \frac{2}{n}\sum_{q=2}^{n-1}an\lg{n} + \Theta(n) &amp; \text{(by the guess)} \\
+            &amp;\le \frac{2a}{n}\bigg(\frac{1}{2}n^2\lg{n} - \frac{1}{8}n^2\bigg)
+                 + \Theta(n) &amp; \text{(by 7.7)} \\
+            &amp;=   an\lg{n} - \frac{a}{4}n + \Theta(n) &amp; \text{(by }\Theta\text{-notation)} \\
+            &amp;\le an\lg{n}
+   \end{align} $$</p>
+
+<p>Note that $\Theta$-notation allows us to pick $a$ and $n$ such that the last
+derivation is possible.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

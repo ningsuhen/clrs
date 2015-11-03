@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 10.4.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 10.4.3</h1>
+<blockquote>
+<p>Write an $\O(n)$-time nonrecursive procedure that, given an $n$-node binary
+tree, prints out the key of each node in the tree. Use a stack as an
+auxiliary data structure.</p>
+</blockquote>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#define</span> MAX_SIZE <span style="color:#00D">10</span>
+
+<span style="color:#080;font-weight:bold">struct</span> tree_t {
+    <span style="color:#080;font-weight:bold">struct</span> tree_t *left;
+    <span style="color:#080;font-weight:bold">struct</span> tree_t *right;
+    <span style="color:#080;font-weight:bold">struct</span> tree_t *parent;
+    <span style="color:#0a8;font-weight:bold">int</span> key;
+};
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> tree_t tree_t;
+<span style="color:#088;font-weight:bold">void</span> store(<span style="color:#0a8;font-weight:bold">int</span>);
+
+<span style="color:#088;font-weight:bold">void</span> print_tree(tree_t *tree) {
+    tree_t *stack[MAX_SIZE];
+    <span style="color:#0a8;font-weight:bold">int</span> count = <span style="color:#00D">0</span>;
+
+    stack[count++] = tree;
+
+    <span style="color:#080;font-weight:bold">while</span> (count) {
+        tree = stack[--count];
+
+        store(tree-&gt;key);
+
+        <span style="color:#080;font-weight:bold">if</span> (tree-&gt;right)
+            stack[count++] = tree-&gt;right;
+
+        <span style="color:#080;font-weight:bold">if</span> (tree-&gt;left)
+            stack[count++] = tree-&gt;left;
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> keys[MAX_SIZE];
+<span style="color:#0a8;font-weight:bold">int</span> count = <span style="color:#00D">0</span>;
+
+<span style="color:#088;font-weight:bold">void</span> reset_storage() {
+    count = <span style="color:#00D">0</span>;
+}
+
+<span style="color:#088;font-weight:bold">void</span> store(<span style="color:#0a8;font-weight:bold">int</span> key) {
+    keys[count++] = key;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

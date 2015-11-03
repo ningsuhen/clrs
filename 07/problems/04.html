@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 7.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 7.4</h1>
+<h2>Stack depth for quicksort</h2>
+
+<blockquote>
+<p>The <code>QUICKSORT</code> algorithm of Section 7.1 contains two recursive calls to
+itself. After <code>QUICKSORT</code> calls <code>PARTITION</code>, it recursively sorts the left
+subarray and then it recursively sorts the right subarray. The second
+recursive call in <code>QUICKSORT</code> is not really necessary; we can avoid it by
+using an iterative control structure. This technique, called <strong>tail
+recursion</strong>, is provided automatically by good compilers. Consider the
+following version of quicksort, which simulates tail recursion:</p>
+
+<pre><code>TAIL-RECURSIVE-QUICKSORT(A, p, r)
+  while p &lt; r
+      // Partition and sort left subarray
+      q = PARTITION(A, p, r)
+      TAIL-RECURSIVE-QUICKSORT(A, p, q - 1)
+      p = q + 1
+</code></pre>
+
+<ol>
+<li>Argue that <code>TAIL-RECURSIVE-QUICKSORT(A, 1, A.length)</code> correctly sorts the
+array $A$.</li>
+</ol>
+
+<p>Compilers usually execute recursive procedures by using a <strong>stack</strong> that
+contains pertinent information, including the parameter values, for each
+recursive call. The information for the most recent call is at the top of the
+stack, and the information for the initial call is at the bottom. Upon
+calling a procedure, its information is <strong>pushed</strong> onto the stack; when it
+terminates, its information is <strong>popped</strong>. Since we assume that array
+parameters are represented by pointers, the information for each procedure
+call on the stack requires $\O(1)$ stack space. The <strong>stack depth</strong> is the
+maximum amount of stack space used at any time during a computation.</p>
+
+<ol>
+<li>Describe a scenario in which <code>TAIL-RECURSIVE-QUICKSORT</code>'s stack depth is
+$\Theta(n)$ on an $n$-element input array.</li>
+<li>Modify the code for <code>TAIL-RECURSIVE-QUICKSORT</code> so that the worst-case
+stack depth is $\Theta(\lg{n})$. Maintain the $\O(n\lg{n})$ expected
+running time of the algorithm.</li>
+</ol>
+</blockquote>
+
+<h3>Argue correctness</h3>
+
+<p>The original version partitions the array and then calls <code>QUICKSORT</code> one on
+each side. This version does the same, although in a different fashion -
+instead of calling <code>TAIL-RECURSIVE-QUICKSORT</code>, it just changes <code>p</code> and restarts
+the loop. It amounts to the same.</p>
+
+<p>This is a straightforward tail-call unrolling.</p>
+
+<h3>Linear stack depth</h3>
+
+<p>This will happen whenever partition returns $r$. That is, whenever the array is
+sorted.</p>
+
+<h3>Modified algorithm</h3>
+
+<p>We are always doing a tail-recursive call on the second partition. We can
+modify the algorithm to do the tail recursion on the larger partition. That
+way, we'll consume less stack.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> partition(<span style="color:#0a8;font-weight:bold">int</span>[], <span style="color:#0a8;font-weight:bold">int</span>, <span style="color:#0a8;font-weight:bold">int</span>);
+
+<span style="color:#088;font-weight:bold">static</span> <span style="color:#0a8;font-weight:bold">int</span> stack_depth = <span style="color:#00D">0</span>;
+<span style="color:#088;font-weight:bold">static</span> <span style="color:#0a8;font-weight:bold">int</span> max_stack_depth = <span style="color:#00D">0</span>;
+
+<span style="color:#088;font-weight:bold">void</span> reset_stack_depth_counter();
+<span style="color:#088;font-weight:bold">void</span> increment_stack_depth();
+<span style="color:#088;font-weight:bold">void</span> decrement_stack_depth();
+
+<span style="color:#088;font-weight:bold">void</span> tail_recursive_quicksort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    increment_stack_depth();
+
+    <span style="color:#080;font-weight:bold">while</span> (p &lt; r - <span style="color:#00D">1</span>) {
+        <span style="color:#0a8;font-weight:bold">int</span> q = partition(A, p, r);
+
+        <span style="color:#080;font-weight:bold">if</span> (q &lt; (p + r) / <span style="color:#00D">2</span>) {
+            tail_recursive_quicksort(A, p, q);
+            p = q;
+        } <span style="color:#080;font-weight:bold">else</span> {
+            tail_recursive_quicksort(A, q + <span style="color:#00D">1</span>, r);
+            r = q;
+        }
+    }
+
+    decrement_stack_depth();
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> partition(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> x, i, j, tmp;
+
+    x = A[r - <span style="color:#00D">1</span>];
+    i = p;
+
+    <span style="color:#080;font-weight:bold">for</span> (j = p; j &lt; r - <span style="color:#00D">1</span>; j++) {
+        <span style="color:#080;font-weight:bold">if</span> (A[j] &lt;= x) {
+            tmp = A[i]; A[i] = A[j]; A[j] = tmp;
+            i++;
+        }
+    }
+
+    tmp = A[i]; A[i] = A[r - <span style="color:#00D">1</span>]; A[r - <span style="color:#00D">1</span>] = tmp;
+
+    <span style="color:#080;font-weight:bold">return</span> i;
+}
+
+<span style="color:#088;font-weight:bold">void</span> increment_stack_depth() {
+    stack_depth++;
+    <span style="color:#080;font-weight:bold">if</span> (max_stack_depth &lt; stack_depth) {
+        max_stack_depth = stack_depth;
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> decrement_stack_depth() {
+    stack_depth--;
+}
+
+<span style="color:#088;font-weight:bold">void</span> reset_stack_depth_counter() {
+    max_stack_depth = <span style="color:#00D">0</span>;
+    stack_depth = <span style="color:#00D">0</span>;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

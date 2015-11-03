@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 9.3.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 9.3.5</h1>
+<blockquote>
+<p>Suppose that you have a "black-box" worst-case linear time median
+subroutine. Give a simple, linear-time algorithm that solves the selection
+problem for an arbitrary order statistic.</p>
+</blockquote>
+
+<p>We find the median in linear time partition the array around it (again, in
+linear time). If the median index (always $\lceil n/2 \rceil$) equals $n$ we
+return the median. Otherwise, we recurse either in the lower or upper part of
+the array, adjusting $n$ accordingly.</p>
+
+<p>This yields the following recurrence:</p>
+
+<p>$$ T(n) = T(n/2) + \O(n) $$</p>
+
+<p>Applying the master method, we get an upper bound of $\O(n)$.</p>
+  <hr />
+  <h3>Python code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">select</span>(items, n):
+    med     = median(items)
+    smaller = [item <span style="color:#080;font-weight:bold">for</span> item <span style="color:#080;font-weight:bold">in</span> items <span style="color:#080;font-weight:bold">if</span> item &lt; med]
+    larger  = [item <span style="color:#080;font-weight:bold">for</span> item <span style="color:#080;font-weight:bold">in</span> items <span style="color:#080;font-weight:bold">if</span> item &gt; med]
+
+    <span style="color:#080;font-weight:bold">if</span> <span style="color:#369;font-weight:bold">len</span>(smaller) == n:
+        <span style="color:#080;font-weight:bold">return</span> med
+    <span style="color:#080;font-weight:bold">elif</span> <span style="color:#369;font-weight:bold">len</span>(smaller) &gt; n:
+        <span style="color:#080;font-weight:bold">return</span> select(smaller, n)
+    <span style="color:#080;font-weight:bold">else</span>:
+        <span style="color:#080;font-weight:bold">return</span> select(<span style="color:#369;font-weight:bold">list</span>(larger), n - <span style="color:#369;font-weight:bold">len</span>(smaller) - <span style="color:#00D">1</span>)
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">median</span>(items):
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">median_index</span>(n):
+        <span style="color:#080;font-weight:bold">if</span> n % <span style="color:#00D">2</span>:
+            <span style="color:#080;font-weight:bold">return</span> n // <span style="color:#00D">2</span>
+        <span style="color:#080;font-weight:bold">else</span>:
+            <span style="color:#080;font-weight:bold">return</span> n // <span style="color:#00D">2</span> - <span style="color:#00D">1</span>
+
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">partition</span>(items, element):
+        i = <span style="color:#00D">0</span>
+
+        <span style="color:#080;font-weight:bold">for</span> j <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(<span style="color:#369;font-weight:bold">len</span>(items) - <span style="color:#00D">1</span>):
+            <span style="color:#080;font-weight:bold">if</span> items[j] == element:
+                items[j], items[-<span style="color:#00D">1</span>] = items[-<span style="color:#00D">1</span>], items[j]
+
+            <span style="color:#080;font-weight:bold">if</span> items[j] &lt; element:
+                items[i], items[j] = items[j], items[i]
+                i += <span style="color:#00D">1</span>
+
+        items[i], items[-<span style="color:#00D">1</span>] = items[-<span style="color:#00D">1</span>], items[i]
+
+        <span style="color:#080;font-weight:bold">return</span> i
+
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">select</span>(items, n):
+        <span style="color:#080;font-weight:bold">if</span> <span style="color:#369;font-weight:bold">len</span>(items) &lt;= <span style="color:#00D">1</span>:
+            <span style="color:#080;font-weight:bold">return</span> items[<span style="color:#00D">0</span>]
+
+        medians = []
+
+        <span style="color:#080;font-weight:bold">for</span> i <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(<span style="color:#00D">0</span>, <span style="color:#369;font-weight:bold">len</span>(items), <span style="color:#00D">5</span>):
+            group = <span style="color:#369;font-weight:bold">sorted</span>(items[i:i + <span style="color:#00D">5</span>])
+            items[i:i + <span style="color:#00D">5</span>] = group
+            median = group[median_index(<span style="color:#369;font-weight:bold">len</span>(group))]
+            medians.append(median)
+
+        pivot = select(medians, median_index(<span style="color:#369;font-weight:bold">len</span>(medians)))
+        index = partition(items, pivot)
+
+        <span style="color:#080;font-weight:bold">if</span> n == index:
+            <span style="color:#080;font-weight:bold">return</span> items[index]
+        <span style="color:#080;font-weight:bold">elif</span> n &lt; index:
+            <span style="color:#080;font-weight:bold">return</span> select(items[:index], n)
+        <span style="color:#080;font-weight:bold">else</span>:
+            <span style="color:#080;font-weight:bold">return</span> select(items[index + <span style="color:#00D">1</span>:], n - index - <span style="color:#00D">1</span>)
+
+    <span style="color:#080;font-weight:bold">return</span> select(items[:], median_index(<span style="color:#369;font-weight:bold">len</span>(items)))
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

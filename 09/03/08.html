@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 9.3.8 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 9.3.8</h1>
+<blockquote>
+<p>Let $X[1..n]$ and $Y[1..n]$ be two arrays, each containing $n$ numbers
+already in sorted order. Give an $\O(\lg{n})$-time algorithm to find the
+median of all $2n$ elements in arrays $X$ and $Y$.</p>
+</blockquote>
+
+<p>This was fun!</p>
+
+<ol>
+<li>If the two arrays are of length $1$, we pick the lower of the two elements</li>
+<li>We the two medians of the array</li>
+<li>We take the lower part of the array with the greater median and the upper
+part of the array with the lesser median. If each array has $n$ elements,
+we take the first/last $\lfloor n / 2 \rfloor$ elements</li>
+<li>We solve the problem for the new arrays</li>
+</ol>
+
+<p>Let's reason about why this works. Since we have $2n$ elements, we know that
+the length is an even number and we're looking for a lower median. We need to
+observe that the median we're looking for is between the medians of the two
+arrays. Let's elaborate on that.</p>
+
+<p>Let's assume that the median is at position $k$ in array $A$. This means that
+there are $k - 1$ elements less than the median in $A$ and $n - k$ elements
+greater than the median in $B$. If $k &lt; n / 2$ then the median of $A$ will be
+greater than the final median, but the median of $B$ will be lesser than it.
+It's the other way around for $k \ge n / 2$. Thus the median of the two arrays
+is always between the medians of each.</p>
+
+<p>Step 3 removes the same number of elements from each array, half of which are
+greater than the median and half of which are less than it. This reduces the
+subproblem to two smaller arrays that are sorted and their elements have the
+same median.</p>
+  <hr />
+  <h3>Python code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">two_array_median</span>(a, b):
+    <span style="color:#080;font-weight:bold">if</span> <span style="color:#369;font-weight:bold">len</span>(a) == <span style="color:#00D">1</span>:
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#369;font-weight:bold">min</span>(a[<span style="color:#00D">0</span>], b[<span style="color:#00D">0</span>])
+
+    m = median_index(<span style="color:#369;font-weight:bold">len</span>(a))
+    i = m + <span style="color:#00D">1</span>
+    <span style="color:#080;font-weight:bold">if</span> a[m] &lt; b[m]:
+        <span style="color:#080;font-weight:bold">return</span> two_array_median(a[-i:], b[:i])
+    <span style="color:#080;font-weight:bold">else</span>:
+        <span style="color:#080;font-weight:bold">return</span> two_array_median(a[:i], b[-i:])
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">median_index</span>(n):
+    <span style="color:#080;font-weight:bold">if</span> n % <span style="color:#00D">2</span>:
+        <span style="color:#080;font-weight:bold">return</span> n // <span style="color:#00D">2</span>
+    <span style="color:#080;font-weight:bold">else</span>:
+        <span style="color:#080;font-weight:bold">return</span> n // <span style="color:#00D">2</span> - <span style="color:#00D">1</span>
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

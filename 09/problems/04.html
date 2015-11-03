@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 9.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 9.4</h1>
+<h2>Alternative analysis of randomized selection</h2>
+
+<blockquote>
+<p>In this problem, we use indicator random variables to analyze the
+<code>RANDOMIZED-SELECT</code> procedure in a manner akin to our analysis of
+<code>RANDOMIZED-QUICKSORT</code> in section 7.4.2.</p>
+
+<p>As in the quicksort analysis, we assume that all the elements are distinct,
+and we rename the elements of the input array $A$ as $z_1, z_2, \ldots,
+z_n$, where $z_i$ is the $i$th smallest element. Thus, the call
+<code>RANDOMIZED-SELECT(A,1,n,k)</code> returns $z_k$.</p>
+
+<p>For $i \le i &lt; j \le n$, let</p>
+
+<p>$$ X_{ijk} = I\{z_i \text{ is compared with } z_j \text{ sometime during
+   the execution of the algorithm to find } z_k \} $$</p>
+
+<ol type="a">
+  <li>Give an exact expression for $\E[X_{ijk}]$. (<i>Hint:</i> Your
+  expression may have different values, depending on the values of $i$, $j$,
+  and $k$.)
+  </li>
+<li>Let $X_k$ denote the total number of comparisons between elements of
+  array $A$ when finding $z_k$. Show that
+  $$ \E[X_k] \le 2 \bigg(
+       \sum_{i=1}^k \sum_{j=k}^n \frac{1}{j - i + 1} +
+       \sum_{j=k+1}^n \frac{j - k - 1}{j - k + 1} +
+       \sum_{i=1}^{k-2} \frac{k - i - 1}{k - i + 1}
+       \bigg) $$
+  </li>
+<li>Show that $\E[X_k] \le 4n$.
+  </li>
+<li>Conclude that, assuming all elements of array $A$ are distinct,
+  `RANDOMIZED-SELECT` runs in expected time $\O(n)$.
+</li>
+</ol>
+</blockquote>
+
+<h3>Expectation of exchanging two elements</h3>
+
+<p>The situation is very similar to the quicksort analysis, although $k$ matters.
+$z_i$ and $z_j$ will be compared if one of them is the first element to get
+picked as a pivot in the smallest interval containing $i$, $j$ and $k$. The
+exact expression depends on the position of $k$ in regards to the other two:</p>
+
+<p>$$ \E[X_{ijk}] =
+     \begin{cases}
+       2 / (k - i + 1) &amp; \text{if } i &lt; j \le k \\
+       2 / (j - i + 1) &amp; \text{if } i \le k \le j \\
+       2 / (j - k + 1) &amp; \text{if } k \le i &lt; j
+     \end{cases}
+$$</p>
+
+<h3>The expected number of comparisons</h3>
+
+<p>It's a long derivation:</p>
+
+<p>$$ \begin{align}
+   \E[X_k] &amp;= \sum_{i=1}^{n-1}   \sum_{j=i+1}^n \E[X_{ijk}] \\
+           &amp;= \sum_{i=1}^k       \sum_{j=i+1}^n \E[X_{ijk}]
+            + \sum_{i=k+1}^{n-1} \sum_{j=i+1}^n \E[X_{ijk}] \\
+           &amp;= \sum_{i=1}^k \bigg(\sum_{j=i+1}^{k-1}\E[X_{ijk}]
+                                 + \sum_{j=k}^n\E[X_{ijk}] \bigg)
+            + \sum_{i=k+1}^{n-1}\sum_{j=i+1}^n\E[X_{ijk}] \\
+           &amp;= \sum_{i=1}^k       \sum_{j=i+1}^{k-1} \E[X_{ijk}]
+            + \sum_{i=1}^k       \sum_{j=k}^n       \E[X_{ijk}]
+            + \sum_{i=k+1}^{n-1} \sum_{j=i+1}^n     \E[X_{ijk}] \\
+           &amp;= \sum_{i=1}^{k-2}   \sum_{j=i+1}^{k-1} \E[X_{ijk}]
+            + \sum_{i=1}^k       \sum_{j=k}^n       \E[X_{ijk}]
+            + \sum_{i=k+1}^{n-1} \sum_{j=i+1}^n     \E[X_{ijk}] \\
+           &amp;= \sum_{i=1}^{k-2}   \sum_{j=i+1}^{k-1} \frac{2}{k - i + 1}
+            + \sum_{i=1}^k       \sum_{j=k}^n       \frac{2}{j - i + 1}
+            + \sum_{i=k+1}^{n-1} \sum_{j=i+1}^n     \frac{2}{j - k + 1} \\
+           &amp;= 2\bigg(
+                \sum_{i=1}^k       \sum_{j=k}^n       \frac{1}{j - i + 1}
+              + \sum_{i=k+1}^{n-1} \sum_{j=i+1}^n     \frac{1}{j - k + 1}
+              + \sum_{i=1}^{k-2}   \sum_{j=i+1}^{k-1} \frac{1}{k - i + 1}
+              \bigg) \\
+           &amp;= 2\bigg(
+                \sum_{i=1}^k       \sum_{j=k}^n       \frac{1}{j - i + 1}
+              + \sum_{i=k+1}^{n-1} \sum_{j=i+1}^n     \frac{1}{j - k + 1}
+              + \sum_{i=1}^{k-2}   \frac{k - i - 1}{k - i + 1}
+              \bigg) \\
+           &amp;= 2\bigg(
+                \sum_{i=1}^k       \sum_{j=k}^n       \frac{1}{j - i + 1}
+              + \sum_{j=k+2}^n     \sum_{i=k+1}^{j-1} \frac{1}{j - k + 1}
+              + \sum_{i=1}^{k-2}   \frac{k - i - 1}{k - i + 1}
+              \bigg) &amp; \text{(note below)} \\
+           &amp;= 2\bigg(
+                \sum_{i=1}^k       \sum_{j=k}^n       \frac{1}{j - i + 1}
+              + \sum_{j=k+2}^n     \frac{j - k - 1}{j - k + 1}
+              + \sum_{i=1}^{k-2}   \frac{k - i - 1}{k - i + 1}
+              \bigg) \\
+           &amp;\le 2\bigg(
+                \sum_{i=1}^k       \sum_{j=k}^n       \frac{1}{j - i + 1}
+              + \sum_{j=k+1}^n     \frac{j - k - 1}{j - k + 1}
+              + \sum_{i=1}^{k-2}   \frac{k - i - 1}{k - i + 1}
+              \bigg) \\
+   \end{align} $$</p>
+
+<p>The last noted derivation is valid because of the following iversonian
+equation:</p>
+
+<p>$$ [k+1 \le i \le n - 1][i+1 \le j \le n] =
+   [k+1 \le i &lt; i + 1 &lt; j \le n] =
+   [k + 1 &lt; j \le n][k + 1 \le i &lt; j]$$</p>
+
+<p>Concrete mathematics helped a lot!</p>
+
+<h3>Bounding to 4n</h3>
+
+<p>Let's take the expressions in parts. The last two are straightforward enough:</p>
+
+<p>$$ \sum_{j=k+1}^n\frac{j-k-1}{j-k+1} + \sum_{i=1}^{k-2}\frac{k-i-1}{k-i+1}
+   \le \sum_{j=k+1}^n 1 + \sum_{i=1}^{k-2} 1
+   = n - k + k - 2
+   \le n $$</p>
+
+<p>This one is a bit trickier for me:</p>
+
+<p>$$ \sum_{i=1}^k \sum_{j=k}^n \frac{1}{j - i + 1} $$</p>
+
+<p>It contains terms of the form $1/m$ where $1 \le m \le n$. It contains $1/1$
+at most once, $1/2$ at most twice, $1/3$ at most three times and so on. Thus,
+the sum of the expressions $1/m$ for each $m$ is at most $1$ and there are $n$
+such different expressions, which bounds the whole sum to $n$.</p>
+
+<p>There should be a way to manipulate the sums to prove that, but I cannot find
+it. In any case, both expressions are at most $2n$, which means that $\E[X_k]
+\le 4n$.</p>
+
+<h3>Conclusion</h3>
+
+<p>Well, it's rather obvious, isn't it? The number of operations in
+<code>RANDOMIZED-SELECT</code> are linear to the number of comparisons, and the expected
+number of comparisons are bound by a linear function, which means that the
+expected running time is linear.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

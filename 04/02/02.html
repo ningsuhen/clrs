@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 4.2.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 4.2.2</h1>
+<blockquote>
+<p>Write pseudocode for Strassen's algorithm</p>
+</blockquote>
+
+<p>Pseudocode is for sissies. Let's write it in C!</p>
+
+<p><em>60 minutes later:</em> OK, bad decision.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;alloca.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+
+<span style="color:#777">// The matrix representation. One structure to fit both a matrix and a</span>
+<span style="color:#777">// submatrix.</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> x;
+    <span style="color:#0a8;font-weight:bold">int</span> y;
+    <span style="color:#0a8;font-weight:bold">int</span> size;
+    <span style="color:#0a8;font-weight:bold">int</span> original_size;
+    <span style="color:#0a8;font-weight:bold">int</span> *data;
+} matrix;
+
+<span style="color:#777">// Functions to index matrices</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> get(matrix m, <span style="color:#0a8;font-weight:bold">int</span> x, <span style="color:#0a8;font-weight:bold">int</span> y) {
+    <span style="color:#080;font-weight:bold">return</span> m.data[m.original_size * (m.x + x) + m.y + y];
+};
+
+<span style="color:#088;font-weight:bold">void</span> put(matrix m, <span style="color:#0a8;font-weight:bold">int</span> x, <span style="color:#0a8;font-weight:bold">int</span> y, <span style="color:#0a8;font-weight:bold">int</span> value) {
+    m.data[m.original_size * (m.x + x) + m.y + y] = value;
+};
+
+<span style="color:#777">// Matrix building</span>
+
+matrix create_matrix(<span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> *data) {
+    matrix result;
+    result.x = <span style="color:#00D">0</span>;
+    result.y = <span style="color:#00D">0</span>;
+    result.size = size;
+    result.original_size = size;
+    result.data = data;
+
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+matrix submatrix(matrix A, <span style="color:#0a8;font-weight:bold">int</span> x, <span style="color:#0a8;font-weight:bold">int</span> y, <span style="color:#0a8;font-weight:bold">int</span> size) {
+    matrix result;
+    result.x = A.x + x;
+    result.y = A.y + y;
+    result.size = size;
+    result.original_size = A.original_size;
+    result.data = A.data;
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+<span style="color:#579">#define</span> INIT_ON_STACK(m_, size_) \
+    m_.x = <span style="color:#00D">0</span>; \
+    m_.y = <span style="color:#00D">0</span>; \
+    m_.size = size_; \
+    m_.original_size = size_; \
+    m_.data = alloca(size_ * size_ * <span style="color:#080;font-weight:bold">sizeof</span>(<span style="color:#0a8;font-weight:bold">int</span>));
+
+<span style="color:#777">// Adding and subtracting matrices</span>
+
+<span style="color:#088;font-weight:bold">void</span> plus(matrix C, matrix A, matrix B) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; C.size; i++) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = <span style="color:#00D">0</span>; j &lt; C.size; j++) {
+            put(C, i, j, get(A, i, j) + get(B, i, j));
+        }
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> minus(matrix C, matrix A, matrix B) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; C.size; i++) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = <span style="color:#00D">0</span>; j &lt; C.size; j++) {
+            put(C, i, j, get(A, i, j) - get(B, i, j));
+        }
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> add(matrix T, matrix S) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; T.size; i++) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = <span style="color:#00D">0</span>; j &lt; T.size; j++) {
+            put(T, i, j, get(T, i, j) + get(S, i, j));
+        }
+    }
+}
+<span style="color:#088;font-weight:bold">void</span> sub(matrix T, matrix S) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; T.size; i++) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = <span style="color:#00D">0</span>; j &lt; T.size; j++) {
+            put(T, i, j, get(T, i, j) - get(S, i, j));
+        }
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> zero(matrix m) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; m.size; i++) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = <span style="color:#00D">0</span>; j &lt; m.size; j++) {
+            put(m, i, j, <span style="color:#00D">0</span>);
+        }
+    }
+}
+
+<span style="color:#777">// A function to print matrices</span>
+
+<span style="color:#088;font-weight:bold">void</span> print_matrix(matrix m) {
+    printf(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">%dx%d (+%d+%d) (%d)</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>, m.size, m.size, m.x, m.y, m.original_size);
+    printf(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">==============</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; m.size; i++) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = <span style="color:#00D">0</span>; j &lt; m.size; j++) {
+            printf(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">%4d</span><span style="color:#710">&quot;</span></span>, get(m, i, j));
+        }
+        printf(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+    }
+    printf(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+}
+
+<span style="color:#777">// Strassen's algorithm</span>
+
+<span style="color:#088;font-weight:bold">void</span> strassen(matrix C, matrix A, matrix B) {
+    <span style="color:#0a8;font-weight:bold">int</span> size = A.size,
+        half = size / <span style="color:#00D">2</span>;
+
+    <span style="color:#080;font-weight:bold">if</span> (A.size == <span style="color:#00D">1</span>) {
+        put(C, <span style="color:#00D">0</span>, <span style="color:#00D">0</span>, get(A, <span style="color:#00D">0</span>, <span style="color:#00D">0</span>) * get(B, <span style="color:#00D">0</span>, <span style="color:#00D">0</span>));
+    } <span style="color:#080;font-weight:bold">else</span> {
+        matrix s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+        matrix p1, p2, p3, p4, p5, p6, p7;
+
+        INIT_ON_STACK(s1, half);
+        INIT_ON_STACK(s2, half);
+        INIT_ON_STACK(s3, half);
+        INIT_ON_STACK(s4, half);
+        INIT_ON_STACK(s5, half);
+        INIT_ON_STACK(s6, half);
+        INIT_ON_STACK(s7, half);
+        INIT_ON_STACK(s8, half);
+        INIT_ON_STACK(s9, half);
+        INIT_ON_STACK(s10, half);
+
+        INIT_ON_STACK(p1, half);
+        INIT_ON_STACK(p2, half);
+        INIT_ON_STACK(p3, half);
+        INIT_ON_STACK(p4, half);
+        INIT_ON_STACK(p5, half);
+        INIT_ON_STACK(p6, half);
+        INIT_ON_STACK(p7, half);
+
+        matrix a11 = submatrix(A,    <span style="color:#00D">0</span>,    <span style="color:#00D">0</span>, half);
+        matrix a12 = submatrix(A,    <span style="color:#00D">0</span>, half, half);
+        matrix a21 = submatrix(A, half,    <span style="color:#00D">0</span>, half);
+        matrix a22 = submatrix(A, half, half, half);
+
+        matrix b11 = submatrix(B,    <span style="color:#00D">0</span>,    <span style="color:#00D">0</span>, half);
+        matrix b12 = submatrix(B,    <span style="color:#00D">0</span>, half, half);
+        matrix b21 = submatrix(B, half,    <span style="color:#00D">0</span>, half);
+        matrix b22 = submatrix(B, half, half, half);
+
+        matrix c11 = submatrix(C,    <span style="color:#00D">0</span>,    <span style="color:#00D">0</span>, half);
+        matrix c12 = submatrix(C,    <span style="color:#00D">0</span>, half, half);
+        matrix c21 = submatrix(C, half,    <span style="color:#00D">0</span>, half);
+        matrix c22 = submatrix(C, half, half, half);
+
+        minus(s1, b12, b22);
+        plus(s2,  a11, a12);
+        plus(s3,  a21, a22);
+        minus(s4, b21, b11);
+        plus(s5,  a11, a22);
+        plus(s6,  b11, b22);
+        minus(s7, a12, a22);
+        plus(s8,  b21, b22);
+        minus(s9, a11, a21);
+        plus(s10, b11, b12);
+
+        strassen(p1, a11, s1);
+        strassen(p2, s2, b22);
+        strassen(p3, s3, b11);
+        strassen(p4, a22, s4);
+        strassen(p5, s5, s6);
+        strassen(p6, s7, s8);
+        strassen(p7, s9, s10);
+
+        zero(c11);
+        zero(c12);
+        zero(c21);
+        zero(c22);
+
+        add(c11, p5);
+        add(c11, p4);
+        sub(c11, p2);
+        add(c11, p6);
+
+        add(c12, p1);
+        add(c12, p2);
+
+        add(c21, p3);
+        add(c21, p4);
+
+        add(c22, p5);
+        add(c22, p1);
+        sub(c22, p3);
+        sub(c22, p7);
+    }
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

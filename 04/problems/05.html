@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 4.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 4.5</h1>
+<h2>Chip testing</h2>
+
+<blockquote>
+<p>Professor Diogenes has $n$ supposedly identical integrated-circuit chips that
+in principle are capable of testing each other. The professor's test jig
+accomodates two chips at a time. When the jig is loaded, each chip tests the
+other and reports whether it is good or bad. A good chip always reports
+accurately whether the other chip is good or bad, but the professor cannot
+trust the answer of a bad chip. Thus, the four possible outcomes of a test
+are as follows.</p>
+
+<table class="table table-bordered table-striped table-compact">
+<thead>
+<tr>
+<th style="text-align: left">Chip A says</th>
+<th style="text-align: left">Chip B says</th>
+<th style="text-align: left">Conclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left">B is good</td>
+<td style="text-align: left">A is good</td>
+<td style="text-align: left">both are good, or both are bad</td>
+</tr>
+<tr>
+<td style="text-align: left">B is good</td>
+<td style="text-align: left">A is bad</td>
+<td style="text-align: left">at least one is bad</td>
+</tr>
+<tr>
+<td style="text-align: left">B is bad</td>
+<td style="text-align: left">A is good</td>
+<td style="text-align: left">at least one is bad</td>
+</tr>
+<tr>
+<td style="text-align: left">B is bad</td>
+<td style="text-align: left">A is bad</td>
+<td style="text-align: left">at least one is bad</td>
+</tr>
+</tbody>
+</table>
+
+<ol>
+<li>Show that if more than $n/2$ chips are bad, the professor cannot
+necessarily determine which chips are good using any strategy based on
+this kind of pairwise test. Assume that the bad chips can conspire to fool
+the professor.</li>
+<li>Consider the problem of finding a single good chip from among $n$ chips,
+assuming that more than $n/2$ of the chips are good. Show that $\lfloor
+n/2 \rfloor$ pairwise tests are sufficient to reduce the problem to one of
+nearly half the size.</li>
+<li>Show that the good chips can be identified with $\Theta(n)$ pairwise
+tests, assuming that more than $n/2$ chips are good. Give and solve the
+recurrence that describes the number of tests.</li>
+</ol>
+</blockquote>
+
+<h3>If more than half are bad</h3>
+
+<p>Lets say that there are $g &lt; n/2$ good chips. The same amount of the remaining
+bad chips can choose to act similar to good chips. That is, they can identify
+each other as good and all other as faulty. Since this is what the good chips
+would do, both groups are symmetric in regards to the operation of parwise
+comparison. No strategy can distinguish between the two groups.</p>
+
+<h3>Finding a single good chip in logarithmic time</h3>
+
+<p>We split the chips in groups of two and compare them. We can take one of the
+chips if the outcome is the first one (both are good or both are bad) and but
+both away otherwise. When putting away, we're removing at least one bad chip
+for every good one we remove. Out of the pairs we've chosen a chip from, there
+would be more good chips than bad chips (there would be more good pairs,
+because the good chips are more than the half). Now we have at most $n/2$
+chips, where at least half of them are good.</p>
+
+<h3>Finding the good chips</h3>
+
+<p>The recurrence for finding at least one good chip is:</p>
+
+<p>$$ T(n) = T(n/2) + n/2 $$</p>
+
+<p>By the master method, this is $\Theta(n)$. After we've found one, we can
+compare it will all others, which is a $\Theta(n)$ operation.</p>
+  <hr />
+  <h3>Python code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#080;font-weight:bold">import</span> <span style="color:#B44;font-weight:bold">random</span>
+
+<span style="color:#080;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">GoodChip</span>:
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">good</span>(<span style="color:#069">self</span>):
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">True</span>
+
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">check</span>(<span style="color:#069">self</span>, other):
+        <span style="color:#080;font-weight:bold">return</span> other.good()
+
+<span style="color:#080;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">BadChip</span>:
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">good</span>(<span style="color:#069">self</span>):
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">False</span>
+
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">check</span>(<span style="color:#069">self</span>, other):
+        <span style="color:#080;font-weight:bold">return</span> [<span style="color:#069">True</span>, <span style="color:#069">False</span>][random.randint(<span style="color:#00D">0</span>, <span style="color:#00D">1</span>)]
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">jig</span>(a, b):
+    <span style="color:#080;font-weight:bold">return</span> [a.check(b), b.check(a)]
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">diogenes</span>(chips, verbose = <span style="color:#069">False</span>):
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">find_single</span>(chips):
+        <span style="color:#080;font-weight:bold">if</span> <span style="color:#369;font-weight:bold">len</span>(chips) &lt;= <span style="color:#00D">2</span>:
+            <span style="color:#080;font-weight:bold">return</span> chips[<span style="color:#00D">0</span>]
+        <span style="color:#080;font-weight:bold">else</span>:
+            halfpoint = <span style="color:#369;font-weight:bold">len</span>(chips) // <span style="color:#00D">2</span>
+            pairs     = <span style="color:#369;font-weight:bold">zip</span>(chips[<span style="color:#00D">0</span>:halfpoint], chips[halfpoint:halfpoint * <span style="color:#00D">2</span>])
+            kept      = [a <span style="color:#080;font-weight:bold">for</span> (a, b) <span style="color:#080;font-weight:bold">in</span> pairs <span style="color:#080;font-weight:bold">if</span> jig(a, b) == [<span style="color:#069">True</span>, <span style="color:#069">True</span>]]
+
+            <span style="color:#080;font-weight:bold">if</span> <span style="color:#369;font-weight:bold">len</span>(chips) % <span style="color:#00D">2</span> == <span style="color:#00D">1</span>:
+                kept.append(chips[-<span style="color:#00D">1</span>])
+
+            <span style="color:#080;font-weight:bold">return</span> find_single(kept)
+
+    good = find_single(chips)
+    <span style="color:#080;font-weight:bold">return</span> [chip <span style="color:#080;font-weight:bold">for</span> chip <span style="color:#080;font-weight:bold">in</span> chips <span style="color:#080;font-weight:bold">if</span> jig(good, chip) == [<span style="color:#069">True</span>, <span style="color:#069">True</span>]]
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

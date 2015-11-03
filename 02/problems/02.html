@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 2.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 2.2</h1>
+<h2>Correctness of bubblesort</h2>
+
+<blockquote>
+<p>Bubblesort is popular, but inefficient, sorting algorithm. It works by
+repeatedly swapping adjancent elements that are out of order.</p>
+
+<pre><code>BUBBLESORT(A)
+  for i to A.length - 1
+      for j = A.length downto i + 1
+          if A[j] &lt; A[j - 1]
+              exchange A[j] with A[j - 1]
+</code></pre>
+
+<ol>
+<li>Let $A'$ denote the output of <em>BUBBLESORT(A)</em>. To prove that <em>BUBBLESORT</em>
+is correct, we need to prove that it terminates and that</li>
+</ol>
+
+<p>$$ A'[1] \leq A'[2] \leq \cdots \leq A'[n] \tag{2.3}$$</p>
+
+<p>where $n = A.length$. In order to show that <em>BUBBLESORT</em> actually sorts,
+   what else do we need to prove?</p>
+
+<ol>
+<li><p>State precisely a loop invariant for the <strong>for</strong> loop in lines 2-4, and
+prove that this loop invariant holds. Your proof should use the structure
+of the loop invariant proof presented in this chapter.</p></li>
+<li><p>Using the termination condition of the loop invariant proved in part (2),
+state a loop invariant for the <strong>for</strong> loop in lines 1-4 that will allow
+you to prove inequality (2.3). Your proof should use the structure of the
+loop invariant proof presented in this chapter.</p></li>
+<li><p>What is the worst-case running time of bubblesort? How does it compare to
+the running time of insertion sort?</p></li>
+</ol>
+</blockquote>
+
+<h3>1. What else?</h3>
+
+<p>We need to prove that $A'$ consists of the original elements in $A$, although
+in (possibly) different order.</p>
+
+<h3>2. Inner loop invariant</h3>
+
+<blockquote>
+<p>At the start of each iteration of the <strong>for</strong> loop of lines 2-4, (1) the
+subarray $A[j...]$ consists of elements that were in $A[j...]$ before
+entering the inner loop (possibly) in different order and (2) $A[j]$ is the
+smallest of those elements.</p>
+</blockquote>
+
+<p><strong>Initialization:</strong> It holds trivially, because $A[j...]$ consists of only
+one element and it is the last element of $A$ when execution starts the inner
+loop.</p>
+
+<p><strong>Maintenance:</strong> On each step, we replace $A[j]$ with $A[j - 1]$ if it is
+smaller. Because we're only adding the previous element and possibly swapping
+two values (1) holds. Since $A[j-1]$ becomes the smallest of $A[j]$ and
+$A[j-1]$ and the loop invariant states that $A[j]$ is the smallest one in
+$A[j...]$, we know that (2) holds.</p>
+
+<p><strong>Termination:</strong> After the loop terminates, we will get $j = i$. This implies
+that $A[i]$ is the smallest element of the subarray $A[i...]$ and array
+contains the original elements in some order.</p>
+
+<h3>3. Outer loop invariant</h3>
+
+<blockquote>
+<p>At the start of each iteration, $A[1..i-1]$ consists of sorted elements, all
+of which are smaller or equal to the ones in $A[i...]$.</p>
+</blockquote>
+
+<p><strong>Initialization:</strong> Initially we have the empty array, which holds trivially.</p>
+
+<p><strong>Maintenance:</strong> The invariant of the inner loop tells us that on each
+iteration, $A[i]$ becomes the smallest element of $A[i...]$ while the rest get
+shuffled. This impliest that at the end of the loop:</p>
+
+<p>$$ A[i] &lt; A[k] \text{, for } i &lt; k $$</p>
+
+<p><strong>Termination:</strong> The loop terminates with $i = n$, where $n$ is the length of
+the array. Substituting the $n$ for $i$ in the invariant, we have that the
+subarray $A[1..n]$ consists of the original elements, but in sorted order.
+This is the entire array, so the entire array is sorted.</p>
+
+<h3>4. Worst-case running time?</h3>
+
+<p>The number of comparisons is</p>
+
+<p>$$ n - 1, n - 2, \cdots , 1 = \frac{n(n - 1)}{2} $$</p>
+
+<p>Which is a quadratic function. The swaps are at most the same ammount, which
+means that the worst-case complexity is $\Theta(n^2)$.</p>
+
+<p>Insertion sort has the same worst-case complexity. In general, the best-case
+complexity of both algorithms should be $\Theta(n)$, but this implementation
+of bubble-sort has $\Theta(n^2)$ best-case complexity. That can be fixed by
+returning if no swaps happened in an iteration of the outer loop.</p>
+
+<p>Furthermore, bubble-sort should be even slower than insertion sort, because
+the swaps imply a lot more assignments than what insertion sort does.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 6.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 6.3</h1>
+<h2>Young tableaus</h2>
+
+<blockquote>
+<p>An $m \times n$ <strong>Young tableau</strong> is an $m \times n$ matrix such that the
+entries of each row are in sorted order from left to right and the entries of
+each column are in sorted order from top to bottom. Some of the entries of a
+Young tableau may be $\infty$, which we treat as nonexistent elements. Thus,
+a Young tableau can be used to hold $r \le mn$ finite numbers.</p>
+
+<ol>
+<li>Draw $4 \times 4$ tableau containing the elements $\{9, 16, 3, 2, 4, 8,
+5, 14, 12\}$</li>
+<li>Argue that an $m \times n$ Young tableau $Y$ is empty if $Y[1, 1] =
+\infty$. Argue that $Y$ is full (contains $mn$ elements) if $Y[m, n] &lt;
+\infty$.</li>
+<li>Give an algorithm to implement <code>EXTRACT-MIN</code> on a nonempty $m \times n$
+Young tableau that runs in $\O(m + n)$ time. Your algorithm should use a
+recursive subroutine that solves an $m \times n$ problem by recursively
+solving either an $(m - 1) \times n$ or an $m \times (n - 1)$ subproblem.
+(Hint: Think about <code>MAX-HEAPIFY</code>.) Define $T(p)$ where $p = m + n$, to be
+the maximum running time of <code>EXTRACT-MIN</code> on any $m \times n$ Young
+tableau. Give and solve a recurrence relation for $T(p)$ that yields the
+$\O(m + n)$ time bound.</li>
+<li>Show how to insert a new element into a nonfull $m \times n$ Young tableau
+in $\O(m + n)$ time</li>
+<li>Using no other sorting method as a subroutine, show how to use an $n
+\times n$ Young tableau to sort $n^2$ numbers in $\O(n^3)$ time.</li>
+<li>Give an $\O(m + n)$-time algorithm to determine whether a given number is
+stored in a given $m \times n$ Young tableau.</li>
+</ol>
+</blockquote>
+
+<h3>Draw a tableau</h3>
+
+<p>$$ \begin{matrix}
+        2 &amp;      3 &amp;     12 &amp;     14 \\
+        4 &amp;      8 &amp;     16 &amp; \infty \\
+        5 &amp;      9 &amp; \infty &amp; \infty \\
+   \infty &amp; \infty &amp; \infty &amp; \infty \\
+   \end{matrix} $$</p>
+
+<h3>Empty and full</h3>
+
+<p>If the top left element is $\infty$, then all the elements on the first row
+need to be $\infty$. But if this is the case, all other elements need to be
+$\infty$ because they are larger than the first element on their column.</p>
+
+<p>If the bottom right element is smaller than $\infty$, all the elements on the
+bottom row need to be smaller than $\infty$. But so are the other elements in
+the tableau, because each is smaller than the bottom element of its column.</p>
+
+<h3>Extracting a minimum element</h3>
+
+<p>The $A[1, 1]$ is the smallest elemnt. We store it, so we can return it later
+and then replace is with $\infty$. This breaks the Young tableau property and
+we need to perform a procedure, similar to <code>MAX-HEAPIFY</code> to restore it.</p>
+
+<p>We compare $A[i, j]$ with each of its neighbours and exchange it with the
+smallest. This restores the property for $A[i, j]$ but reduces the problem to
+either $A[i, j+1]$ or $A[i+1, j]$. We terminate when $A[i,j]$ is smaller than
+its neighbours.</p>
+
+<p>The relation in question is:</p>
+
+<p>$$ T(p) = T(p - 1) + \O(1) = T(p-2) + \O(1) + \O(1) = \ldots = \O(p) $$</p>
+
+<h3>Inserting a new element</h3>
+
+<p>The algorithm is very similar to the previous, except that we start with the
+bottom right element of the tableau and move it upwards and leftwards to the
+correct position. The asymptotic analysis is the same.</p>
+
+<h3>Sorting</h3>
+
+<p>We can sort by starting with an empty tableau and inserting all the $n^2$
+elements in it. Each insertion is $\O(n + n) = \O(n)$. The complexity is
+$n^2\O(n) = \O(n^3)$. Afterwards we can take them one by one and put them back
+in the original array which has the same complexity. In total, its $\O(n^3)$.</p>
+
+<p>We can also do it in place if we allow for "partial" tableaus where only a
+portion of the top rows (and a portion of the last of them) is in the tableau.
+Then we can build the tableau in place and then start putting each minimal
+element to the end. This would be asymptotically equal, but use constant
+memory. It would also sort the array in reverse.</p>
+
+<h3>Finding</h3>
+
+<p>We from the lower-left corner. We check the current element $current$ with the
+one we're looking for $key$ and move up if $current &gt; key$ and right if
+$current &lt; key$. We declare success if $current = key$ and otherwise terminate
+if we walk off the tableau.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdbool.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;limits.h&gt;</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> i;
+    <span style="color:#0a8;font-weight:bold">int</span> j;
+} cell;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> *elements;
+    <span style="color:#0a8;font-weight:bold">int</span> m;
+    <span style="color:#0a8;font-weight:bold">int</span> n;
+} tableau_t;
+
+cell up(cell c) {
+    cell result = {c.i - <span style="color:#00D">1</span>, c.j};
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+cell down(cell c) {
+    cell result = {c.i + <span style="color:#00D">1</span>, c.j};
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+cell left(cell c) {
+    cell result = {c.i, c.j - <span style="color:#00D">1</span>};
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+cell right(cell c) {
+    cell result = {c.i, c.j + <span style="color:#00D">1</span>};
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+cell make_cell(<span style="color:#0a8;font-weight:bold">int</span> i, <span style="color:#0a8;font-weight:bold">int</span> j) {
+    cell result = {i, j};
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+<span style="color:#0a8;font-weight:bold">bool</span> within(tableau_t *tableau, cell c) {
+    <span style="color:#080;font-weight:bold">return</span> (c.i &gt;= <span style="color:#00D">0</span> &amp;&amp; c.j &gt;= <span style="color:#00D">0</span> &amp;&amp; c.i &lt; tableau-&gt;m &amp;&amp; c.j &lt; tableau-&gt;n);
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> get(tableau_t *tableau, cell c) {
+    <span style="color:#0a8;font-weight:bold">int</span> index = c.i * tableau-&gt;n + c.j;
+    <span style="color:#080;font-weight:bold">return</span> tableau-&gt;elements[index];
+}
+
+<span style="color:#088;font-weight:bold">void</span> set(tableau_t *tableau, cell c, <span style="color:#0a8;font-weight:bold">int</span> value) {
+    <span style="color:#0a8;font-weight:bold">int</span> index = c.i * tableau-&gt;n + c.j;
+    tableau-&gt;elements[index] = value;
+}
+
+<span style="color:#088;font-weight:bold">void</span> init_empty_tableau(tableau_t *tableau) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; tableau-&gt;m * tableau-&gt; n; i++) {
+        tableau-&gt;elements[i] = INT_MAX;
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> extract_min(tableau_t *tableau) {
+    <span style="color:#0a8;font-weight:bold">int</span> min, new;
+    cell current = {<span style="color:#00D">0</span>, <span style="color:#00D">0</span>},
+         next;
+
+    new = INT_MAX;
+    min = get(tableau, current);
+
+    set(tableau, current, INT_MAX);
+
+    <span style="color:#080;font-weight:bold">while</span> (<span style="color:#069">true</span>) {
+        <span style="color:#0a8;font-weight:bold">int</span> smallest;
+        cell d = down(current);
+        cell r = right(current);
+
+        <span style="color:#080;font-weight:bold">if</span> (within(tableau, d) &amp;&amp; get(tableau, d) &lt; new) {
+            next = d;
+            smallest = get(tableau, next);
+        } <span style="color:#080;font-weight:bold">else</span> {
+            smallest = new;
+        }
+
+        <span style="color:#080;font-weight:bold">if</span> (within(tableau, r) &amp;&amp; get(tableau, r) &lt; smallest) {
+            next = r;
+            smallest = get(tableau, next);
+        }
+
+        <span style="color:#080;font-weight:bold">if</span> (new == smallest) {
+            set(tableau, current, new);
+            <span style="color:#080;font-weight:bold">break</span>;
+        }
+
+        set(tableau, current, smallest);
+        current = next;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> min;
+}
+
+<span style="color:#088;font-weight:bold">void</span> insert(tableau_t *tableau, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    cell current = make_cell(tableau-&gt;m - <span style="color:#00D">1</span>, tableau-&gt;n - <span style="color:#00D">1</span>),
+         next;
+
+    <span style="color:#080;font-weight:bold">if</span> (get(tableau, current) != INT_MAX) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">tableau is full</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    <span style="color:#080;font-weight:bold">while</span> (<span style="color:#069">true</span>) {
+        <span style="color:#0a8;font-weight:bold">int</span> largest;
+        cell u = up(current);
+        cell l = left(current);
+
+        <span style="color:#080;font-weight:bold">if</span> (within(tableau, u) &amp;&amp; get(tableau, u) &gt; key) {
+            next = u;
+            largest = get(tableau, next);
+        } <span style="color:#080;font-weight:bold">else</span> {
+            largest = key;
+        }
+
+        <span style="color:#080;font-weight:bold">if</span> (within(tableau, l) &amp;&amp; get(tableau, l) &gt; largest) {
+            next = l;
+            largest = get(tableau, next);
+        }
+
+        <span style="color:#080;font-weight:bold">if</span> (key == largest) {
+            set(tableau, current, key);
+            <span style="color:#080;font-weight:bold">break</span>;
+        }
+
+        set(tableau, current, largest);
+        current = next;
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> sort(<span style="color:#0a8;font-weight:bold">int</span> *array, <span style="color:#0a8;font-weight:bold">int</span> size_sqrt) {
+    <span style="color:#0a8;font-weight:bold">int</span> elements[size_sqrt * size_sqrt];
+    tableau_t tableau = {elements, size_sqrt, size_sqrt};
+
+    init_empty_tableau(&amp;tableau);
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size_sqrt * size_sqrt; i++) {
+        insert(&amp;tableau, array[i]);
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size_sqrt * size_sqrt; i++) {
+        <span style="color:#0a8;font-weight:bold">int</span> next = extract_min(&amp;tableau);
+        array[i] = next;
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">bool</span> find(tableau_t *tableau, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    cell c = {tableau-&gt;m - <span style="color:#00D">1</span>, <span style="color:#00D">0</span>};
+
+    <span style="color:#080;font-weight:bold">while</span> (within(tableau, c)) {
+        <span style="color:#0a8;font-weight:bold">int</span> value = get(tableau, c);
+
+        <span style="color:#080;font-weight:bold">if</span> (value == key) {
+            <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">true</span>;
+        } <span style="color:#080;font-weight:bold">else</span> <span style="color:#080;font-weight:bold">if</span> (value &gt; key) {
+            c = up(c);
+        } <span style="color:#080;font-weight:bold">else</span> {
+            c = right(c);
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">false</span>;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

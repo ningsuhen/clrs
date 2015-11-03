@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 5.3.7 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 5.3.7</h1>
+<blockquote>
+<p>Suppose we want to create a <strong>random sample</strong> of the set $\{1, 2, 3, \ldots,
+n\}$, that is, an $m$-element subset $S$, where $0 \le m \le n$, such that
+each $m$-subset is equally likely to be created. One way would be to set
+$A[i] = i$ for $i = 1, 2, 3, \ldots, n$, call <code>RANDOMIZE-IN-PLACE(A)</code>, and
+then take just the first $m$ array elements. This method would make $n$ calls
+to the <code>RANDOM</code> procedure. If $n$ is much larger than $m$, we can create a
+random sample with fewer calls to <code>RANDOM</code>. Show that the following recursive
+procedure returns a random $m$-subset $S$ of $\{1, 2, \ldots, n\}$, in
+which each $m$-subset is equally likely, while making only $m$ calls to
+<code>RANDOM</code>:</p>
+
+<pre><code>RANDOM-SAMPLE(m,n)
+if m == 0
+    return ∅
+else
+    S = RANDOM-SAMPLE(m-1, n-1)
+    i = RANDOM(1,n)
+    if i ∈ S
+        S = S ∪ {n}
+    else
+        S = S ∪ {i}
+    return S
+</code></pre>
+</blockquote>
+
+<p>Each combination should have a $1/\binom{n}{m}$ chance of showing up. Let's
+establish an invariant for <code>RANDOM-SAMPLE(m,n)</code>. We are going to go with:</p>
+
+<blockquote>
+<p><code>RANDOM-SAMPLE(m,n)</code> returns a uniformly distributed combination.</p>
+</blockquote>
+
+<p>We shall do induction on $m$. It's trivially so when $m$ is 1 (or 0). Let's
+assume the invariant holds for $m-1$. Let's see what happens when we pass $m$.</p>
+
+<p>The recursive call returns an $m-1$ sample with uniform probability. There are
+two options - either the new $m$-subset includes $n$ or not.</p>
+
+<p>If that happens (probability: $m/n$), the probability for each combination
+including $n$ is:</p>
+
+<p>$$ \frac{m}{n}\bigg(1/\binom{n-1}{m-1}\bigg) = 1/\binom{n}{m} $$</p>
+
+<p>If it does not (probability: $(n-m)/n$), it includes one of the $(n-m)$ numbers
+not present. The chance for each is:</p>
+
+<p>$$ \frac{n-m}{n}\bigg(1/\binom{n-1}{m}\bigg) = 1/\binom{n}{m} $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

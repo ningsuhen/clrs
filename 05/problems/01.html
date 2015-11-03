@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 5.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 5.1</h1>
+<h2>Probabilstic counting</h2>
+
+<blockquote>
+<p>With a $b$-bit counter, we can ordinarily only count up to $2^b - 1$. With R.
+Morris's <strong>probabilistic counting</strong>, we can count up to a much larger value
+at the expense of some loss of precision.</p>
+
+<p>We let a counter value of $i$ represent that a count of $n_i$ for
+$i = 0, 1, \ldots, 2^b-1$, where the $n_i$ form an increasing sequence of
+nonnegative values. We assume that the initial value of the counter is 0,
+representing a count of $n_0 = 0$. The <code>INCREMENT</code> operation works on a
+counter containing the value $i$ in a probabilistic manner. If $i = 2^b - 1$,
+then the operation reports an overflow error. Otherwise, the <code>INCREMENT</code>
+operation increases the counter by 1 with probability $1/(n_{i+1} - n_i)$,
+and it leaves the counter unchanged with probability $1-1/(n_{i+1} - n_i)$.</p>
+
+<p>If we select $n_i = i$ for all $i \ge 0$, then the counter is an ordinary
+one. More interesting situations arise if we select, say, $n_i = 2^{i-1}$ for
+$i &gt; 0$ or $n_i = F_i$ (the $i$th Fibonacci number - see Section 3.2).</p>
+
+<p>For this problem, assume that $n_{2^b-1}$ is large enough that the
+probability of an overflow error is negligible.</p>
+
+<ol>
+<li>Show that the expected value represented by the counter after $n$
+<code>INCREMENT</code> operations have been performed is exactly $n$.</li>
+<li>The analysis of the variance of the count represented by the counter
+depends on the sequence of the $n_i$. Let us consider a simple case: $n_i
+= 100i$ for all $i \ge 0$. Estimate the variance in the value represented
+by the register after $n$ <code>INCREMENT</code> operations have been performed.</li>
+</ol>
+</blockquote>
+
+<h3>Expected value</h3>
+
+<p>Suppose at the start of the $j$th increment, the counter holds $i$, which
+represents $n_i$. If the counter increases, then the value it will increase by
+$n_{i+1} - n_i$. It happens with probability $1/(n_{i+1} - n_i)$, and so:</p>
+
+<p>$$ \begin{align}
+     \E[X_j] &amp;= 0 \cdot \Pr\{\text{stays same}\} + 1 \cdot \Pr\{\text{increases}\} \\
+             &amp;= 0 \cdot \bigg(1 - \frac{1}{n_{i+1} - n_i}\bigg) +
+                1 \cdot \bigg((n_{i+1} - n_i) \cdot \frac{1}{n_{i+1} - n_i}\bigg) \\
+             &amp;= 1
+   \end{align} $$</p>
+
+<p>This is the expectation any increment. Since there are $n$ increments, the
+execpted value will be $n$.</p>
+
+<h3>Variance</h3>
+
+<p>The variance of a single increment.</p>
+
+<p>$$ \begin{align}
+   \Var[X_j] &amp;= \E[X_j^2] - \E^2[X_j] \\
+             &amp;= \bigg(0^2 \cdot \frac{99}{100} + 100^2 \frac{1}{100}\bigg) - 1 \\
+             &amp;= 99
+   \end{align} $$</p>
+
+<p>As for the variance of the total value:</p>
+
+<p>$$ \Var[X] = \Var[X_1 + X_2 + \ldots + X_n] = \sum_{i=1}^n\Var[X_i] = 99n $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

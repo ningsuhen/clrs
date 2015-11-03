@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 7.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 7.5</h1>
+<h2>Median-of-3 partition</h2>
+
+<blockquote>
+<p>One way to improve the <code>RANDOMIZED-QUICKSORT</code> procedure is to partition
+around a pivot that is chosen more carefully than by picking a random element
+from the subarray. One common approach is the <strong>median-of-3</strong> method: choose
+the pivot as the median (middle element) of a set of 3 elements randomly
+selected from the subarray. (See <a href="../04/06.html">exercise 7.4-6</a>.) For this problem, let us
+assume that the elements of the input array $A[1 \ldots n]$ are distinct and
+that $n \ge 3$. We denote the sorted output array by $A'[1 \ldots n]$. Using
+the median-of-3 method to choose the pivot element $x$, define $p_i = \Pr\{x
+= A'[i]\}$.</p>
+
+<ol>
+<li>Give an exact formula for $p_i$ as a function of $n$ and $i$ for $i = 2,
+3, \ldots, n - 1$. (Note that $p_1 = p_n = 0$.)</li>
+<li>By what amount have we increased the likelihood of choosing the pivot as
+$x = A'[\lfloor(n+1)/2\rfloor]$, the median of $A[1 \ldots n]$, compared with
+the ordinary implementation? Assume that $n \to \infty$, and give the
+limiting ratio of these probabilities.</li>
+<li>If we define a "good" split to mean choosing the pivot as $x = A'[i]$,
+where $n/3 \le i \le 2n/3$, by what amount have we increased the
+likelihood of getting a good split compared with the ordinary
+implementation? (<i>Hint</i>: Approximate the sum by an integral.)</li>
+<li>Argue that in the $\Omega(n\lg{n})$ running time of quicksort, the
+median-of-3 method affects only the constant factor.</li>
+</ol>
+</blockquote>
+
+<h3>Probability</h3>
+
+<p>There are $n!/(n-3)!$ 3-permutations of all possible picks. In order to have
+the $i$th element, we need to pick one smaller, the $i$th element and one
+larger. There are $i - 1$ ways to pick a smaller one and $n-i$ ways to pick the
+larger. There are $3! ways to arrange how the three elements are picked. Thus:</p>
+
+<p>$$ p_i = \frac{6(i-1)(n-i)}{n(n-1)(n-2)} $$</p>
+
+<h3>Improvement</h3>
+
+<p>$$ \lim_{n \to \infty}\frac{6(i-1)(n-i)}{n(n-1)(n-2)}/\frac{1}{n}
+ = \lim_{n \to \infty}\frac{6n(n/2 - 1)(n/2)}{(n-1)(n-2)}
+ = \lim_{n \to \infty}\frac{6(n^2 - 2n)}{4(n^2 - 3n + 2)}
+ = \frac{6}{4} $$</p>
+
+<p>We get a $1.5$ improvement, which does not seem that much.</p>
+
+<h3>Improvement</h3>
+
+<p>From <a href="../02/06.html">exercise 7.2-6</a> we know that we get a "good" split with probability $1 -
+2(1/3) = 1/3$. As for the probability of getting a good split with median-of-3:</p>
+
+<p>$$ \begin{align}
+   \lim_{n \to \infty}\sum_{i=n/3}^{2n/3}\frac{6(i-1)(n-i)}{n(n-1)(n-2)} &amp;=
+     \lim_{n \to \infty}\frac{6}{n(n-1)(n-2)}\sum_{i=n/3}^{2n/3}(i-1)(n-i) \\
+     &amp;= \lim_{n \to \infty}\binom{n}{3}\int_{n/3}^{2n/3}(i-1)(n-1)\mathrm{d}i \\
+        &amp; \quad \Bigg( \int(i-1)(n-1)\mathrm{d}i = \frac{1}{6}(3ni^2 - 6ni - 2i^3 + 3i^2) \Bigg) \\
+     &amp;= \lim_{n \to \infty}\binom{n}{3}\frac{1}{6}\bigg[
+          \frac{36}{27}n^3 - \frac{16}{27}n^3 + o(n^3) -
+          \frac{9}{27}n^3 + \frac{2}{27}n^3 + o(n^3)
+        \bigg] \\
+    &amp;= \lim_{n \to \infty}\frac{1}{n(n-1)(n-2)} \frac{13}{27}(n^3 + o(n^3)) \\
+    &amp;= \lim_{n \to \infty}\frac{13}{27}\frac{n^3 + o(n^3)}{n^3 + o(n^3)} \\
+    &amp;= \frac{13}{27}
+   \end{align} $$</p>
+
+<p>Thus, as $n$ grows, the chance of getting a "good" split converges to $13/27$. The improvement is:</p>
+
+<p>$$ \frac{13}{27} \div \frac{1}{3} = \frac{39}{27} \approx 1.444(4) $$</p>
+
+<h3>Improvement</h3>
+
+<p>The running time would improve if the new approach can always pick a good
+split. Unfortunatelly, it can't. It makes it impossible for one of the splits
+to be empty, but it can still pick a $1$-to-$n-2$ split. It improves the
+probability of a good split and adds some overhead to picking the pivot, but it
+makes no hard guarantees on the quality of the split. Thus, the algorithm
+remains $\Omega(n\lg{n})$ and $\O(n^2)$.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

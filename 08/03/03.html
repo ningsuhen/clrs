@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 8.3.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 8.3.3</h1>
+<blockquote>
+<p>Use induction to prove that radix sort works. Where does your proof need the
+assumption that the intermediate sort is stable?</p>
+</blockquote>
+
+<p>We can take the following invariant:</p>
+
+<blockquote>
+<p>At the beginning of the <strong>for</strong> loop, the array is sorted on the last $i - 1$
+digits.</p>
+</blockquote>
+
+<p><strong>Initialization</strong>. The array is trivially sorted on the last 0 digits.</p>
+
+<p><strong>Maintenance</strong>. Let's assume that the array is sorted on the last $i - 1$
+digits. After we sort on the $i$th digit, the array will be sorted on the last
+$i$ digits. It is obvious that elements with different digit in the $i$th
+position are ordered accordingly; in the case of the same $i$th digit, we still
+get a correct order, because we're using a stable sort and the elements were
+already sorted on the last $i - 1$ digits.</p>
+
+<p><strong>Termination</strong>. The loop terminates when $i = d + 1$. Since the invariant
+holds, we have the numbers sorted on $d$ digits.</p>
+
+<p>We use the assumption in the maintenance explanation.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

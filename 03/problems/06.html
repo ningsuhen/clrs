@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 3.6 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 3.6</h1>
+<h2>Iterated functions</h2>
+
+<blockquote>
+<p>We can apply the iteration operator $<em>$ used in the $\lg^</em>$ function to any
+monotonically increasing function $f(n)$ over the reals. For a given
+constant $c \in \mathbb{R}$, we define the iterated function $f_c^*$ by</p>
+
+<p>$$ f_c^*(n) = min \lbrace i \geq 0 : f^{(i)}(n) \leq c \rbrace $$</p>
+
+<p>which need not be well defined in all cases. In other words, the quantity
+$f_c^*(n)$ is the number of iterated applications of the function $f$
+required to reduce its argument down to $c$ or less.</p>
+
+<p>For each of the following functions $f(n)$ and constants $c$, give as tight
+a bound as possible on $f_c^*(n)$.</p>
+</blockquote>
+
+<table class="table table-bordered table-striped table-compact">
+<thead>
+<tr>
+<th style="text-align: center">$ f(n) $</th>
+<th style="text-align: center">$ c $</th>
+<th style="text-align: center">$ f_c^*(n) $</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">$ n - 1 $</td>
+<td style="text-align: center">$ 0 $</td>
+<td style="text-align: center">$ \Theta(n) $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ \lg{n} $</td>
+<td style="text-align: center">$ 1 $</td>
+<td style="text-align: center">$ \Theta(\lg^*{n}) $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n / 2 $</td>
+<td style="text-align: center">$ 1 $</td>
+<td style="text-align: center">$ \Theta(\lg{n}) $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n / 2 $</td>
+<td style="text-align: center">$ 2 $</td>
+<td style="text-align: center">$ \Theta(\lg{n}) $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ \sqrt{n} $</td>
+<td style="text-align: center">$ 2 $</td>
+<td style="text-align: center">$ \Theta(\lg\lg{n}) $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ \sqrt{n} $</td>
+<td style="text-align: center">$ 1 $</td>
+<td style="text-align: center"><em>does not converge</em></td>
+</tr>
+<tr>
+<td style="text-align: center">$ n^{1/3} $</td>
+<td style="text-align: center">$ 2 $</td>
+<td style="text-align: center">$ \Theta(\log_3{\lg{n}}) $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n/\lg{n} $</td>
+<td style="text-align: center">$ 2 $</td>
+<td style="text-align: center">$ \omega(\lg\lg{n}), o(\lg{n}) $</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

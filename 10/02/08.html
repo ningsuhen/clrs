@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 10.2.8 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 10.2.8</h1>
+<blockquote>
+<p>$\star$ Explain how to implement doubly linked lists using only one pointer
+value <code>x.np</code> per item instead of the usual two (<code>next</code> and <code>prev</code>). Assume
+that all pointer values can be interpreted as $k$-bit integers, and define
+<code>x.np = x.next XOR x.prev</code>, the $k$-bit "exclusive-or" of <code>x.next</code> and
+<code>x.prev</code>. (The value <code>NIL</code> is represented by 0). Be sure to describe what
+information you need to access the head of the list. Show how to implement
+the <code>SEARCH</code>, <code>INSERT</code> and <code>DELETE</code> operations on such a list. Also show how
+to reverse such a list in $\O(1)$ time.</p>
+</blockquote>
+
+<p>We can find the pointer to the next item by XOR-ing <code>np</code> with the pointer to
+the previous item and vice-versa. If the previous pointer of the head of the
+list is to NIL and the next pointer of the tail is to NIL, then we only need a
+pointer to either end of the list to access it. Reversing the list is just
+swapping the head and the tail.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> node_t {
+    <span style="color:#0a8;font-weight:bold">int</span> key;
+    <span style="color:#080;font-weight:bold">struct</span> node_t *np;
+} node_t;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#080;font-weight:bold">struct</span> node_t *head;
+    <span style="color:#080;font-weight:bold">struct</span> node_t *tail;
+} list_t;
+
+node_t *xor(node_t *left, node_t *right) {
+    <span style="color:#080;font-weight:bold">return</span> (node_t *) (((<span style="color:#0a8;font-weight:bold">unsigned</span> <span style="color:#0a8;font-weight:bold">long</span>) left) ^ ((<span style="color:#0a8;font-weight:bold">unsigned</span> <span style="color:#0a8;font-weight:bold">long</span>) right));
+}
+
+<span style="color:#088;font-weight:bold">void</span> init_list(list_t *list) {
+    list-&gt;head = <span style="color:#069">NULL</span>;
+    list-&gt;tail = <span style="color:#069">NULL</span>;
+}
+
+<span style="color:#088;font-weight:bold">void</span> destroy_list(list_t *list) {
+    node_t *prev = <span style="color:#069">NULL</span>;
+    node_t *node = list-&gt;head;
+    node_t *next;
+
+    <span style="color:#080;font-weight:bold">while</span> (node) {
+        next = xor(node-&gt;np, prev);
+        free(node);
+        prev = node;
+        node = next;
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> insert(list_t *list, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    node_t *new = (node_t *) malloc(<span style="color:#080;font-weight:bold">sizeof</span>(node_t));
+    new-&gt;key = key;
+    new-&gt;np = xor(<span style="color:#069">NULL</span>, list-&gt;tail);
+
+    <span style="color:#080;font-weight:bold">if</span> (list-&gt;tail) {
+        list-&gt;tail-&gt;np = xor(new, xor(<span style="color:#069">NULL</span>, list-&gt;tail-&gt;np));
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (!list-&gt;head) {
+        list-&gt;head = new;
+    }
+
+    list-&gt;tail = new;
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> get(list_t *list, <span style="color:#0a8;font-weight:bold">int</span> index) {
+    node_t *node = list-&gt;head;
+    node_t *prev = <span style="color:#069">NULL</span>;
+    node_t *next;
+
+    <span style="color:#080;font-weight:bold">while</span> (index--) {
+        <span style="color:#080;font-weight:bold">if</span> (!node) {
+            fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Index out of bounds</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+            exit(<span style="color:#00D">1</span>);
+        }
+        next = xor(node-&gt;np, prev);
+        prev = node;
+        node = next;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> node-&gt;key;
+}
+
+node_t *search(list_t *list, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    node_t *node = list-&gt;head;
+    node_t *prev = <span style="color:#069">NULL</span>;
+    node_t *next;
+
+    <span style="color:#080;font-weight:bold">while</span> (node) {
+        <span style="color:#080;font-weight:bold">if</span> (node-&gt;key == key) {
+            <span style="color:#080;font-weight:bold">return</span> node;
+        }
+
+        next = xor(node-&gt;np, prev);
+        prev = node;
+        node = next;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">NULL</span>;
+}
+
+<span style="color:#088;font-weight:bold">void</span> delete(list_t *list, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    node_t *node = list-&gt;head;
+    node_t *prev = <span style="color:#069">NULL</span>;
+    node_t *next;
+
+    <span style="color:#080;font-weight:bold">while</span> (node) {
+        <span style="color:#080;font-weight:bold">if</span> (node-&gt;key == key) {
+            next = xor(node-&gt;np, prev);
+
+            <span style="color:#080;font-weight:bold">if</span> (prev) {
+                prev-&gt;np = xor(xor(prev-&gt;np, node), next);
+            } <span style="color:#080;font-weight:bold">else</span> {
+                list-&gt;head = next;
+            }
+
+            <span style="color:#080;font-weight:bold">if</span> (next) {
+                next-&gt;np = xor(xor(next-&gt;np, node), prev);
+            } <span style="color:#080;font-weight:bold">else</span> {
+                list-&gt;tail = prev;
+            }
+
+            node = next;
+        } <span style="color:#080;font-weight:bold">else</span> {
+            next = xor(node-&gt;np, prev);
+            prev = node;
+            node = next;
+        }
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> reverse(list_t *list) {
+    node_t *tmp;
+    tmp = list-&gt;head;
+    list-&gt;head = list-&gt;tail;
+    list-&gt;tail = tmp;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

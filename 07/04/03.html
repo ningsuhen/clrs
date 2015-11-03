@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 7.4.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 7.4.3</h1>
+<blockquote>
+<p>Show that the expression $q^2 + (n - q - 1)^2$ achieves a maximum over $q =
+0, 1, \ldots, n-1$ when $q = 0$ and $q = n - 1$.</p>
+</blockquote>
+
+<p>$$ \begin{align}
+   f(q)   &amp;= q^2 + (n - q - 1)^2 \\
+   f'(q)  &amp;= 2q - 2(n - q - 1) = 4q - 2n + 2 \\
+   f''(q) &amp;= 4 \\
+   \end{align} $$</p>
+
+<p>$f'(q) = 0$ when $q = \frac{1}{2}n - \frac{1}{4}$. $f'(q)$ is also continious.
+$\forall q : f''(q) &gt; 0$, which means that $f'(q)$ is negative left of $f'(q) =
+0$ and positive right of it, which means that this is a local minima. In this
+case, $f(q)$ is decreasing in the beginning of the interval and increasing in
+the end, which means that those two points are the only candidates for a
+maximum in the interval.</p>
+
+<p>$$ f(0) = (n - 1)^2 \\
+   f(n-1) = (n - 1)^2 + 0^2 $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

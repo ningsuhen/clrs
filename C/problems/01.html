@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem C.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem C.1</h1>
+<h2>Balls and bins</h2>
+
+<blockquote>
+<p>In this problem, we investigate the effect of various assumptions on the
+number of ways of placing $n$ balls into $b$ distinct bins.</p>
+
+<ol>
+<li>Suppose that the $n$ balls are distinct and their order within a bin does
+not matter. Argue that the number of ways of placing the balls in the bins
+is $b^n$.</li>
+<li>Suppose that the balls are distinct and that the balls in each bin are
+ordered. Prove that there are exactly $(b + n - 1)!/(b - 1)!$ ways to
+place the balls in the bins. (Hint: Consider the number of ways of
+arranging $n$ distinct balls and $b-1$ indistinguishable stricks in a
+row).</li>
+<li>Suppose that the balls are identical, and hence their order within a bin
+does not matter. Show that the number of ways of placing the balls in the
+bins is $\binom{b+n-1}{n}$. (Hint: Of the arrangements in part (b), how
+many are repeated if the balls are made identical?)</li>
+<li>Suppose that the balls are identical and that no bin may contain more than
+one balls, so that $n \le b$. Show that the number of ways of placing the
+balls is $\binom{b}{n}$.</li>
+<li>Suppose that the balls are identical and that no bin may be left empty.
+Assuming that $n \ge b$, show that the number of ways of placing the balls
+is $\binom{n-1}{b-1}$.</li>
+</ol>
+</blockquote>
+
+<h3>Distinct balls, unordered</h3>
+
+<p>There are $b$ ways to place the first ball, then $b$ ways to place the second
+and so on. There are $n$ balls, so the total number of ways is $b^n$.</p>
+
+<h3>Distinct balls, ordered</h3>
+
+<p>As the hint indicates, this is isomporhic to arranging $n + b - 1$ items, out
+of which $b - 1$ are separators. The balls before the first separator go in the
+first bin, those between the first and the second go in the second bin, etc.
+There are $(n + b - 1)!$ ways to do that, but since the order of the separators
+does not matter, $(b - 1)!$ out of those are duplicated. Thus the answer is
+$(b + n - 1)!/(b - 1)!$.</p>
+
+<h3>Identical balls, unordered</h3>
+
+<p>There are $(b + n - 1)!/(b - 1)!$ ways if the balls are distinct. If they are
+made identical, $n!$ of the arrangements are repeated for each position of the
+separators. We get $\frac{(b + n - 1)!}{n!(b - 1)!} = \binom{b + n - 1}{n}$
+arrangements.</p>
+
+<h3>Identical balls, max 1 per bin</h3>
+
+<p>This is reduced to selecting $n$ of the $b$ bins to put balls in, which is the
+definition of binomial coefficients - $\binom{b}{n}$.</p>
+
+<h3>Identical balls, no bin left empty</h3>
+
+<p>This is fun. First, we put a ball in each bin and we're left with $n - b$ balls
+to put in $b$ bins. Now lets use part (c) - substituting $n - b$ for $n$, we
+get:</p>
+
+<p>$$ \binom{b + n - b - 1}{n - b} = \binom{n - 1}{n - b}
+                                = \binom{n - 1}{n - 1 - n + b}
+                                = \binom{n - 1}{b - 1} $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

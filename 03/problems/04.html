@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 3.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 3.4</h1>
+<h2>Asymptotic notation properties</h2>
+
+<blockquote>
+<p>Let $f(n)$ and $g(n)$ be asymptotically positive functions. Prove or
+disprove each of the following conjectures.</p>
+
+<ol>
+<li>$ f(n) = O(g(n)) \text{ implies } g(n) = O(f(n)) $</li>
+<li>$ f(n) + g(n) = \Theta(\min(f(n), g(n))) $</li>
+<li>$ f(n) = O(g(n)) \text{ implies } \lg(f(n)) = O(lg(g(n))), \text{ where }
+\lg(g(n)) \geq 1 \text{ and } f(n) \geq 1 \text{ for all sufficiently
+large n} $</li>
+<li>$ f(n) = O(g(n)) \text{ implies } 2^{f(n)} = O(2^{g(n)}). $</li>
+<li>$ f(n) = O((f(n))^2) $</li>
+<li>$ f(n) = O(g(n)) \text{ implies } g(n) = \Omega(f(n)) $</li>
+<li>$ f(n) = \Theta(f(n/2)) $</li>
+<li>$ f(n) + o(f(n)) = \Theta(f(n)) $</li>
+</ol>
+</blockquote>
+
+<h3>a. $ f(n) = O(g(n)) \text{ implies } g(n) = O(f(n)) $</h3>
+
+<p><strong>Incorrect</strong>. It's easy to see that $n = O(n^2)$, but $n^2 \neq O(n)$.</p>
+
+<h3>b. $ f(n) + g(n) = \Theta(\min(f(n), g(n))) $</h3>
+
+<p><strong>Incorrect</strong>. Simply $n^2 + n \neq \Theta(\min(n^2, n)) = \Theta(n) $</p>
+
+<h3>c. $ f(n) = O(g(n)) \Rightarrow \lg(f(n)) = O(lg(g(n))) \text{ if } \lg(g(n)) \geq 1, f(n) \geq 1 $</h3>
+
+<p><strong>Correct</strong>. We can do this, because $f(n) \geq 1$ after a certain $n \geq n_0$.</p>
+
+<p>$$ \exists c, n_0 : \forall n \geq n_0 : 0 \leq f(n) \leq cg(n) \\
+   \Downarrow \\
+   0 \leq \lg{f(n)} \leq \lg(cg(n)) = \lg{c} + \lg{g(n)}$$</p>
+
+<p>We need to prove that:</p>
+
+<p>$$ \lg{f(n)} \leq d\lg{g(n)} $$</p>
+
+<p>We can easily find $d$:</p>
+
+<p>$$ d = \frac{\lg{c} + \lg{g(n)}}{\lg{g(n)}} = \frac{\lg{c}}{\lg{g}} + 1 \leq \lg{c} + 1 $$</p>
+
+<p>The last step is valid, because $\lg{g(n)} \geq 1$.</p>
+
+<h3>d. $ f(n) = O(g(n)) \Rightarrow 2^{f(n)} = O(2^{g(n)}). $</h3>
+
+<p><strong>Incorrect</strong>, because $2n = O(n)$, but $2^{2n} = 4^n \neq O(2^n)$.</p>
+
+<h3>e. $ f(n) = O((f(n))^2) $</h3>
+
+<p><strong>Correct</strong>. $0 \leq f(n) \leq cf^2(n)$ is trivial when $f(n) \geq 1$.</p>
+
+<p>It would be incorrect if $f(n) &lt; 1$ for all $n$, but we are usually not
+interested in such functions.</p>
+
+<h3>f. $ f(n) = O(g(n)) \Rightarrow g(n) = \Omega(f(n)) $</h3>
+
+<p><strong>Correct</strong>. From the first, we know that:</p>
+
+<p>$$ 0 \leq f(n) \leq cg(n) $$</p>
+
+<p>We need to prove that:</p>
+
+<p>$$ 0 \leq df(n) \leq g(n) $$</p>
+
+<p>Which is straightforward with $d = 1/c$.</p>
+
+<h3>g. $ f(n) = \Theta(f(n/2)) $</h3>
+
+<p><strong>Incorrect</strong>. Let's pick $f(n) = 2^{n}$. We will need to prove that:</p>
+
+<p>$$ \exists c_1, c_2, n: \forall n \geq n_0 : 0 \leq c_1 \cdot 2^{n/2} \leq 2^n
+   \leq c_2 \cdot 2^{n/2} $$</p>
+
+<p>Which is obviously untrue.</p>
+
+<h3>h. $ f(n) + o(f(n)) = \Theta(f(n)) $</h3>
+
+<p><strong>Correct</strong>. Let $g(n) = o(f(n))$. We need to proove that:</p>
+
+<p>$$ c_1f(n) \leq f(n) + g(n) \leq c_2f(n) $$</p>
+
+<p>We know that:</p>
+
+<p>$$ \forall c \exists n_0 \forall n \geq n_0 : cg(n) &lt; f(n) $$</p>
+
+<p>Thus, if we pick $c_1 = 1$ and $c_2 = 2$, it holds.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

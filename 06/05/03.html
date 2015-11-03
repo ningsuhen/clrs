@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 6.5.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 6.5.3</h1>
+<blockquote>
+<p>Write pseudocode for the procedures <code>HEAP-MINIMUM</code>, <code>HEAP-EXTRACT-MIN</code>,
+<code>HEAP-DECREASE-KEY</code>, and <code>MIN-HEAP-INSERT</code> that implement a min-priority
+queue with a min-heap.</p>
+</blockquote>
+
+<p>Pseudocode? Why, let's do some real code!</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;limits.h&gt;</span>
+
+<span style="color:#579">#define</span> PARENT(i) ((i - <span style="color:#00D">1</span>) / <span style="color:#00D">2</span>)
+<span style="color:#579">#define</span> LEFT(i)   (<span style="color:#00D">2</span> * i + <span style="color:#00D">1</span>)
+<span style="color:#579">#define</span> RIGHT(i)  (<span style="color:#00D">2</span> * i + <span style="color:#00D">2</span>)
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> *elements;
+    <span style="color:#0a8;font-weight:bold">int</span> length;
+    <span style="color:#0a8;font-weight:bold">int</span> heap_size;
+} heap_t;
+
+<span style="color:#0a8;font-weight:bold">int</span> heap_minimum(heap_t *heap) {
+    <span style="color:#080;font-weight:bold">return</span> heap-&gt;elements[<span style="color:#00D">0</span>];
+}
+
+<span style="color:#088;font-weight:bold">void</span> min_heapify(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> i) {
+    <span style="color:#0a8;font-weight:bold">int</span> left  = LEFT(i),
+        right = RIGHT(i),
+        smallest;
+
+    <span style="color:#080;font-weight:bold">if</span> (left &lt; heap-&gt;heap_size &amp;&amp; heap-&gt;elements[left] &lt; heap-&gt;elements[i]) {
+        smallest = left;
+    } <span style="color:#080;font-weight:bold">else</span> {
+        smallest = i;
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (right &lt; heap-&gt;heap_size &amp;&amp; heap-&gt;elements[right] &lt; heap-&gt;elements[smallest]) {
+        smallest = right;
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (smallest != i) {
+        <span style="color:#0a8;font-weight:bold">int</span> tmp = heap-&gt;elements[i];
+        heap-&gt;elements[i] = heap-&gt;elements[smallest];
+        heap-&gt;elements[smallest] = tmp;
+
+        min_heapify(heap, smallest);
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> heap_extract_min(heap_t *heap) {
+    <span style="color:#080;font-weight:bold">if</span> (heap-&gt;heap_size == <span style="color:#00D">0</span>) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">heap underflow</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    <span style="color:#0a8;font-weight:bold">int</span> min = heap-&gt;elements[<span style="color:#00D">0</span>];
+    heap-&gt;elements[<span style="color:#00D">0</span>] = heap-&gt;elements[heap-&gt;heap_size - <span style="color:#00D">1</span>];
+    heap-&gt;heap_size--;
+    min_heapify(heap, <span style="color:#00D">0</span>);
+
+    <span style="color:#080;font-weight:bold">return</span> min;
+}
+
+<span style="color:#088;font-weight:bold">void</span> heap_decrease_key(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> i, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    <span style="color:#080;font-weight:bold">if</span> (key &gt; heap-&gt;elements[i]) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">new key is larger than current key</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    heap-&gt;elements[i] = key;
+    <span style="color:#080;font-weight:bold">while</span> (i &gt; <span style="color:#00D">0</span> &amp;&amp; heap-&gt;elements[PARENT(i)] &gt; heap-&gt;elements[i]) {
+        <span style="color:#0a8;font-weight:bold">int</span> tmp = heap-&gt;elements[PARENT(i)];
+        heap-&gt;elements[PARENT(i)] = heap-&gt;elements[i];
+        heap-&gt;elements[i] = tmp;
+        i = PARENT(i);
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> min_heap_insert(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    <span style="color:#080;font-weight:bold">if</span> (heap-&gt;length == heap-&gt;heap_size) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">heap overflow</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    heap-&gt;elements[heap-&gt;heap_size] = INT_MAX;
+    heap-&gt;heap_size++;
+    heap_decrease_key(heap, heap-&gt;heap_size - <span style="color:#00D">1</span>, key);
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

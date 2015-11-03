@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 10.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 10.1</h1>
+<h2>Comparisons among lists</h2>
+
+<blockquote>
+<p>For each of the four types of lists in the following table, what is
+the asymptotic worst-case running time fore each dynamic-set
+operation listed?</p>
+</blockquote>
+
+<table class="table table-bordered table-striped table-compact">
+<thead>
+<tr>
+<th style="text-align: left"></th>
+<th style="text-align: center">unsorted, singly linked</th>
+<th style="text-align: center">sorted, singly linked</th>
+<th style="text-align: center">unsorted, doubly linked</th>
+<th style="text-align: center">sorted, doubly linked</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><code>SEARCH(L, k)</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>INSERT(L, x)</code></td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">linear</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>DELETE(L, x)</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">constant</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>SUCCESSOR(L, x)</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>PREDECESSOR(L, x)</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>MINIMUM(L, k)</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>MAXIMUM(L, k)</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear</td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>
+<code>MAXIMUM</code> assumes that we don't keep track of the tail of the list. If it
+does, we can make the algorithms linear when the list is sorted</li>
+</ul>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

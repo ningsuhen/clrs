@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 7.2.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 7.2.4</h1>
+<blockquote>
+<p>Banks often record transactions on an account in order of the times of the
+transactions, but many people like to receive their bank statements with
+checks listed in order by check numbers. People usually write checks in order
+by check number, and merchants usually cash the with reasonable dispatch. The
+problem of converting time-of-transaction ordering to check-number ordering
+is therefore the problem of sorting almost-sorted input. Argue that the
+procedure <code>INSERTION-SORT</code> would tend to beat the procedure <code>QUICKSORT</code> on
+this problem.</p>
+</blockquote>
+
+<p>A simple intuitive argument will suffice here.</p>
+
+<p>The more sorted the array is, the less work insertion sort will do. Namely,
+<code>INSERTION-SORT</code> is $\Theta(n + d)$, where $d$ is the number of inversions in
+the array. In the example above the number of inversions tends to be small so
+insertion sort will be close to linear.</p>
+
+<p>On the other hand, if <code>PARTITION</code> does picks a pivot that does not participate
+in an inversion, it will produce and empty partition. Since there is a small
+number of inversions, <code>QUICKSORT</code> is very likely to produce empty partitions.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

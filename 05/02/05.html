@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 5.2.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 5.2.5</h1>
+<blockquote>
+<p>Let $A[1 \ldots n]$ be an array of $n$ distinct numbers. If $i &lt; j$ and
+$A[i] &gt; A[j]$, then the pair $(i, j)$ is called an <strong>inversion</strong> of $A$.
+(See <a href="../../02/problems/04.html">Problem 2-4</a> for more on inversions.) Suppose that the elements of $A$
+form a uniform random permutation of $\langle 1, 2, \ldots, n \rangle$. Use
+indicator random variables to compute the expected number of inversions.</p>
+</blockquote>
+
+<p>Let $X_{ij}$ be the event that there is an inversion between $i$ and $j$. The
+probability of an inversion for each pair is $1/2$ because there are
+$\binom{n}{2}$ possible pairs and the probability of having the larger number
+first is $\frac{1}{n(n-1)}$. Dividing the two yields $1/2$. Thus we get that
+$\E[X_{ij}] = 1/2$.</p>
+
+<p>$$ \E[X] = \sum_{i=1}^{n-1} \sum_{j=i+1}^n \E[X_{ij}]
+         = \sum_{i=1}^{n-1} \sum_{j=i+1}^n \frac{1}{2}
+         = \frac{1}{2} \sum_{i=1}^{n-1} \sum_{j=i+1}^n 1
+         = \frac{1}{2} \sum_{i=1}^{n-1} (n-i)
+         = \frac{1}{2} \sum_{i=1}^{n-1} i
+         = \frac{n(n-1)}{4}
+         = \binom{n}{2}/2
+$$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

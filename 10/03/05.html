@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 10.3.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 10.3.5</h1>
+<blockquote>
+<p>Let $L$ be a doubly linked list of length $n$ stored in arrays <code>key</code>,
+<code>prev</code>, and <code>next</code> of length $m$. Suppose that these arrays are managed by
+<code>ALLOCATE-OBJECT</code> and <code>FREE-OBJECT</code> procedures that keep a doubly linked
+free list $L$. Suppose further that of the $m$ items, exactly $n$ are on the
+list $L$ and $m - n$ are on the free list. Write a procedure
+<code>COMPACTIFY-LIST(L, F)</code> that, given the list $L$ and the free list $F$,
+moves the items in $L$ so that they occupy array positions $1, 2, \ldots, n$
+and adjust the free list $F$ so that it remains correct, occupying array
+positions $n + 1, n + 2, \ldots, m$. The running time of your procedure
+should be $\Theta(n)$, and it should use only a constant amount of extra
+space. Argue that your procedure is correct.</p>
+</blockquote>
+
+<p>I'll use this approach:</p>
+
+<ol>
+<li>We traverse the free list and mark each element by putting a special value
+in its <code>prev</code> pointer (it is not used by the free list)</li>
+<li>We start two pointers, one from the beginning of the memory and one from
+the end. We increment the left pointer until it reaches an empty cell and
+decrement the right until it reaches a non-empty cell. We move the right
+cell to the left position and leave a forwarding address in the <code>next</code>
+field. This terminates when the two pointers catch up. At this point the
+"active" memory is in the beginning of the array and the free - in the end.
+We take note of the threshold.</li>
+<li>We linearly scan the first part of the array and update all the pointers
+that point beyond the threshold, by using the forwarding address in <code>next</code>.</li>
+<li>Finally, we organize the memory beyond the threshold in a free list.</li>
+</ol>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+
+<span style="color:#579">#define</span> MAX_SIZE <span style="color:#00D">100</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> list_t;
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> obj_t;
+
+<span style="color:#0a8;font-weight:bold">int</span> empty_list = -<span style="color:#00D">1</span>;
+
+<span style="color:#0a8;font-weight:bold">int</span>   prev[MAX_SIZE];
+<span style="color:#0a8;font-weight:bold">int</span>   next[MAX_SIZE];
+obj_t keys[MAX_SIZE];
+
+<span style="color:#0a8;font-weight:bold">int</span> free_list;
+
+<span style="color:#088;font-weight:bold">void</span> init_storage() {
+    <span style="color:#0a8;font-weight:bold">int</span> i;
+    <span style="color:#080;font-weight:bold">for</span> (i = <span style="color:#00D">0</span>; i &lt; MAX_SIZE - <span style="color:#00D">1</span>; i++)
+        next[i] = i + <span style="color:#00D">1</span>;
+
+    next[i] = -<span style="color:#00D">1</span>;
+    free_list = <span style="color:#00D">0</span>;
+}
+
+list_t allocate_object() {
+    <span style="color:#080;font-weight:bold">if</span> (free_list == -<span style="color:#00D">1</span>) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Storage depleted</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">1</span>);
+    }
+
+    list_t new = free_list;
+    free_list = next[free_list];
+    <span style="color:#080;font-weight:bold">return</span> new;
+}
+
+<span style="color:#088;font-weight:bold">void</span> free_object(list_t list) {
+    next[list] = free_list;
+    free_list = list;
+}
+
+list_t cons(obj_t key, list_t list) {
+    list_t new = allocate_object();
+
+    next[new] = list;
+    prev[new] = empty_list;
+    keys[new] = key;
+
+    <span style="color:#080;font-weight:bold">if</span> (list != empty_list) {
+        prev[list] = new;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> new;
+}
+
+<span style="color:#088;font-weight:bold">void</span> delete(list_t list) {
+    <span style="color:#080;font-weight:bold">if</span> (prev[list] != empty_list) {
+        next[prev[list]] = next[list];
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (next[list] != empty_list) {
+        prev[next[list]] = prev[list];
+    }
+
+    free_object(list);
+}
+
+obj_t get(list) {
+    <span style="color:#080;font-weight:bold">if</span> (list == empty_list) <span style="color:#080;font-weight:bold">return</span> -<span style="color:#00D">1</span>;
+    <span style="color:#080;font-weight:bold">return</span> keys[list];
+}
+
+list_t next_obj(list) {
+    <span style="color:#080;font-weight:bold">if</span> (list == empty_list) <span style="color:#080;font-weight:bold">return</span> -<span style="color:#00D">1</span>;
+    <span style="color:#080;font-weight:bold">return</span> next[list];
+}
+
+list_t compatify_list(list_t list) {
+    list_t left, right, i;
+
+    <span style="color:#080;font-weight:bold">if</span> (free_list == empty_list) {
+        <span style="color:#080;font-weight:bold">return</span> list;
+    }
+
+    i = free_list;
+    <span style="color:#080;font-weight:bold">while</span> (i != empty_list) {
+        prev[i] = -<span style="color:#00D">2</span>;
+        i = next[i];
+    }
+
+    left  = <span style="color:#00D">0</span>;
+    right = MAX_SIZE - <span style="color:#00D">1</span>;
+    <span style="color:#080;font-weight:bold">while</span> (<span style="color:#00D">1</span>) {
+        <span style="color:#080;font-weight:bold">while</span> (prev[left] != -<span style="color:#00D">2</span>)
+            left++;
+
+        <span style="color:#080;font-weight:bold">while</span> (prev[right] == -<span style="color:#00D">2</span>)
+            right--;
+
+        <span style="color:#080;font-weight:bold">if</span> (left &gt;= right) <span style="color:#080;font-weight:bold">break</span>;
+
+        prev[left] = prev[right];
+        next[left] = next[right];
+        keys[left] = keys[right];
+
+        next[right] = left;
+
+        right--;
+        left++;
+    }
+
+    right++;
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; right; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (prev[i] &gt;= right) {
+            prev[i] = next[prev[i]];
+        }
+
+        <span style="color:#080;font-weight:bold">if</span> (next[i] &gt;= right) {
+            next[i] = next[next[i]];
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (list &gt;= right) {
+        list = next[list];
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (i = right; i &lt; MAX_SIZE - <span style="color:#00D">1</span>; i++) {
+        next[i] = i+<span style="color:#00D">1</span>;
+    }
+    next[i] = -<span style="color:#00D">1</span>;
+
+    free_list = right;
+
+    <span style="color:#080;font-weight:bold">return</span> list;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

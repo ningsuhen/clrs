@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 5.4.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 5.4.4</h1>
+<blockquote>
+<p>$\star$ How many people should be invited to a party in order to make it
+likely that there are <em>three</em> people with the same birthday?</p>
+</blockquote>
+
+<p>The answer is $88$. I reached it by trial and error. But let's analyze it with
+indicator random variables.</p>
+
+<p>Let $X_{ijk}$ be the indicator random variable for the event of the people with
+indices $i$, $j$ and $k$ have the same birthday. The probability is $1/n^2$.
+Then:</p>
+
+<p>$$ \begin{align}
+   \E[X] &amp;= \sum_{i=1}^n\sum_{j=i+1}^n\sum_{k=j+1}^nX_{ijk} \\
+         &amp;= \sum_{i=1}^n\sum_{j=i+1}^n\sum_{k=j+1}^n\frac{1}{n^2} \\
+         &amp;= \binom{n}{3}\frac{1}{n^2} \\
+         &amp;= \frac{k(k-1)(k-2)}{6n^2}
+   \end{align} $$</p>
+
+<p>Solving this yields $94$. It's a bit more, but again, indicator random
+variables are approximate.</p>
+
+<p>Finding more commentary online is tricky.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

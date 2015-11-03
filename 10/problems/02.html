@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 10.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 10.2</h1>
+<h2>Mergeable heaps using linked lists</h2>
+
+<blockquote>
+<p>A <strong>mergeable heap</strong> supports the following operations: <code>MAKE-HEAP</code> (which
+creates an empty mergeable heap), <code>INSERT</code>, <code>MINIMUM</code>, <code>EXTRACT-MIN</code>, and
+<code>UNION</code>. Show how to implement mergeable heaps using linked lists in each of
+the following cases. Try to make each operation as efficient as possible.
+Analyze the running time of each operation in terms of the size of the
+dynamic set(s) being operated on.</p>
+
+<ol type="a">
+  <li>Lists are sorted.
+  </li>
+<li>Lists are unsorted.
+  </li>
+<li>Lists are unsorted, and dynamic sets to be merged are disjoint.
+</li>
+</ol>
+</blockquote>
+
+<p>There isn't a difference in my implementation between the sorted and unsorted
+lists. There will be a difference between (a) and (b) if we don't allow
+repetitions in the lists, but since this will make insertion linear, I find it
+better to let insert create duplicates and them remove them on <code>EXTRACT-MIN</code>.
+That way the latter is linear (even if with a larger constant),  but <code>UNION</code>
+can be implemented constantly with doubly-linked lists.</p>
+
+<p>I've chosen singly-linked lists for no good reason. Mostly because I did not
+realize <code>UNION</code> is going to take linear time with such an implementation (in
+order to find the last element of the first list). If we switch to
+doubly-linked, we can make it constant easily.</p>
+
+<p>I find this problem too simple to bother further.</p>
+
+<p>Otherwise, the running times are as follows</p>
+
+<table class="table table-bordered table-striped table-compact">
+<thead>
+<tr>
+<th style="text-align: left"></th>
+<th style="text-align: center">sorted</th>
+<th style="text-align: center">unsorted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left"><code>MAKE-HEAP</code></td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">constant</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>INSERT</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">constant</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>MINIMUM</code></td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">linear</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>EXTRACT-MIN</code></td>
+<td style="text-align: center">constant</td>
+<td style="text-align: center">linear</td>
+</tr>
+<tr>
+<td style="text-align: left"><code>UNION</code></td>
+<td style="text-align: center">linear</td>
+<td style="text-align: center">linear*</td>
+</tr>
+</tbody>
+</table>
+
+<p>As I noted, <code>UNION</code> can be made constant if we keep track of the last element
+of the list.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdarg.h&gt;</span>
+
+<span style="color:#777">/////////////////////////////////////////////////////////////////////////////</span>
+<span style="color:#777">// List operations</span>
+<span style="color:#777">/////////////////////////////////////////////////////////////////////////////</span>
+
+<span style="color:#080;font-weight:bold">struct</span> list_t {
+    <span style="color:#0a8;font-weight:bold">int</span> key;
+    <span style="color:#080;font-weight:bold">struct</span> list_t *next;
+};
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> list_t list_t;
+
+list_t *insert_sorted(list_t *list, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    list_t *new = malloc(<span style="color:#080;font-weight:bold">sizeof</span>(list_t));
+    new-&gt;key = key;
+
+    <span style="color:#080;font-weight:bold">if</span> (!list || key &lt; list-&gt;key) {
+        new-&gt;next = list;
+        <span style="color:#080;font-weight:bold">return</span> new;
+    }
+
+    list_t *l = list;
+    <span style="color:#080;font-weight:bold">while</span> (l-&gt;next &amp;&amp; l-&gt;next-&gt;key &lt; key) {
+        l = l-&gt;next;
+    }
+
+    new-&gt;next = l-&gt;next;
+    l-&gt;next = new;
+
+    <span style="color:#080;font-weight:bold">return</span> list;
+}
+
+list_t *delete_key(list_t *list, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    list_t *match;
+    <span style="color:#080;font-weight:bold">while</span> (list &amp;&amp; list-&gt;key == key) {
+        match = list;
+        list = list-&gt;next;
+        free(match);
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (!list) {
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">NULL</span>;
+    }
+
+    list_t *node = list;
+    <span style="color:#080;font-weight:bold">while</span> (node-&gt;next) {
+        <span style="color:#080;font-weight:bold">if</span> (node-&gt;next-&gt;key == key) {
+            match = node-&gt;next;
+            node-&gt;next = match-&gt;next;
+            free(match);
+        } <span style="color:#080;font-weight:bold">else</span> {
+            node = node-&gt;next;
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> list;
+}
+
+list_t *prepend(list_t *list, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    list_t *new = malloc(<span style="color:#080;font-weight:bold">sizeof</span>(list_t));
+
+    new-&gt;key = key;
+    new-&gt;next = list;
+
+    <span style="color:#080;font-weight:bold">return</span> new;
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> find_min(list_t *list) {
+    <span style="color:#0a8;font-weight:bold">int</span> min = list-&gt;key;
+    list = list-&gt;next;
+
+    <span style="color:#080;font-weight:bold">while</span> (list) {
+        <span style="color:#080;font-weight:bold">if</span> (list-&gt;key &lt; min) {
+            min = list-&gt;key;
+        }
+        list = list-&gt;next;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> min;
+}
+
+list_t *link_together(list_t *a, list_t *b) {
+    list_t *result;
+
+    <span style="color:#080;font-weight:bold">if</span> (!a) {
+        result = b;
+    } <span style="color:#080;font-weight:bold">else</span> {
+        result = a;
+        <span style="color:#080;font-weight:bold">while</span> (a-&gt;next) {
+            a = a-&gt;next;
+        }
+        a-&gt;next = b;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+list_t *merge_sorted(list_t *a, list_t *b) {
+    list_t dummy;
+    list_t *new = &amp;dummy;
+
+    <span style="color:#080;font-weight:bold">while</span> (a &amp;&amp; b) {
+        <span style="color:#080;font-weight:bold">if</span> (a-&gt;key &lt; b-&gt;key) {
+            new-&gt;next = a;
+            a = a-&gt;next;
+            new = new-&gt;next;
+        } <span style="color:#080;font-weight:bold">else</span> {
+            new-&gt;next = b;
+            b = b-&gt;next;
+            new = new-&gt;next;
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (a) {
+        new-&gt;next = a;
+    } <span style="color:#080;font-weight:bold">else</span> {
+        new-&gt;next = b;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> dummy.next;
+}
+
+<span style="color:#777">/////////////////////////////////////////////////////////////////////////////</span>
+<span style="color:#777">// 1. Mergreable heaps with sorted list</span>
+<span style="color:#777">/////////////////////////////////////////////////////////////////////////////</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    list_t *head;
+} heap1;
+
+heap1 *make_heap1() {
+    heap1 *result = malloc(<span style="color:#080;font-weight:bold">sizeof</span>(heap1));
+    result-&gt;head = <span style="color:#069">NULL</span>;
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+<span style="color:#088;font-weight:bold">void</span> insert1(heap1 *heap, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    heap-&gt;head = insert_sorted(heap-&gt;head, key);
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> minimum1(heap1 *heap) {
+    <span style="color:#080;font-weight:bold">return</span> heap-&gt;head-&gt;key;
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> extract_min1(heap1 *heap) {
+    list_t *head = heap-&gt;head;
+    <span style="color:#0a8;font-weight:bold">int</span> result = head-&gt;key;
+    heap-&gt;head = head-&gt;next;
+    free(head);
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+heap1 *union1(heap1 *ha, heap1 *hb) {
+    heap1 *result = malloc(<span style="color:#080;font-weight:bold">sizeof</span>(heap1));
+    result-&gt;head = merge_sorted(ha-&gt;head, hb-&gt;head);
+
+    free(ha);
+    free(hb);
+
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+<span style="color:#777">/////////////////////////////////////////////////////////////////////////////</span>
+<span style="color:#777">// 2. Mergreable heaps with unsorted lists</span>
+<span style="color:#777">/////////////////////////////////////////////////////////////////////////////</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    list_t *head;
+} heap2;
+
+heap2 *make_heap2() {
+    heap2 *result = malloc(<span style="color:#080;font-weight:bold">sizeof</span>(heap2));
+    result-&gt;head = <span style="color:#069">NULL</span>;
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+
+<span style="color:#088;font-weight:bold">void</span> insert2(heap2 *heap, <span style="color:#0a8;font-weight:bold">int</span> key) {
+    heap-&gt;head = prepend(heap-&gt;head, key);
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> minimum2(heap2 *heap) {
+    <span style="color:#080;font-weight:bold">return</span> find_min(heap-&gt;head);
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> extract_min2(heap2 *heap) {
+    <span style="color:#0a8;font-weight:bold">int</span> min = minimum2(heap);
+    heap-&gt;head = delete_key(heap-&gt;head, min);
+    <span style="color:#080;font-weight:bold">return</span> min;
+}
+
+heap2 *union2(heap2 *ha, heap2 *hb) {
+    heap2 *result = make_heap2();
+    result-&gt;head = link_together(ha-&gt;head, hb-&gt;head);
+
+    free(ha);
+    free(hb);
+
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

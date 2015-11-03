@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.4.6 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.4.6</h1>
+<blockquote>
+<p>$\star$ Professor Rosencrantz flips a fair coin $n$ times, and so does
+Professor Guildenstern. Show that the probability that they get the same
+number of heads is $\binom{2n}{n}/4^n$. (Hint: For Professor Rosencrantz,
+call a head a success; for Professor Guildenstern, call a tail a success.)
+Use your argument to verify the identity</p>
+
+<p>$$ \sum_{k=0}^n\binom{n}{k}^2 = \binom{2n}{n} $$</p>
+</blockquote>
+
+<p>Let's do what the hint says: call tails for Professor Guildenstern a success
+and heads - failure. They have the same numbers of heads when they have
+$k + (n - k) = n$ successes out of $2n$ trials.</p>
+
+<p>$$ \Pr\{R=G\} = b(n;2n;1/2)
+                = \binom{2n}{n} \frac{1}{2^n} \frac{1}{2^n}
+                = \binom{2}{n}/4^n $$</p>
+
+<p>Alternatively, we can just calculate the probability and see what happens:</p>
+
+<p>$$ \begin{align}
+   \Pr\{R=G\} &amp;= \sum_{k=0}^n \Pr\{R=k\}\Pr\{G=n-k\} \\
+                &amp;= \sum_{k=0}^n \binom{n}{k} \cdot \frac{1}{2^n} \cdot
+                               \binom{n}{n-k} \cdot \frac{1}{2^n} \\
+                &amp;= \frac{1}{4^n} \sum_{k=0}^n \binom{n}{k} \binom{n}{n-k} \\
+                &amp;= \frac{1}{4^n} \sum_{k=0}^n \binom{n}{k}^2
+  \end{align} $$</p>
+
+<p>Those are two ways we can express the same value. This let's us verify the
+identity.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

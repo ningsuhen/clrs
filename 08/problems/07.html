@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 8.7 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 8.7</h1>
+<h2>The 0-1 sorting lemma and columnsort</h2>
+
+<blockquote>
+<p>A <strong>compare-exchange</strong> operation on two array elements $A[i]$ and $A[j]$,
+where $i &lt; j$ has the form:</p>
+
+<pre><code>COMPARE-EXCHANGE(A, i, j)
+  if A[i] &gt; A[j]
+      exchange A[i] with A[j]
+</code></pre>
+
+<p>After the compare-exchange operation, we know that $A[i] \le A[j]$.</p>
+
+<p>An <strong>oblivious compare-exchange algorithm</strong> operates solely by a sequence
+of prespecified compare-exchange operations. The indices of the positions
+compared in the sequence must be determined in advance, and although they
+can depend on the number of elements being sorted, they cannot depend on the
+values being sorted, nor can they depend on the result of any prior
+compare-exchange operation. For example, here is insertion sort expressed as
+an oblivious compare-exchange algorithm:</p>
+
+<pre><code>INSERTION-SORT(A)
+  for j = 2 to A.length
+      for i = j - 1 downto 1
+          COMPARE-EXCHANGE(A, i, i + 1)
+</code></pre>
+
+<p>The <strong>0-1 sorting lemma</strong> provides a powerful way to prove that an oblivious
+compare-exchange algorithm produces a sorted result. It states that if an
+oblivious compare-exchange algorithm correctly sorts all input sequences
+consisting of only 0s and 1s, then it correctly sorts all inputs containing
+arbitrary values.</p>
+
+<p>You will prove the 0-1 sorting lemma by proving its contrapositive: if an
+oblivious compare-exchange algorithm fails to sort an input containing
+arbitrary values, then it fails to sort some 0-1 input. Assume that an
+oblivious compare-exchange algorithm X fails to correctly sort the array
+$A[1..n]$. Let $A[p]$ be the smallest value in $A$ that algorithm X puts
+into the wrong location, and let $A[q]$ be the value that algorithm X moves
+to the location into which $A[p]$ should have gone. Define an array
+$B[1..n]$ of 0s and 1s as follows:</p>
+
+<p>$$ B[i] = \begin{cases}
+            0 &amp; \text{ if } A[i] \le A[p] \\
+            1 &amp; \text{ if } A[i] &gt; A[p]
+          \end{cases} $$</p>
+
+<ol type="a">
+  <li>Argue that $A[q] &gt; A[p]$, so that $B[p] = 0$ and $B[q] = 1$.
+  </li>
+<li>To complete the proof 0-1 sorting lemma, provide that algorithm X
+  fails to sort array $B$ correctly.
+</li>
+</ol>
+
+<p>Now you will use the 0-1 sorting lemma to prove that a particular sorting
+algorithm works correctly. The algorithm, <strong>columnsort</strong>, works on a
+rectangular array of $n$ elements. The array has $r$ rows and $s$ columns
+(so that $n = rs$), subject to three restrictions:</p>
+
+<ul>
+<li>$r$ must be even,</li>
+<li>$s$ must be a divisor of r, and</li>
+<li>$r \ge 2s^2$.</li>
+</ul>
+
+<p>When columnsort completes, the array is sorted in <strong>column-major order</strong>:
+reading down the columns, from left to right, the elements monotonically
+increase.</p>
+
+<p>Columnsort operates in eight steps, regardless of the value of $n$. The odd
+steps are all the same: sort each column individually. Each even step is a
+fixed permutation. Here are the steps:</p>
+
+<ol>
+<li>Sort each column.</li>
+<li>Transpose the array, but reshape it back to $r$ rows and $s$ columns. In
+other words, turn the leftmost column into the top $r/s$ rows, in order;
+turn the next column into the next $r/s$ rows, in order; and so on.</li>
+<li>Sort each column.</li>
+<li>Perform the inverse of the permutation performed in step 2.</li>
+<li>Sort each column.</li>
+<li>Shift the top half of each column into the bottom half of the same
+column, and shift the bottom half of each column into the top half of the
+next column to the right. Leave the top half of the leftmost column
+empty. Shift the bottom half of the last column into the top last column
+into the top half of a new rightmost column, and leave the bottom half of
+this new column empty.</li>
+<li>Sort each column</li>
+<li>Perform the inverse of the permutation performed in step 6.</li>
+</ol>
+
+<p>Figure 8.5 shows an example of the steps of columnsort with $r = 6$ and $s =
+3$. (Even though this example violated the requirement that $r \ge 2s^2$, it
+happens to work.)</p>
+
+<ol type="a" start="3">
+  <li>Argue that we can treat columnsort as an oblivious compare-exchange
+  algorithm, even if we do not know what sorting method the odd steps are.
+</li>
+</ol>
+
+<p>Although it might seem hard to believe that columnsort actually sorts, you
+will use the 0-1 sorting lemma to prove that it does. The 0-1 dorting lemma
+applies because we can treat columnsort as an oblivious compare-exchange
+algorithm. A couple of definitions will help you apply the 0-1 sorting
+lemma. We say that an area of an array is <strong>clean</strong> if we know that it
+contains either all 0s or all 1s. Otherwise, the area might contain mixed 0s
+and 1s, and it is dirty. From here on, assume that the input array contains
+only 0s and 1s, and that we can treat it as an array with $r$ rows and $s$
+columns.</p>
+
+<ol type="a" start="4">
+  <li>Prove that after steps 1-3, the array consists of some clean rows of
+  0s at the top, some clean rows of 1s at the bottom, and at most $s$ dirty
+  rows between them
+  </li>
+<li>Prove that after step 4, the array, read in column-major order, starts
+  with a clean area of 0s, ends with a clean area of 1s, and has a dirty
+  area of at most $s^2$ elements in the middle.
+  </li>
+<li>Prove that steps 5-8 produce a fully sorted 0-1 output. Conclude that
+  columnsort correctly sorts all inputs containing arbitrary values.
+  </li>
+<li>Now suppose that $s$ does not divide $r$. Prove that after steps 1-3,
+  the array consists of some clean rows of 0s at the top, some clean rows of
+  1s at the bottom, and at most $2s - 1$ dirty rows between them. How large
+  must $r$ be, compared with $s$, for columnsort to correctly sort when $s$
+  does not divide $r$?
+  </li>
+<li>Suggest a simple change to step 1 that allow us to maintain the
+  requirement that $r \ge 2s^2$ when $s$ does not divide $r$, and prove that
+  with your change, columnsort correctly sorts.
+</li>
+</ol>
+</blockquote>
+
+<p>This one is tricky. I would not have been able to solve it by myself. I had
+help from those two:</p>
+
+<ul>
+<li><a href="http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/networks/nulleinsen.htm">The 0-1 sorting principle</a></li>
+<li><a href="http://www.cs.dartmouth.edu/reports/TR2003-444.pdf">Stupid Column Sort Tricks</a></li>
+</ul>
+
+<h3>Proof of the 0-1 sorting lemma</h3>
+
+<p>We know that $A[q] &gt; A[p]$ by definition ($A[q]$ is misplaced, but it cannot
+be smaller than $A[p]$, since $A[p]$ is the smallest misplaced element). From
+this it follows that $B[p] = 0$ and $B[q] = 1$.</p>
+
+<p>To prove the rest, we need to establish that a monotonous mapping and a
+compare-exchange operation commutate, that is, they can be applied in any
+order. This makes sense, since if the mapping is applied first, the order of
+the elements would not change (because the mapping is monotonic) and the
+compare-exchange would have the same result.</p>
+
+<p>An oblivious compare-exchange algorithm can be regarded as a sequence of
+compare-exchange operations. Thus, it doesn't matter if the monotonous mapping
+is applied before the fist or after the last compare-exchange operation.</p>
+
+<p>Applying that to $A$ and $B$, we conclude that $B[q] = 1$ and $B[p] = 0$. We
+know that $q &lt; p$, otherwise $A[q]$ there would have been a smaller misplaced
+element. From this we gather that $B[q] &gt; B[p]$ and $q &lt; p$, which means that
+the array is unsorted.</p>
+
+<p>There is a more formal proof in <a href="http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/networks/nulleinsen.htm">the first link</a>.</p>
+
+<h3>Applicability</h3>
+
+<p>Since the even-numbered steps perform things <em>blindly</em>, we can suspect that
+the algorithm has some elements of obliviousness in it.</p>
+
+<p>If we perform the odd numbered steps with an oblivious compare-exchange
+algorithm, then columnsort is obviously oblivious and we can apply the 0-1
+sorting lemma. Since we can treat those steps as "black boxes", we can replace
+the sorting algorithm with any other algorithm that produces the same result
+(that is, any sorting algorithm) and the resulting columnsort would still
+sort.</p>
+
+<h3>Correctness</h3>
+
+<p>After the first step, each column becomes a sequences of 0s followed by a
+sequence of 1s. In this sense, there is only one <code>0 → 1</code> transition in each
+column. Since $s$ divides $r$, each column will map to $r/s$ rows. One of
+those rows will contain the <code>0 → 1</code> transition. The others will contain only
+0s or 1s. That is, each column will map to at most one dirty row and the rest
+will be clean.</p>
+
+<p>After the transposition, and second sorting, the clean rows of 0s will move to
+the top and the clean rows of 1s will move to the bottom. We're left with at
+most $s$ dirty rows in the middle.</p>
+
+<p>After the reversal of the permutation, the $s$ dirty rows will map to a
+sequence of $s^2$. All the other elements are clean.</p>
+
+<p>The dirty sequence is at least half a column long now. It either fits in one
+column or crosses over in the next one. All columns left of it contain only 0s
+and all columns right of it contain only 1s.</p>
+
+<p>If the result is contained in a single column, step 5 will result in a sorting
+in column major mode and the subsequent steps will not interfere with it.</p>
+
+<p>If not, step 6 arranges the columns in a way that the dirty subsequence will
+fill a single column. Sorting all column cleans it and we have a sorted array.</p>
+
+<p>Note that sorting the half-columns is unnecessary - step 5 already sorted
+them.</p>
+
+<h3>When s does not divide r</h3>
+
+<p>If $s$ does not divide $r$, a row can contain not only a <code>0 → 1</code> transition,
+but also a <code>1 → 0</code> transitions. There would be at most $s - 1$ of those,
+resulting to a dirty region of $2s - 1$.</p>
+
+<p>We can make $r$ to be at least $2(2s - 1)^2$. As for the change to step one,
+we can either pad the array with $+ \infty$ until $s$ divides $r$, or we can
+chop off a small part of the array and sort it separately. The latter will be
+more efficient, since it does not require moving the array.</p>
+
+<p>Finally, all of that turns to be unnecessary - columnsort works without the
+divisibility restriction. Details can be found in <a href="http://www.cs.dartmouth.edu/reports/TR2003-444.pdf">the paper</a>.</p>
+
+<h3>Implementation</h3>
+
+<p>Surprising as it is, columnsort smokes the stdlib implementation of quicksort.
+I thought the overhead was to much, but it appears that it is not. Of course,
+the crossover point will vary.</p>
+  <hr />
+  <h3>C runner output</h3>
+  <pre>stdlib sort = 3.449338
+columnsort  = 1.801681
+</pre>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;pthread.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;math.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+
+<span style="color:#579">#define</span> STDLIB_SORT qsort
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">unsigned</span> <span style="color:#0a8;font-weight:bold">int</span> number;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    size_t start;
+    size_t size;
+} column_t;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#088;font-weight:bold">void</span> column_sorter(number *, column_t *, <span style="color:#0a8;font-weight:bold">int</span>);
+
+<span style="color:#088;font-weight:bold">void</span> check_dimensions(size_t r, size_t s);
+
+<span style="color:#777">/**
+ * The basic column sort implementation. It does a copy of the array for steps
+ * 3 and 5. It also does not sort the half-columns in the beginning and the
+ * end, since that is not necessary for the correctness of the algorithm.
+ */</span>
+
+<span style="color:#088;font-weight:bold">void</span> columnsort(number *A, size_t r, size_t s, column_sorter sort_columns) {
+    size_t size = r * s;
+    number *copy;
+    column_t columns[s];
+
+    check_dimensions(r, s);
+
+    copy = calloc(size, <span style="color:#080;font-weight:bold">sizeof</span>(number));
+
+    <span style="color:#080;font-weight:bold">for</span> (size_t i = <span style="color:#00D">0</span>; i &lt; s; i++) {
+        columns[i] = (column_t) {i * r, r};
+    }
+
+    sort_columns(A, columns, s);
+
+    <span style="color:#080;font-weight:bold">for</span> (size_t i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        copy[(i % s) * r + i / s] = A[i];
+    }
+
+    sort_columns(copy, columns, s);
+
+    <span style="color:#080;font-weight:bold">for</span> (size_t i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        A[i] = copy[(i % s) * r + i / s];
+    }
+
+    sort_columns(A, columns, s);
+
+    <span style="color:#080;font-weight:bold">for</span> (size_t i = <span style="color:#00D">0</span>; i &lt; s - <span style="color:#00D">1</span>; i++) {
+        columns[i] = (column_t) {i * r + r / <span style="color:#00D">2</span>, r};
+    }
+
+    sort_columns(A, columns, s - <span style="color:#00D">1</span>);
+
+    free(copy);
+}
+
+<span style="color:#777">/*
+ * A function that compares numbers, to be passed to the stdlib sort.
+ */</span>
+
+<span style="color:#0a8;font-weight:bold">int</span> compare(<span style="color:#088;font-weight:bold">const</span> <span style="color:#088;font-weight:bold">void</span> *a, <span style="color:#088;font-weight:bold">const</span> <span style="color:#088;font-weight:bold">void</span> *b) {
+    number *first  = (number *) a;
+    number *second = (number *) b;
+
+    <span style="color:#080;font-weight:bold">if</span> (*first == *second) {
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#00D">0</span>;
+    } <span style="color:#080;font-weight:bold">else</span> <span style="color:#080;font-weight:bold">if</span> (*first &gt; *second) {
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#00D">1</span>;
+    } <span style="color:#080;font-weight:bold">else</span> {
+        <span style="color:#080;font-weight:bold">return</span> -<span style="color:#00D">1</span>;
+    }
+}
+
+<span style="color:#777">/*
+ * Verified the dimensions of the passed array.
+ */</span>
+
+<span style="color:#088;font-weight:bold">void</span> check_dimensions(size_t r, size_t s) {
+    <span style="color:#080;font-weight:bold">if</span> (r % <span style="color:#00D">2</span>) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">r must be even</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (r % s) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">s must divide r</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (r &lt; <span style="color:#00D">2</span> * s * s) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">r must be grater than 2s²</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+}
+
+<span style="color:#777">/*
+ * A utility function to call with the array and a column.
+ */</span>
+
+<span style="color:#088;font-weight:bold">void</span> sort(number *A, column_t column) {
+    STDLIB_SORT(A + column.start, column.size, <span style="color:#080;font-weight:bold">sizeof</span>(number), compare);
+}
+
+<span style="color:#777">/*
+ * Sequential sorting of columns
+ */</span>
+
+<span style="color:#088;font-weight:bold">void</span> sequential_sort_columns(number *numbers, column_t *columns, <span style="color:#0a8;font-weight:bold">int</span> size) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        sort(numbers, columns[i]);
+    }
+}
+
+<span style="color:#777">/*
+ * Parallel sorting of columns. This implementation is a bit naïve - it can
+ * reuse existing threads instead of spawning new ones every time. Furthermore,
+ * I never explored using locking mechanisms instead of joining the threads.
+ */</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    number *numbers;
+    column_t column;
+} job_t;
+
+<span style="color:#088;font-weight:bold">void</span> *sort_job(<span style="color:#088;font-weight:bold">void</span> *pjob) {
+    job_t *job = (job_t *) pjob;
+    sort(job-&gt;numbers, job-&gt;column);
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">NULL</span>;
+}
+
+<span style="color:#088;font-weight:bold">void</span> threaded_sort_columns(number *numbers, column_t *columns, <span style="color:#0a8;font-weight:bold">int</span> size) {
+    <span style="color:#088;font-weight:bold">void</span> *status;
+    pthread_t threads[size];
+    job_t jobs[size];
+    pthread_attr_t attr;
+
+    pthread_attr_init(&amp;attr);
+    pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        jobs[i] = (job_t) {numbers, columns[i]};
+        pthread_create(&amp;threads[i], &amp;attr, sort_job, &amp;jobs[i]);
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        pthread_join(threads[i], &amp;status);
+    }
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

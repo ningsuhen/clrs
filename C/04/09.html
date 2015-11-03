@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.4.9 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.4.9</h1>
+<blockquote>
+<p>$\star$ Let $X$ be the random variable for the total number of successes, in
+a set $A$ of $n$ Bernoulli trials, where the $i$th trial has a probability
+$p_i$ of success, and let $X'$ be the random variable for the total number of
+successes in a second set $A'$ of $n$ Bernoulli trials, where the $i$th trial
+has a probability $p_i' \ge p_i$ of success. Prove that $o \le k \le n$,</p>
+
+<p>$$ \Pr\{X' \ge k\} \ge \Pr\{X \ge k\} $$</p>
+
+<p>(Hint: Show how to obtain the Bernoulli trials in $A'$ by an experiment
+involving the trials of $A$, and use the result of <a href="../03/07.html">exercise C.3-7</a>)</p>
+</blockquote>
+
+<p>Let $Y_1, Y_2, \ldots Y_n$ be indicator random variables for the events in $A$.</p>
+
+<p>Let $Z_1, Z_2, \ldots Z_n$ be new random variables, such that:</p>
+
+<ul>
+<li>If $Y_i = 1$ then $Z_i = 1$</li>
+<li>If $Y_i = 0$ then $Z_i = 1$ with probability $\frac{p_i' - p_i}{1-p_i}$</li>
+</ul>
+
+<p>Let's calculate $\Pr\{Z_i\}$:</p>
+
+<p>$$ \Pr\{Z_i\} = p_i \Pr\{Y_i = 1\} + (1 - p_i) \cdot \frac{p_i' - p_i}{1-p_i}
+                = p_i + p_i' - p_i
+                = p_i' $$</p>
+
+<p>Since we know that $p_i' \ge p_i$, we can do the following:</p>
+
+<p>$$ \Pr\{X' \ge k\} = \Pr\{Z_1 + Z_2 + \ldots + Z_n\}
+                   \ge \Pr\{Y_1 + Y_2 + \ldots + Y_n\}
+                     = \Pr\{X \ge k\} $$</p>
+
+<p>The last part can also be proven by <a href="../03/07.html">exercise C.3-7</a>.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

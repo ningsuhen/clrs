@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 5.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 5.2</h1>
+<h2>Searching an unsorted array</h2>
+
+<blockquote>
+<p>The problem examines three algorithms for searching for a value $x$ in an
+unsorted array $A$ consisting for $n$ elements.</p>
+
+<p>Consider the following randomized strategy: pick a random index $i$ into $A$.
+If $A[i] = x$, then we terminate; otherwise, we continue the search by
+picking a new random index into $A$. We continue picking random indices into
+$A$ until we find an index $j$ such that $A[j] = x$ or until we have checked
+every element of $A$. Note that we pick from the whole set of indices each
+time, so that we may examine a given element more than once.</p>
+
+<ol>
+<li>Write pseudocode for a procedure <code>RANDOM-SEARCH</code> to implement the strategy
+above. Be sure that your algorithm terminates when all indices into $A$
+have been picked.</li>
+<li>Suppose that there is exactly one index $i$ such that $A[i] = x$. What is
+the expected number of indices into $A$ that we must pick before we find
+$x$ and <code>RANDOM-SEARCH</code> terminates?</li>
+<li>Generalizing your solution to part (b), suppose that there are $k \ge 1$
+indices $i$ such that $A[i] = x$. What is the expected number of indices
+into $A$ that we must pick before we find $x$ and <code>RANDOM-SEARCH</code>
+terminates? Your answer should be a function of $n$ and $k$.</li>
+<li>Suppose that there are no indices $i$ such that $A[i] = x$. What is the
+expected number of indices into $A$ that we must pick before we have
+checked all elements of $A$ and <code>RANDOM-SEARCH</code> terminates?</li>
+</ol>
+
+<p>Now consider a deterministic linear search algorithm, which we refer to as
+<code>DETERMINISTIC-SEARCH</code>. Specifically, the algorithm searches $A$ for $x$ in
+order, considering $A[1], A[2], A[3], \ldots, A[n]$ until either it finds
+$A[i] = x$ or it reaches the end of the array. Assume that possible
+permutations of the input array are equally likely.</p>
+
+<ol>
+<li>Suppose that there is exactly one index $i$ such that $A[i] = x$. What is
+the average-case running time of <code>DETERMINISTIC-SEARCH</code>? What is the
+worst-case running time of <code>DETERMINISTIC-SEARCH</code>?</li>
+<li>Generalizing your solution to part (e), suppose that there are $k \ge 1$
+indices $i$ such that $A[i] = x$. What is the average-case running time of
+<code>DETERMINISTIC-SEARCH</code>? What is the worst-case running time of
+<code>DETERMINISTIC-SEARCH</code>? Your answer should be a function of $n$ and $k$.</li>
+<li>Suppose that there are no indices $i$ such that $A[i] = x$. What is the
+average-case running time of <code>DETERMINISTIC-SEARCH</code>? What is the
+worst-case running time of <code>DETERMINISTIC-SEARCH</code>?</li>
+</ol>
+
+<p>Finally, consider a randomized algorithm <code>SCRAMBLE-SEARCH</code> that works by
+first randomly permuting the input array and then running the deterministic
+linear search given above on the resulting permuting array.</p>
+
+<ol>
+<li>Letting $k$ be the number of indices $i$ such that $A[i] = x$, give the
+worst-case and expected running time of <code>SCRAMBLE-SEARCH</code> for the cases in
+which $k = 0$ and $k = 1$. Generalizing your solution to handle the case
+in which $k \ge 1$.</li>
+<li>Which of the three searching algorithms would you use? Explain your
+answer.</li>
+</ol>
+</blockquote>
+
+<h3>RANDOM-SEARCH pseudocode</h3>
+
+<pre><code>RANDOM-SEARCH(x, A, n):
+  v = ∅
+  while |∅| ≠ n
+      i = RANDOM(1, n)
+      if A[i] = x
+          return i
+      else:
+          v = v ∩ i
+  return ␀
+</code></pre>
+
+<p><code>v</code> can be implemented in multiple ways - a hash table, a tree or a bitmap. The
+last one would probabily perform best and consume the least space.</p>
+
+<h3>RANDOM-SEARCH with one match</h3>
+
+<p><code>RANDOM-SEARCH</code> is well-modelled by Bernoulli trials. The expected number of
+picks is $n$.</p>
+
+<h3>RANDOM-SEARCH with multiple matches</h3>
+
+<p>In similar fashion, the expected number of picks is $n/k$.</p>
+
+<h3>RANDOM-SEARCH with no matches</h3>
+
+<p>This is modelled by the balls and bins problem, explored in section 5.4.2. The
+answer is $n(\ln{n} + \O(1))$.</p>
+
+<h3>DETERMINISTIC-SEARCH with one match</h3>
+
+<p>The worst-case running time is $n$. The average-case is $(n+1)/2$ (obviously).</p>
+
+<h3>DETERMINISTIC-SEARCH with multiple matches</h3>
+
+<p>The worst-case running time is $n-k+1$. The average-case running time is
+$(n+1)/(k+1)$. Let $X_i$ be an indicator random variable that the $i$th element
+is a match. $\Pr\{X_i\} = 1/(k+1)$. Let $Y$ be an indicator random variable
+that we have found a match after the first $n-k+1$ elements ($\Pr\{Y\} = 1$).
+Thus:</p>
+
+<p>$$ \E[X] = \E[X_1 + X_2 + \ldots + X_{n-k} + Y]
+         = 1 + \sum_{i=1}^{n-k}\E[X_i]
+         = 1 + \frac{n-k}{k+1}
+         = \frac{n+1}{k+1} $$</p>
+
+<h3>DETERMINISTIC-SEARCH with no matches</h3>
+
+<p>Both the worst-case and average case is $n$.</p>
+
+<h3>SCRAMBLE-SEARCH matches</h3>
+
+<p>It's the same as <code>DETERMINISTIC-SEARCH</code>, only we replace "average-case" with "expected".</p>
+
+<h3>Best algorithm</h3>
+
+<p>Definitelly <code>DETERMINISTIC-SEARCH</code>. <code>SCRAMBLE-SEARCH</code> gives better expected
+results, but for the cost of randomly permuting the array, which is a linear
+operation. In the same time we could have scanned the full array and reported a
+result.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

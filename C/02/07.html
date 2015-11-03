@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.2.7 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.2.7</h1>
+<blockquote>
+<p>$\star$ Show how to construct a set of $n$ events that are pairwise
+independent but such that no subset of $k &gt; 2$ of them is mutually
+independent.</p>
+</blockquote>
+
+<p>Get a dice with $n^2$ sides (you can actually construct one of those). Assign
+the numbers $1 \ldots n$ to $n$ colors, non of which is black. Use each color
+to paint $n-1$ sides, paint one side striped with all colors, and paint the
+rest black. Here's a table:</p>
+
+<table class="table table-bordered table-striped table-compact">
+<thead>
+<tr>
+<th style="text-align: center"></th>
+<th style="text-align: center">1</th>
+<th style="text-align: center">2</th>
+<th style="text-align: center">3</th>
+<th style="text-align: center">...</th>
+<th style="text-align: center">n</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center"><strong>1</strong></td>
+<td style="text-align: center">1</td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">n</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>2</strong></td>
+<td style="text-align: center">1</td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">n</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>3</strong></td>
+<td style="text-align: center">1</td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">n</td>
+</tr>
+<tr>
+<td style="text-align: center">...</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">n</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>n-1</strong></td>
+<td style="text-align: center">1</td>
+<td style="text-align: center">2</td>
+<td style="text-align: center">3</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">n</td>
+</tr>
+<tr>
+<td style="text-align: center"><strong>n</strong></td>
+<td style="text-align: center">all</td>
+<td style="text-align: center">-</td>
+<td style="text-align: center">-</td>
+<td style="text-align: center">...</td>
+<td style="text-align: center">-</td>
+</tr>
+</tbody>
+</table>
+
+<p>Counting the side painted with all colors, there are $(n-1 + 1)/n^2 = 1/n$ ways
+to get each color. For any two colors, there are $1/n^2$ ways, which satisfies
+the equation for independence. However, for $k$ colors, the chances are too
+$1/n^2$, where they should be $1/n^k$ if that event was independent.</p>
+
+<p>Thus, each pair is independent, but each subset with three or more elements is
+not.</p>
+
+<p>I'm actually quite proud of this solution.</p>
+
+<p>There is an <a href="http://www.pme-math.org/journal/issues/PMEJ.Vol.9.No.9.pdf">interesting article</a>
+in the Pi Mu Epsilon Journal, vol 9, 1993</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

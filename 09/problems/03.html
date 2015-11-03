@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 9.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 9.3</h1>
+<h2>Small order statistics</h2>
+
+<blockquote>
+<p>We showed that the worst-case number $T(n)$ of comparisons used by <code>SELECT</code>
+to select the $i$th order statistic from $n$ numbers satisfies $T(n) =
+\Theta(n)$, but the constant hidden by the $\Theta$-notation is rather
+large. When $i$ is small relative to $n$, we can implement a different
+procedure that uses <code>SELECT</code> as a subroutine but makes fewer comparisons in
+the worst case.</p>
+
+<p></p>
+<ol type="a">
+  <li>Describe an algorithm that uses $U_i(n)$ comparisons to find the $i$th
+  smallest of $n$ elements, where
+  $$ U_i(n) = \begin{cases}
+                T(n) &amp; \text{if } i \ge n/2 \\
+                \lfloor n/2 \rfloor + U_i(\lceil n/2 \rceil) + T(2i) &amp; \text{otherwise}
+              \end{cases} $$
+  (<i>Hint:</i> Begin with $\lfloor n/2 \rfloor$ disjoint pairwise
+  comparisons, and recurse on the set containing the smaller element from
+  each pair.)
+  </li>
+<li>Show that, if $i &lt; n/2$, then $U_i(n) = n + \O(T(2i)\lg(n/i))$.
+  </li>
+<li>Show that, if $i$ is a constant less than $n/2$, then $U_i(n) = n +
+  \O(\lg{n})$.
+  </li>
+<li>Show that, if $i = n/k$ for $k \ge 2$, then $U_i(n) = n +
+  \O(T(2n/k)\lg{k})$.
+
+</li>
+</ol>
+</blockquote>
+
+<h3>The algorithm</h3>
+
+<p>This is a modified version of <code>SELECT</code>. Not only it finds the $i$th order
+statistic, but it also partitions the array, thus finding the $i-1$ smaller
+elements.</p>
+
+<ol>
+<li>If $i \ge n/2$, we just use <code>SELECT</code>
+</li>
+<li>Otherwise, split the array in pairs and compare each pair.</li>
+<li>We take the smaller elements of each pair, but keep track of the other one.</li>
+<li>We recursively find the first $i$ elements among the smaller elements</li>
+<li>The $i$th order statistic is among the pairs containing the smaller
+elements we found in the previous step. We call <code>SELECT</code> on those $2i$
+elements. That's the final answer.</li>
+</ol>
+
+<p>Just picking the smaller element of each pair is not enough. For example, if
+we're looking for the 2nd order statistic and our pairs are <code>1, 2</code>, <code>3, 4</code>,
+<code>5, 6</code>, <code>7, 8</code>, <code>9, 10</code>, the answer is in the larger part of the first pair.
+That's why we need to keep track and later perform <code>SELECT</code> on $2i$ elements.</p>
+
+<p>Steps 1-4 can be implemented in place by modifying the algorithm to put the
+larger elements of the pairs on the inactive side of the pivot and modifying
+<code>PARTITION</code> to swap the elements on the inactive side every time it swaps
+elements on the active side. More details can be found in the Instructor's
+Manual.</p>
+
+<h3>The math</h3>
+
+<p>We can prove (b) by induction. This is the step:</p>
+
+<p>$$ \begin{align}
+   U_i(n) &amp;= \lfloor n/2 \rfloor + U_i(\lceil n/2 \rceil) + T(2i) \\
+          &amp;= \lfloor n/2 \rfloor + \lceil n/2 \rceil +
+             \O(T(2i)\lg(\lfloor n/2 \rfloor / i)) + T(2i) \\
+          &amp;= n + \O(T(2i)\lg(n/i)) + T(2i) \\
+          &amp;= n + \O(T(2i)\lg(n/i))
+   \end{align} $$</p>
+
+<p>This is a bit more sloppy that doing it with the substitution method, but that
+feels like grunt work to me at this point.</p>
+
+<p>The other two are obvious:</p>
+
+<p>$$ \begin{align}
+   U_i(n) &amp;= n + \O(T(2i)\lg(n/i)) \\
+          &amp;= n + \O(\O(1)\lg(n/i)) \\
+          &amp;= n + \O(\lg{n} - \lg{i}) \\
+          &amp;= n + \O(\lg{n} - \O(1)) \\
+          &amp;= n + \O(\lg{n})
+   \end{align} $$</p>
+
+<p>$$ \begin{align}
+   U_i(n) &amp;= n + \O(T(2i)\lg(n/i)) \\
+          &amp;= n + \O(T(2n/k)\lg(n/(n/k))) \\
+          &amp;= n + \O(T(2n/k)\lg{k}) \\
+   \end{align} $$</p>
+
+<p>Again, this reasoning is sloppy, but I don't feel like applying the
+substitution method.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

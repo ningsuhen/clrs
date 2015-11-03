@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 3.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 3.5</h1>
+<h2>Variations on $O$ and $\Omega$</h2>
+
+<blockquote>
+<p>Some authors define $\Omega$ in a slightly different way than we do; let's
+use $\mathop{\Omega}^{\infty}$ (read "omega infinity") for this alternative
+definition. We say that $f(n) = \mathop{\Omega}^{\infty}(g(n))$ if there
+exists a positive constant $c$ such that $f(n) \geq cg(n) \geq 0$ for
+infinitely many integers $n$.</p>
+
+<ol>
+<li>Show that for any two functions $f(n)$ and $g(n)$ that are asymptotically
+nonnegative, either $f(n) = O(g(n))$ or $f(n) =
+\mathop{\Omega}^{\infty}(g(n))$ or both, whereas this is not true if we
+use $\Omega$ in place of $\mathop{\Omega}^{\infty}$.</li>
+<li>Describe the potential advantages and disadvantages of using
+$\mathop{\Omega}^{\infty}$ instead of $\Omega$ to characterize the
+running times of programs.</li>
+<li>Some authors also define $O$ in a slightly different manner; let's use
+$O'$ for the alternative definition. We say that $f(n) = O'(g(n))$ if and
+only if $|f(n)| = O(g(n))$. What happens to each direction of the "if and
+only if" in Theorem 3.1 if we substitute $O'$ for $O$ but we still use
+$\Omega$?</li>
+<li>Some authors define $\tilde{O}$ (read "soft-oh") to mean $O$ with
+logarithmic factors ignored:
+$$ \tilde{O} = \lbrace f(n) : \exists c &gt; 0, k &gt; 0 n_0 \forall n \geq n_0: 0 \leq f(n) \leq
+                       cg(n)\lg^k(n) \rbrace $$
+Define $\tilde{\Omega}$ and $\tilde{\Theta}$ in a similar manner. Prove
+the corresponding analog to Theorem 3.1.</li>
+</ol>
+</blockquote>
+
+<h3>Omega infinity</h3>
+
+<p>We need to compare:</p>
+
+<p>$$ cg(n) \leq f(n) $$</p>
+
+<p>Either this holds for an infinite number of integers or for a finite one (or
+zero). If the former, we have $\mathop{\Omega}^{\infty}$. If it is a finite
+number, then the largest is $n_0$ and we have that:</p>
+
+<p>$$ \forall n &gt; n_0: f(n) &lt; cg(n) $$</p>
+
+<p>Which is sufficient for $f(n) = O(g(n))$. Both can hold if $f(n) = g(n)$,
+obviously.</p>
+
+<p>It's not true for $\Omega$, because $n = \mathop{\Omega}^{\infty}(n^{\sin{n}})$,
+but $n \neq \Omega(n^{\sin{n}})$.</p>
+
+<h3>Potential advantages</h3>
+
+<p>I can't think of anything meaningful. It lets us reason for functions like
+$n^{\sin{n}}$, but I'm not sure that lower bound is the most useful thing
+here.</p>
+
+<h3>$O'$</h3>
+
+<p>Theorem 3.1 will change the "if and only if" to "implies", that is, $\Theta
+\Rightarrow O'$, but not the other way around. This can be illustrated by
+$f(n) = n \cdot \sin{n}$, which is $O'(n)$, but not $O(n)$ or $\Theta(n)$.</p>
+
+<h3>Soft-oh</h3>
+
+<p>I'm uncertain how we should define $\tilde{\Omega}$. I assume that $n =
+\tilde{\Omega}(n\lg{n})$. In that case,</p>
+
+<p>$$ \tilde{\Omega} = \lbrace f(n) : \exists c, k, n \forall n &gt; n_0 :
+   0 \leq cg(n) \lg^{-k}(n) \leq f(n) \rbrace $$</p>
+
+<p>And:</p>
+
+<p>$$ \tilde{\Theta} = \lbrace f(n) : \exists c_1, c_2, k_1, k_2, n \forall n &gt; n_0 :
+   0 \leq c_1g(n) \lg^{-k_1}(n) \leq f(n) \leq c_2g(n) \lg^{k_2}(n)\rbrace $$</p>
+
+<p>Proving the theorem is very trivial.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

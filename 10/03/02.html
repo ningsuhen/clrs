@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 10.3.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 10.3.2</h1>
+<blockquote>
+<p>Write the procedures <code>ALLOCATE-OBJECT</code> and <code>FREE-OBJECT</code> for a homogeneous
+collection of objects implemented by the single-array representation.</p>
+</blockquote>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+
+<span style="color:#579">#define</span> MAX_SIZE <span style="color:#00D">3</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> list_t;
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> obj_t;
+
+<span style="color:#0a8;font-weight:bold">int</span> empty_list = -<span style="color:#00D">1</span>;
+<span style="color:#0a8;font-weight:bold">int</span> cells[MAX_SIZE * <span style="color:#00D">3</span>];
+<span style="color:#0a8;font-weight:bold">int</span> free_list;
+
+<span style="color:#579">#define</span> NEXT(i) cells[(i) + <span style="color:#00D">1</span>]
+<span style="color:#579">#define</span> PREV(i) cells[(i) + <span style="color:#00D">2</span>]
+<span style="color:#579">#define</span> KEY(i)  cells[i]
+
+<span style="color:#088;font-weight:bold">void</span> init_storage() {
+    <span style="color:#0a8;font-weight:bold">int</span> i;
+    <span style="color:#080;font-weight:bold">for</span> (i = <span style="color:#00D">0</span>; i &lt; (MAX_SIZE - <span style="color:#00D">1</span>) * <span style="color:#00D">3</span>; i += <span style="color:#00D">3</span>)
+        NEXT(i) = i + <span style="color:#00D">3</span>;
+
+    NEXT(i) = -<span style="color:#00D">1</span>;
+    free_list = <span style="color:#00D">0</span>;
+}
+
+list_t allocate_object() {
+    <span style="color:#080;font-weight:bold">if</span> (free_list == -<span style="color:#00D">1</span>) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Storage depleted</span><span style="color:#b0b">\n</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">1</span>);
+    }
+
+    list_t new = free_list;
+    free_list = NEXT(free_list);
+    <span style="color:#080;font-weight:bold">return</span> new;
+}
+
+<span style="color:#088;font-weight:bold">void</span> free_object(list_t list) {
+    NEXT(list) = free_list;
+    free_list = list;
+}
+
+list_t cons(obj_t key, list_t list) {
+    list_t new = allocate_object();
+
+    NEXT(new) = list;
+    PREV(new) = empty_list;
+    KEY(new) = key;
+
+    <span style="color:#080;font-weight:bold">if</span> (list != empty_list) {
+        PREV(list) = new;
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> new;
+}
+
+<span style="color:#088;font-weight:bold">void</span> delete(list_t list) {
+    <span style="color:#080;font-weight:bold">if</span> (PREV(list) != empty_list) {
+        NEXT(PREV(list)) = NEXT(list);
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (NEXT(list) != empty_list) {
+        PREV(NEXT(list)) = PREV(list);
+    }
+
+    free_object(list);
+}
+
+obj_t get(list) {
+    <span style="color:#080;font-weight:bold">if</span> (list == empty_list) <span style="color:#080;font-weight:bold">return</span> -<span style="color:#00D">1</span>;
+    <span style="color:#080;font-weight:bold">return</span> KEY(list);
+}
+
+list_t next(list) {
+    <span style="color:#080;font-weight:bold">if</span> (list == empty_list) <span style="color:#080;font-weight:bold">return</span> -<span style="color:#00D">1</span>;
+    <span style="color:#080;font-weight:bold">return</span> NEXT(list);
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

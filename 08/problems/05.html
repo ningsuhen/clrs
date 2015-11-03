@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 8.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 8.5</h1>
+<h2>Average sorting</h2>
+
+<blockquote>
+<p>Suppose that instead of sorting an array, we just require that the elements
+increase on average. More precisely, we call an $n$-element array
+<strong>k-sorted</strong> if, for all $i = 1, 2, \ldots, n - k$, the following holds:</p>
+
+<p>$$ \frac{\sum_{j=i}^{i+k-1}A[j]}{k} \le
+   \frac{\sum_{j=i + 1}^{i+k}A[j]}{k} $$</p>
+
+<ol type="a">
+  <li>What does it mean for an array to be 1-sorted?
+  </li>
+<li>Give a permutation of the numbers $1, 2, \ldots, 10$ that is 2-sorted,
+      but not sorted
+  </li>
+<li>Prove that an $n$-element array is k-sorted if and only if $A[i] \le
+      A[i+k]$ for all $i = 1, 2, \ldots, n-k$.
+  </li>
+<li>Give an algorithm that $k$-sorts an $n$-element array in
+      $\O(n\lg(n/k))$ time.
+</li>
+</ol>
+
+<p>We can also show a lower bound on the time to produce a $k$-sorted array,
+when $k$ is a constant.</p>
+
+<ol type="a" start="5">
+  <li>Show that we can sort a $k$-sorted array of length $n$ in
+      $\O(n\lg{k})$ time. (<i>Hint:</i> Use the solution to [exercise 6.5-9](/06/05/09.html).)
+  </li>
+<li>Show that when $k$ is a constant, $k$-sorting an $n$-element array
+      requires $\Omega(n\lg{n})$ time. (<i>Hint:</i> Use the solution to the
+      previous part along with the lower bound on comparison sorts.)
+</li>
+</ol>
+</blockquote>
+
+<h3>Intuitive description</h3>
+
+<p>I'm going to state an unintuitive description of what does it mean for an
+array to be $k$-sorted. It will be presented without proof. It will become
+evident later in the text.</p>
+
+<p>If we write out $k$-sorted array in a grid with $k$ columns, each column will
+be sorted from top to bottom. This is essentially what (c) means.</p>
+
+<h3>Various notions</h3>
+
+<p>For an array to be 1-sorted it means that it is sorted in the traditional
+sense of the word, that is, $A[i] \le A[i+1]$ for each index $i$.</p>
+
+<p>Here's a 2-sorted permutation that is not sorted: $2, 1, 4, 3, 6, 5, 8, 7, 10,
+9$.</p>
+
+<h3>Alternative condition</h3>
+
+<p>Let's assume that an array is $k$-sorted. Then:</p>
+
+<p>$$ \frac{\sum_{j=i}^{i+k-1}A[j]}{k} \le \frac{\sum_{j=i + 1}^{i+k}A[j]}{k} \\
+   \Updownarrow \\
+   \frac{A[i] + \sum_{j=i+1}^{i+k-1}A[j]}{k} \le
+     \frac{\sum_{j=i+1}^{i+k-1}A[j] + A[i+k]}{k} \\
+   \Updownarrow \\
+   \frac{A[i]}{k} \le \frac{A[i+k]}{k} \\
+   \Updownarrow \\
+   A[i] \le A[i+k] $$</p>
+
+<p>Note that this derivation works backwards for proving the <strong>if</strong> part.</p>
+
+<h3>The algorithms</h3>
+
+<p>To $k$-sort the array, we need to sort the $k$ columns, that is, $k$ arrays of
+$n/k$ elements. This is a $(n/k)\lg(n/k)$ algorithm, performed $k$ times. We
+can use merge-sort. We don't even need to copy the array - we can calculate
+the indices on the fly, although that turned less fun than expected.</p>
+
+<p>To sort a $k$-sorted array, we just do what we suggested in <a href="../../06/05/09.html">exercise 6.5-9</a> -
+we build a min heap and every time we take an element from it, we pick another
+element from the column the minimal element was in. Keeping track of that in C
+is a bit hairy, so the implementation is gruesome. There is a new operation,
+<code>MIN-HEAP-PUSH-POP</code>, that is an improvement over first extracting the element
+and then inserting another one.</p>
+
+<h3>Lower bound on comparisons</h3>
+
+<p>The problem can be reduced to $k$ problems of size $(n/k)$, each with minimal
+number of comparisons $\Omega((n/k)\lg(n/k))$. The total is
+$\Omega(n\lg(n/k))$ and if $k$ is a constant, we get a very familiar
+$\Omega(n\lg{n})$. Really not that surprising.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdio.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;limits.h&gt;</span>
+<span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;string.h&gt;</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> value;
+    <span style="color:#0a8;font-weight:bold">int</span> s;
+} item;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    item *elements;
+    <span style="color:#0a8;font-weight:bold">int</span> length;
+    <span style="color:#0a8;font-weight:bold">int</span> heap_size;
+} heap_t;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> size;
+    <span style="color:#0a8;font-weight:bold">int</span> k;
+    <span style="color:#0a8;font-weight:bold">int</span> exhausted;
+    <span style="color:#0a8;font-weight:bold">int</span> *next_indices;
+} sort_state_t;
+
+<span style="color:#088;font-weight:bold">void</span> merge_sort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r, <span style="color:#0a8;font-weight:bold">int</span> k, <span style="color:#0a8;font-weight:bold">int</span> s);
+<span style="color:#088;font-weight:bold">void</span> min_heap_insert(heap_t *heap, item key);
+<span style="color:#0a8;font-weight:bold">int</span> state_took_column(sort_state_t *state, <span style="color:#0a8;font-weight:bold">int</span> index);
+item min_heap_push_pop(heap_t *heap, item new);
+item heap_minimum(heap_t *heap);
+item heap_extract_min(heap_t *heap);
+
+<span style="color:#777">/*
+ * Average soting is performed by just merge-sorting each column. That was
+ * easy. Modifying merge sort was hard.
+ */</span>
+
+<span style="color:#088;font-weight:bold">void</span> k_sort(<span style="color:#0a8;font-weight:bold">int</span> *numbers, <span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> k) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; k; i++) {
+        merge_sort(numbers, <span style="color:#00D">0</span>, size, k, i);
+    }
+}
+
+<span style="color:#777">/*
+ * Sorting a k-sorted array. We need to keep track of which column produced
+ * the minumum element in the heap and this resulted in quite the tricky C
+ * code. I don't think this is a good practice, but still, that's the best I'm
+ * willing to make it right now.
+ */</span>
+
+<span style="color:#088;font-weight:bold">void</span> merge_k_sorted(<span style="color:#0a8;font-weight:bold">int</span> *numbers, <span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> k) {
+    <span style="color:#0a8;font-weight:bold">int</span> copy[size];
+
+    item heap_elements[k];
+    heap_t heap = {heap_elements, k, <span style="color:#00D">0</span>};
+
+    <span style="color:#0a8;font-weight:bold">int</span> next_indices[k];
+    sort_state_t state = {size, k, <span style="color:#00D">0</span>, next_indices};
+
+    memcpy(copy, numbers, size * <span style="color:#080;font-weight:bold">sizeof</span>(<span style="color:#0a8;font-weight:bold">int</span>));
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; k; i++) {
+        item new = {copy[i], i};
+        min_heap_insert(&amp;heap, new);
+        next_indices[i] = i + k;
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        item min = heap_minimum(&amp;heap);
+        numbers[i] = min.value;
+
+        <span style="color:#0a8;font-weight:bold">int</span> next = state_took_column(&amp;state, min.s);
+
+        <span style="color:#080;font-weight:bold">if</span> (next != -<span style="color:#00D">1</span>) {
+            min_heap_push_pop(&amp;heap, (item) {copy[next], next % k});
+        } <span style="color:#080;font-weight:bold">else</span> {
+            heap_extract_min(&amp;heap);
+        }
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> state_took_column(sort_state_t *state, <span style="color:#0a8;font-weight:bold">int</span> index) {
+    <span style="color:#0a8;font-weight:bold">int</span> size = state-&gt;size,
+        k = state-&gt;k,
+        s = index,
+        *next_indices = state-&gt;next_indices;
+
+    <span style="color:#080;font-weight:bold">if</span> (next_indices[s] &gt;= size) {
+        <span style="color:#080;font-weight:bold">while</span> (state-&gt;exhausted &lt; k &amp;&amp; next_indices[state-&gt;exhausted] &gt;= state-&gt;size) {
+            state-&gt;exhausted++;
+        }
+
+        <span style="color:#080;font-weight:bold">if</span> (state-&gt;exhausted == k) {
+            <span style="color:#080;font-weight:bold">return</span> -<span style="color:#00D">1</span>;
+        }
+
+        <span style="color:#0a8;font-weight:bold">int</span> next = next_indices[state-&gt;exhausted];
+        next_indices[state-&gt;exhausted] += k;
+        <span style="color:#080;font-weight:bold">return</span> next;
+    } <span style="color:#080;font-weight:bold">else</span> {
+        <span style="color:#0a8;font-weight:bold">int</span> next = next_indices[s];
+        next_indices[s] += k;
+        <span style="color:#080;font-weight:bold">return</span> s;
+    }
+}
+
+<span style="color:#777">/*
+ * This is the merge sort from Chapter 2, modified to look only at indices
+ * congruent to k modulo s. There are two very ugly and long macroses that
+ * perform this unpleasant job. There's probably a nicer way to do the
+ * calculation, but modular arithmetic has always been my Achilles' heel.
+ */</span>
+
+<span style="color:#579">#define</span> FIRST(index, k, s) ((index) + (s) - (index) % (k) + ((index) % (k) &lt;= (s) ? <span style="color:#00D">0</span> : (k)))
+<span style="color:#579">#define</span> COUNT(a, b, k, s) (((b) - (a)) / (k) + ((((s) - (a) % (k)) + (k)) % (k) &lt; ((b) - (a)) % (k) ? <span style="color:#00D">1</span> : <span style="color:#00D">0</span>))
+
+<span style="color:#088;font-weight:bold">void</span> merge(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> q, <span style="color:#0a8;font-weight:bold">int</span> r, <span style="color:#0a8;font-weight:bold">int</span> k, <span style="color:#0a8;font-weight:bold">int</span> s) {
+    <span style="color:#0a8;font-weight:bold">int</span> i, j, l;
+
+    <span style="color:#0a8;font-weight:bold">int</span> n1 = COUNT(p, q, k, s);
+    <span style="color:#0a8;font-weight:bold">int</span> n2 = COUNT(q, r, k, s);
+
+    <span style="color:#0a8;font-weight:bold">int</span> L[n1];
+    <span style="color:#0a8;font-weight:bold">int</span> R[n2];
+
+    <span style="color:#080;font-weight:bold">for</span> (i = FIRST(p, k, s), j = <span style="color:#00D">0</span>; i &lt; q; j++, i += k) L[j] = A[i];
+    <span style="color:#080;font-weight:bold">for</span> (i = FIRST(q, k, s), j = <span style="color:#00D">0</span>; i &lt; r; j++, i += k) R[j] = A[i];
+
+    <span style="color:#080;font-weight:bold">for</span>(i = <span style="color:#00D">0</span>, j = <span style="color:#00D">0</span>, l = FIRST(p, k, s); l &lt; r; l += k) {
+        <span style="color:#080;font-weight:bold">if</span> (i == n1) {
+            A[l] = R[j++];
+        } <span style="color:#080;font-weight:bold">else</span> <span style="color:#080;font-weight:bold">if</span> (j == n2) {
+            A[l] = L[i++];
+        } <span style="color:#080;font-weight:bold">else</span> <span style="color:#080;font-weight:bold">if</span> (L[i] &lt;= R[j]) {
+            A[l] = L[i++];
+        } <span style="color:#080;font-weight:bold">else</span> {
+            A[l] = R[j++];
+        }
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> merge_sort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r, <span style="color:#0a8;font-weight:bold">int</span> k, <span style="color:#0a8;font-weight:bold">int</span> s) {
+    <span style="color:#080;font-weight:bold">if</span> (COUNT(p, r, k, s) &gt; <span style="color:#00D">1</span>) {
+        <span style="color:#0a8;font-weight:bold">int</span> q = (p + r) / <span style="color:#00D">2</span>;
+        merge_sort(A, p, q, k, s);
+        merge_sort(A, q, r, k, s);
+        merge(A, p, q, r, k, s);
+    }
+}
+
+<span style="color:#777">/*
+ * Finally, the min heap from exercise 6.5-3, modified to store items instead
+ * of ints. When I first wrote it, I made an error in the implementation and
+ * that sent me in a hour-long debugging session. C is fun.
+ *
+ * Also, there is a new heap operation (min_heap_push_pop) that is a faster
+ * than heap_extract_min and then min_heap_insert.
+ */</span>
+
+<span style="color:#579">#define</span> PARENT(i) ((i - <span style="color:#00D">1</span>) / <span style="color:#00D">2</span>)
+<span style="color:#579">#define</span> LEFT(i)   (<span style="color:#00D">2</span> * i + <span style="color:#00D">1</span>)
+<span style="color:#579">#define</span> RIGHT(i)  (<span style="color:#00D">2</span> * i + <span style="color:#00D">2</span>)
+
+item heap_minimum(heap_t *heap) {
+    <span style="color:#080;font-weight:bold">return</span> heap-&gt;elements[<span style="color:#00D">0</span>];
+}
+
+<span style="color:#088;font-weight:bold">void</span> min_heapify(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> i) {
+    <span style="color:#0a8;font-weight:bold">int</span> left  = LEFT(i),
+        right = RIGHT(i),
+        smallest;
+
+    <span style="color:#080;font-weight:bold">if</span> (left &lt; heap-&gt;heap_size &amp;&amp; heap-&gt;elements[left].value &lt; heap-&gt;elements[i].value) {
+        smallest = left;
+    } <span style="color:#080;font-weight:bold">else</span> {
+        smallest = i;
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (right &lt; heap-&gt;heap_size &amp;&amp; heap-&gt;elements[right].value &lt; heap-&gt;elements[smallest].value) {
+        smallest = right;
+    }
+
+    <span style="color:#080;font-weight:bold">if</span> (smallest != i) {
+        item tmp = heap-&gt;elements[i];
+        heap-&gt;elements[i] = heap-&gt;elements[smallest];
+        heap-&gt;elements[smallest] = tmp;
+
+        min_heapify(heap, smallest);
+    }
+}
+
+item heap_extract_min(heap_t *heap) {
+    <span style="color:#080;font-weight:bold">if</span> (heap-&gt;heap_size == <span style="color:#00D">0</span>) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">heap underflow</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    item min = heap-&gt;elements[<span style="color:#00D">0</span>];
+    heap-&gt;elements[<span style="color:#00D">0</span>] = heap-&gt;elements[heap-&gt;heap_size - <span style="color:#00D">1</span>];
+    heap-&gt;heap_size--;
+    min_heapify(heap, <span style="color:#00D">0</span>);
+
+    <span style="color:#080;font-weight:bold">return</span> min;
+}
+
+<span style="color:#088;font-weight:bold">void</span> heap_decrease_key(heap_t *heap, <span style="color:#0a8;font-weight:bold">int</span> i, item key) {
+    <span style="color:#080;font-weight:bold">if</span> (key.value &gt; heap-&gt;elements[i].value) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">new key is larger than current key</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    heap-&gt;elements[i].value = key.value;
+    <span style="color:#080;font-weight:bold">while</span> (i &gt; <span style="color:#00D">0</span> &amp;&amp; heap-&gt;elements[PARENT(i)].value &gt; heap-&gt;elements[i].value) {
+        item tmp = heap-&gt;elements[PARENT(i)];
+        heap-&gt;elements[PARENT(i)] = heap-&gt;elements[i];
+        heap-&gt;elements[i] = tmp;
+        i = PARENT(i);
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> min_heap_insert(heap_t *heap, item key) {
+    <span style="color:#080;font-weight:bold">if</span> (heap-&gt;length == heap-&gt;heap_size) {
+        fprintf(stderr, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">heap overflow</span><span style="color:#710">&quot;</span></span>);
+        exit(<span style="color:#00D">0</span>);
+    }
+
+    heap-&gt;elements[heap-&gt;heap_size].value = INT_MAX;
+    heap-&gt;elements[heap-&gt;heap_size].s = key.s;
+    heap-&gt;heap_size++;
+    heap_decrease_key(heap, heap-&gt;heap_size - <span style="color:#00D">1</span>, key);
+}
+
+item min_heap_push_pop(heap_t *heap, item new) {
+    item result = heap-&gt;elements[<span style="color:#00D">0</span>];
+    heap-&gt;elements[<span style="color:#00D">0</span>] = new;
+    min_heapify(heap, <span style="color:#00D">0</span>);
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

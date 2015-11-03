@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 9.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 9.2</h1>
+<h2>Weighted median</h2>
+
+<blockquote>
+<p>For $n$ distinct elements $x_1, x_2, \ldots, x_n$ with positive weights
+$w_1, w_2, \ldots, w_n$ such that $\sum_{i=1}^n w_i = 1$, the <strong>weighted
+(lower) median</strong> is the element $x_k$ satisfying</p>
+
+<p>$$ \sum_{x_i &lt; x_k} w_i &lt; \frac{1}{2} $$
+and
+$$ \sum_{x_i &gt; x_k} w_i \le \frac{1}{2} $$</p>
+
+<p>For example, if the elments are $0.1, 0.35, 0.05, 0.1, 0.15, 0.05, 0.2$ and
+each element equals its weight (that is, $w_i = x_i$ for $i = 1, 2, \ldots,
+7$, then the median is $0.1$, but the weighted median is $0.2$.</p>
+
+<ol type="a">
+  <li>Argue that the median of $x_1, x_2, \ldots, x_n$ is the weighted
+  median of $x_i$ with weights $w_i = 1/n$ for $i = 1, 2, \ldots, n$.
+  </li>
+<li>Show how to compute the weighted median of $n$ elements in
+  $\O(n\lg{n})$ worst-case time using sorting.
+  </li>
+<li>Show how to compute the weighted median in $\Theta(n)$ worst-case time
+  using a linear-time median algorithm such as `SELECT` from Section 9.3.
+</li>
+</ol>
+
+<p>The <strong>post-office location problem</strong> is defined as follows. We are given $n$
+points $p_1, p_2, \ldots, p_n$ with associated weights $w_1, w_2, \ldots,
+w_n$. We wish to find a point $p$ (not necessarily one of the input points)
+that minimizes the sum $\sum_{i=1}^n w_i d(p,p_i)$, where $d(a, b)$ is the
+distance between the points $a$ and $b$.</p>
+
+<ol type="a" start="4">
+  <li>Argue that the weighted median is a best solution for the
+  1-dimensional post-office location problem, in which points are simply
+  real numbers and the distance between points $a$ and $b$ is $d(a,b) = |a -
+  b|$.
+  </li>
+<li>Find the best solution for the 2-dimensional post-office location
+  problem, in which the points are $(x,y)$ coordinate pairs and the distance
+  between points $a = (x_1, y_1)$ and $b = (x_2, y_2)$ is the **Manhattan
+  distance** given by $d(a, b) = |x_1 - x_2| + |y_1 - y_2|$.
+</li>
+</ol>
+</blockquote>
+
+<h3>Median and weighted median</h3>
+
+<p>If the weights all elements are $1/n$, then the sum of the weights of the
+elements, smaller than the median, is $\lfloor \frac{n - 1}{2} \rfloor
+\frac{1}{n}$ and the sum of the weights of the larger elements is $\lceil
+\frac{n - 1}{2} \rceil \frac{1}{n}$. This satisfies the condition for weighted
+median. Furthermore, choosing a smaller or greater value will not hold in the
+condition.</p>
+
+<h3>Computing with sorting</h3>
+
+<ol>
+<li>Sort the array</li>
+<li>Start walking the array from left to right, accumulating the weights of the
+elements encountered</li>
+<li>The first element with accumulated weight $w \ge 1/2$ is the weighted
+median</li>
+</ol>
+
+<h3>Computing in linear time</h3>
+
+<p>It's a very similar to <code>SELECT</code>, but instead of passing $i$, we pass a number
+around which the weights should partition (initially $1/2$). We find a good
+pivot in linear time and we partition around it. When we sum the weights in
+the lower part of the array and the weights in the upper part. If they fulfill
+the condition, we have our weighted median.</p>
+
+<h3>1-dimensional post-office location problem</h3>
+
+<p>I'll present an informal argument, since it is convincing enough. A more
+formal one can be found in the instructor's manual.</p>
+
+<p>The situation is similar to <a href="../03/08.html">exercise 9.3.8</a>. Let's assume that we pick the
+weighted median as the solution and then start moving left or right. As we
+move away from the weighted median (in any direction), we're moving towards
+elements with combined weight less than $1/2$ and away from elements wight
+combined weight greater than $1/2$. Every "step" we take, we're increasing the
+total distance.</p>
+
+<h3>2-dimensional post-office location problem with Manhattan distance</h3>
+
+<p>The solution is finding $(x_m, y_m)$ where those are the weighted medians of
+the $x$- and $y$- coordinates.</p>
+
+<p>I'm not even going to start proving this formally, since it requires
+mathematics above my current comfort level. Reasoning informally, by the
+definition of Manhattan distance, the $x$ coordinates and the $y$ coordinates
+are independent ­ we can rearrange the $x$ in any way we want, without
+affecting the $y$ coordinate of the solution and vice-versa.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

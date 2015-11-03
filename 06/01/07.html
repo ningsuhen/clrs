@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 6.1.7 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 6.1.7</h1>
+<blockquote>
+<p>Show that, with the array representation for sorting an $n$-element heap, the
+leaves are the nodes indexed by $\lfloor n/2 \rfloor + 1,\lfloor n/2 \rfloor
++ 2, \ldots, n$.</p>
+</blockquote>
+
+<p>Another very obvious one.</p>
+
+<p>Let's take the left child of the node indexed by $\lfloor n/2 \rfloor + 1$.</p>
+
+<p>$$ \text{LEFT}(\lfloor n/2 \rfloor + 1) = 2(\lfloor n/2 \rfloor + 1)
+                                        &gt; 2(n/2 - 1) + 2
+                                        = n - 2 + 2
+                                        = n $$</p>
+
+<p>Since the index of the left child is larger than the number of elements in the
+heap, the node doesn't have childrens and thus is a leaf. Same goes for all
+nodes with larger indices.</p>
+
+<p>Note that if we take element indexed by $\lfloor n/2 \rfloor$, it will not be a
+leaf. In case of even number of nodes, it will have a left child with index $n$
+and in the case of odd number of nodes, it will have a left child with index
+$n-1$ and a right child with index $n$.</p>
+
+<p>This makes the number of leaves in a heap of size $n$ equal to $\lceil n/2
+\rceil$.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

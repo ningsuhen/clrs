@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 8.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 8.4</h1>
+<h2>Water jugs</h2>
+
+<blockquote>
+<p>Suppose that you are given $n$ red and $n$ blue water jugs, all of different
+shapes and sizes. All red jugs hold different amounts of water, as do the
+blue ones. Moreover, for every red jug, there is a blue jug that holds the
+same amount of water, and vice versa.</p>
+
+<p>Your task is to find a grouping of the jugs into pairs of red and blue jugs
+that hold the same amount of water. To do so, you may perform the following
+operation: pick a pair of jugs in which one is red and one is blue, fill the
+red jug with water, and then pour the water into the blue jug. This
+operation will tell you whether the red or the blue jug can hold more water,
+or that they have the same volume. Assume that such a comparison takes one
+time unit. Your goal is to find an algorithm that makes a minimum number of
+comparisons to determine the grouping. Remember that you man not directly
+compare two red jugs or two blue jugs.</p>
+
+<ol>
+<li>Describe a deterministic algorithm that user a $\Theta(n^2)$ comparisons
+to group the jugs into pairs.</li>
+<li>Prove a lower bound of $\Omega(n\lg{n})$ for the number of comparisons
+that an algorithm solving this problem must make.</li>
+<li>Give a randomized algorithm whose expected number of comparisons is
+$\O(n\lg{n})$, and prove that this bound is correct. What is the
+worst-case number of comparisons for your algorithm?</li>
+</ol>
+</blockquote>
+
+<h3>Deterministic algorithm</h3>
+
+<p>We compare each red jug with each blue jug and pair them on the first match.</p>
+
+<h3>Lower bound</h3>
+
+<p>We approach it in a similar fashion as section 8.1. The difference is that the
+nodes in this decision tree have three children, instead of two (it's a
+3-tree!). If both sets of jugs are ordered, then a pairing is a
+$n$-permutation that maps each red jug to a blue one. Since there are $n!$
+possible outputs, they should be present as leaves in the decision tree. If
+the length of the tree is $l$ we get a similar inequality:</p>
+
+<p>$$ n! \le l \le 3^h$$</p>
+
+<p>Again, taking the logarithms, we get:</p>
+
+<p>$$ h \ge lg(n!) = \Omega(n\lg{n}) $$</p>
+
+<h3>Randomized algorithm</h3>
+
+<p>We can use an approach similar to quicksort. The partition function should
+work as follows:</p>
+
+<ol>
+<li>Choose, at random, a red jug for a pivot ($\O(1)$)</li>
+<li>Pick a corresponding blue jug ($\O(n)$)</li>
+<li>Partition the blue jugs around the red pivot and put the blue pivot in
+place ($\O(n)$)</li>
+<li>Partition the red jugs around the blue pivot and but the red pivot in place
+($\O(n)$).</li>
+</ol>
+
+<p>We're only comparing red and blue jugs.</p>
+
+<p>The analysis is similar to the one of quicksort in section 7.4. There is some
+effort to translate the argument to having two arrays and additional
+comparisons, but the work is not hard. I will not present it here, since I
+think the applicability of the same argument is obvious.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#0a8;font-weight:bold">int</span> jug;
+
+<span style="color:#088;font-weight:bold">static</span> <span style="color:#0a8;font-weight:bold">int</span> tmp;
+<span style="color:#579">#define</span> EXCHANGE(a, b) {tmp = a; a = b; b = tmp;}
+
+<span style="color:#0a8;font-weight:bold">int</span> cmp(jug red, jug blue);
+
+<span style="color:#088;font-weight:bold">void</span> quadratic_pair(jug *red, jug *blue, <span style="color:#0a8;font-weight:bold">int</span> size) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = i; j &lt; size; j++) {
+            <span style="color:#080;font-weight:bold">if</span> (cmp(red[i], blue[j]) == <span style="color:#00D">0</span>) {
+                EXCHANGE(blue[i], blue[j]);
+                <span style="color:#080;font-weight:bold">break</span>;
+            }
+        }
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> partition(jug *red, jug *blue, <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> q);
+
+<span style="color:#088;font-weight:bold">void</span> quick_pair(jug *red, jug *blue, <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &lt; r - <span style="color:#00D">1</span>) {
+        <span style="color:#0a8;font-weight:bold">int</span> q = partition(red, blue, p, r);
+        quick_pair(red, blue, p, q);
+        quick_pair(red, blue, q + <span style="color:#00D">1</span>, r);
+    }
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> partition(jug *red, jug *blue, <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> q) {
+    <span style="color:#0a8;font-weight:bold">int</span> pivot, i;
+    jug red_pivot, blue_pivot;
+
+    <span style="color:#777">// Pick a red pivot</span>
+    i = rand() % (q - p) + p;
+    EXCHANGE(red[i], red[q - <span style="color:#00D">1</span>]);
+    red_pivot = red[q - <span style="color:#00D">1</span>];
+
+    <span style="color:#777">// Find the blue pivot and put it in final position</span>
+    <span style="color:#777">// NOTE: This look can be folded in the next one to minimize the number of</span>
+    <span style="color:#777">// comparisons, but I will keep it here for clarity</span>
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = p; i &lt; q; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (cmp(red_pivot, blue[i]) == <span style="color:#00D">0</span>) {
+            EXCHANGE(blue[i], blue[q - <span style="color:#00D">1</span>]);
+            <span style="color:#080;font-weight:bold">break</span>;
+        }
+    }
+
+    <span style="color:#777">// Partition the blue jugs around the red pivot</span>
+    pivot = p;
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = p; i &lt; q - <span style="color:#00D">1</span>; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (cmp(red_pivot, blue[i]) &gt; <span style="color:#00D">0</span>) {
+            EXCHANGE(blue[pivot], blue[i]);
+            pivot++;
+        }
+    }
+
+    <span style="color:#777">// Put the blue pivot in place</span>
+    EXCHANGE(blue[pivot], blue[q-<span style="color:#00D">1</span>]);
+    blue_pivot = blue[pivot];
+
+    <span style="color:#777">// Partition the red jugs around the blue pivot</span>
+    <span style="color:#0a8;font-weight:bold">int</span> j = p;
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = p; i &lt; q - <span style="color:#00D">1</span>; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (cmp(red[i], blue_pivot) &lt; <span style="color:#00D">0</span>) {
+            EXCHANGE(red[j], red[i]);
+            j++;
+        }
+    }
+
+    <span style="color:#777">// Put the red pivot in place</span>
+    EXCHANGE(red[q - <span style="color:#00D">1</span>], red[j]);
+
+    <span style="color:#777">// Return the pivot index</span>
+    <span style="color:#080;font-weight:bold">return</span> pivot;
+}
+
+<span style="color:#0a8;font-weight:bold">int</span> cmp(jug red, jug blue) {
+    <span style="color:#080;font-weight:bold">return</span> red - blue;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

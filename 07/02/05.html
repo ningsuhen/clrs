@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 7.2.5 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 7.2.5</h1>
+<blockquote>
+<p>Suppose that the splits at every level of quicksort are in proportion $1 -
+\alpha$ to $\alpha$, where $0 &lt; \alpha \le 1/2$ is a constant. Show that the
+minumum depth of a leaf in the recursion tree is approximately
+$-\lg{n}/lg{\alpha}$ and the maximum depth is approximately
+$-\lg{n}/\lg(1-\alpha)$. (Don't worry about integer round-off)</p>
+</blockquote>
+
+<p>The minimum depth of the tree is the solution of $n\alpha^x \le 1$:</p>
+
+<p>$$ n\alpha^x \le 1 \\
+   \Downarrow \\
+   \alpha^x \le \frac 1 n \\
+   \Downarrow \\
+   x \ge \log_{\alpha}\frac{1}{n} \\
+   \Downarrow \\
+   \log_{\alpha}\frac{1}{n} = \log_{1/\alpha}
+                            = \frac{\lg{n}}{\lg(1/\alpha)}
+                            = - \frac{\lg{n}}{\lg{\alpha}}
+$$</p>
+
+<p>In the same way, the maximum depth is $\log_{1/(1-\alpha)}n = - \frac{\lg{n}}{\lg(1-\alpha)}$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

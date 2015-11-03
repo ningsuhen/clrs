@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 8.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 8.2</h1>
+<h2>Sorting in place in linear time</h2>
+
+<blockquote>
+<p>Suppose that we have an array of $n$ data records and that the key of each
+record has the value 0 or 1. An algorithm for sorting such a set of records
+might posses some subset of the following three desirable characteristics:</p>
+
+<ol>
+<li>The algorithm runs in $\O(n)$ time</li>
+<li>The algorithm is stable.</li>
+<li>The algorithm sorts in place, using no more than a constant amount of
+storage space in addition to the original array.</li>
+</ol>
+
+<p>Do the following:</p>
+
+<ol>
+<li>Give an algorithm that satisfies criteria 1 and 2 above</li>
+<li>Give an algorithm that satisfies criteria 1 and 3 above</li>
+<li>Give an algorithm that satisfies criteria 2 and 3 above</li>
+<li>Can you use any of your algorithms from parts (a)-(c) as the sorting
+method used in line 2 of <code>RADIX-SORT</code>, so that <code>RADIX-SORT</code> sorts $n$
+records with $b$-bit keys in $\O(bn)$ time? Explain how or why not.</li>
+<li>Suppose that the $n$ records have keys in the range $1$ to $k$. Show how
+to modify counting sort so that it sorts the records in place in
+$\O(n+k)$ time. You may use $\O(k)$ storage outside the input array. Is
+your algorithm stable? (<i>Hint</i>: How would you do it for $k = 3$?)</li>
+</ol>
+</blockquote>
+
+<h3>Algorithms</h3>
+
+<ol>
+<li>This can be done with counting sort. We need two variables to track the
+numbers/indices of ones and zeroes and $\Theta(n)$ space to make a copy.</li>
+<li>This can be done with approach similar to Hoare partition in <a href="../../07/problems/01.html">problem 7.1</a>
+</li>
+<li>I can't think of a stable in-place algorithm so bubble-sort will do</li>
+</ol>
+
+<h3>Usage in radix sort</h3>
+
+<p>Only the first one (the counting sort variant) can be used. The second is not
+stable, which is a requirement for radix sort, and the third takes
+$\Theta(n^2)$ time, which will turn the compound sorting algorithm
+$\Theta(bn^2)$.</p>
+
+<h3>In place counting sort</h3>
+
+<p>We build an array of counts as in <code>COUNTING-SORT</code>, but we perform the sorting
+differently. We start with <code>i = 0</code> and then.</p>
+
+<pre><code>while i ≤ A.length
+    if A[i] is correctly placed
+        i = i + 1
+    else
+        put A[i] in place, exchanging with the element there
+</code></pre>
+
+<p>On each step we're either (1) incrementing <code>i</code> or (2) putting an element in
+its place. The algorithm terminates because eventually we run out of misplaced
+elements and have to increment <code>i</code>.</p>
+
+<p>There are some details about checking whether <code>A[i]</code> is correctly placed that
+are in the C code.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdbool.h&gt;</span>
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> key;
+    <span style="color:#0a8;font-weight:bold">int</span> value;
+} item;
+
+<span style="color:#088;font-weight:bold">static</span> item tmp;
+
+<span style="color:#579">#define</span> EXCHANGE(a, b) tmp = a; a = b; b = tmp;
+
+<span style="color:#088;font-weight:bold">void</span> stable_linear_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> size) {
+    <span style="color:#0a8;font-weight:bold">int</span> zero = <span style="color:#00D">0</span>,
+        one  = <span style="color:#00D">0</span>;
+    item copy[size];
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (A[i].key == <span style="color:#00D">0</span>) {
+            one++;
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (A[i].key == <span style="color:#00D">0</span>) {
+            copy[zero] = A[i];
+            zero++;
+        } <span style="color:#080;font-weight:bold">else</span> {
+            copy[one] = A[i];
+            one++;
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        A[i] = copy[i];
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> linear_in_place_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> size) {
+    <span style="color:#0a8;font-weight:bold">int</span> left = -<span style="color:#00D">1</span>,
+        right = size;
+
+    <span style="color:#080;font-weight:bold">while</span> (<span style="color:#069">true</span>) {
+        <span style="color:#080;font-weight:bold">do</span> { left++;  } <span style="color:#080;font-weight:bold">while</span> (A[left].key  == <span style="color:#00D">0</span>);
+        <span style="color:#080;font-weight:bold">do</span> { right--; } <span style="color:#080;font-weight:bold">while</span> (A[right].key == <span style="color:#00D">1</span>);
+
+        <span style="color:#080;font-weight:bold">if</span> (left &gt; right) {
+            <span style="color:#080;font-weight:bold">return</span>;
+        }
+
+        EXCHANGE(A[left], A[right]);
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> stable_in_place_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> size) {
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = size; i &gt; <span style="color:#00D">0</span>; i--) {
+        <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> j = <span style="color:#00D">0</span>; j &lt; i; j++) {
+            <span style="color:#080;font-weight:bold">if</span> (A[j].key &gt; A[j + <span style="color:#00D">1</span>].key) {
+                EXCHANGE(A[j], A[j+<span style="color:#00D">1</span>]);
+            }
+        }
+    }
+}
+
+<span style="color:#088;font-weight:bold">void</span> in_place_counting_sort(item *A, <span style="color:#0a8;font-weight:bold">int</span> size, <span style="color:#0a8;font-weight:bold">int</span> range) {
+    <span style="color:#0a8;font-weight:bold">int</span> counts[range + <span style="color:#00D">1</span>];
+    <span style="color:#0a8;font-weight:bold">int</span> positions[range + <span style="color:#00D">1</span>];
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt;= range; i++) {
+        counts[i] = <span style="color:#00D">0</span>;
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt; size; i++) {
+        counts[A[i].key]++;
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">2</span>; i &lt;= range; i++) {
+        counts[i] += counts[i-<span style="color:#00D">1</span>];
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>; i &lt;= range; i++) {
+        positions[i] = counts[i];
+    }
+
+    <span style="color:#0a8;font-weight:bold">int</span> i = <span style="color:#00D">0</span>;
+    <span style="color:#080;font-weight:bold">while</span> (i &lt; size) {
+        <span style="color:#0a8;font-weight:bold">int</span> key = A[i].key;
+        <span style="color:#0a8;font-weight:bold">bool</span> placed = (positions[key - <span style="color:#00D">1</span>] &lt;= i &amp;&amp; i &lt; positions[key]);
+
+        <span style="color:#080;font-weight:bold">if</span> (placed) {
+            i++;
+        } <span style="color:#080;font-weight:bold">else</span> {
+            EXCHANGE(A[i], A[counts[key] - <span style="color:#00D">1</span>]);
+            counts[key]--;
+        }
+    }
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

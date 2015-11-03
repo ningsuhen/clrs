@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 7.2 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 7.2</h1>
+<h2>Quicksort with equal element values</h2>
+
+<blockquote>
+<p>The analysis of the expected running time of randomized quicksort in section
+7.4.2 assumes that all element values are distinct. In this problem. we
+examine what happens when they are not.</p>
+
+<ol>
+<li>Suppose that all element values are equal. What would be randomized
+quick-sort's running time in this case?</li>
+<li>The <code>PARTITION</code> procedure returns an index $q$ such that each element of
+$A[p \ldots q - 1]$ is less than or equal to $A[q]$ and each element of
+$A[q + 1 \ldots r]$ is greater than $A[q]$. Modify the <code>PARTITION</code>
+procedure to produce a procedure <code>PARTITION'(A, p, r)</code> which permutes the
+elements of $A[p \ldots r]$ and returns two indices $q$ and $t$ where $p
+\le q \le t \le r$, such that:
+<ul>
+ <li>all elements of $A[q \ldots t]$ are equal,</li>
+ <li>each element of $A[p \ldots q - 1]$ is less than $A[q]$, and</li>
+ <li>each element of $A[t + 1 \ldots r]$ is greater than $A[q]$.</li>
+</ul>
+Like <code>PARTITION</code>, your <code>PARTITION'</code> procedure should take $\Theta(r - p)$
+time.</li>
+<li>Modify the <code>RANDOMIZED-QUICKSORT</code> procedure to call <code>PARTITION'</code>, and name
+the new procedure <code>RANDOMIZED-QUICKSORT'</code>. Then modify the <code>QUICKSORT</code>
+procedure to produce a procedure <code>QUICKSORT'(p, r)</code> that calls
+<code>RANDOMIZED-PARTITION'</code> and recurses only on partitions of elements not
+know to be equal to each other.</li>
+<li>Using <code>QUICKSORT'</code>, how would you adjust the analysis of section 7.4.2 to
+avoid the assumption that all elements are distinct?</li>
+</ol>
+</blockquote>
+
+<h3>Running time</h3>
+
+<p>It will be $\Theta(n^2)$, because each split will be (n-1)-to-1 (see <a href="../01/02.html">exercise
+7.1-2</a>).</p>
+
+<h3>Implementation</h3>
+
+<p>The code is below.</p>
+
+<p><code>PARTITION'</code> is very similar to <code>PARTITION</code>, except that after it completes
+arranging the elements around a pivot $q$, it moves all elements $t &gt; q: A[t] =
+x$ right after $q$. That way we get a chuck of equal elements after the pivot.</p>
+
+<p>The procedure makes another pass at the array, which is at most $n$ more time
+and becuse $\Theta(n) + \Theta(n) = \Theta(n) = \Theta(r - p)$ we fulfill the
+condition.</p>
+
+<h3>Analysis</h3>
+
+<p>The analysis does not change much. Section 7.4.2 uses the knowledge that the
+elements are distinct in order to determine when two elements cannot be
+compared. It will still be true that in any interval $Z_{ij}$, two elements
+will get compared only if $z_i$ or $z_j$ gets picked as a pivot first. This
+would not hold with <code>PARTITION'</code> if there are repeated elements.</p>
+
+<p>Note that with this implementation, the number of comparisons increases, but
+only by a constant factor. The results from the analysis are the same.</p>
+  <hr />
+  <h3>C code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#579">#include</span> <span style="color:#B44;font-weight:bold">&lt;stdlib.h&gt;</span>
+
+<span style="color:#579">#define</span> EXCHANGE(a, b) tmp = a; a = b; b = tmp;
+
+<span style="color:#080;font-weight:bold">typedef</span> <span style="color:#080;font-weight:bold">struct</span> {
+    <span style="color:#0a8;font-weight:bold">int</span> q;
+    <span style="color:#0a8;font-weight:bold">int</span> t;
+} pivot_t;
+
+pivot_t partition(<span style="color:#0a8;font-weight:bold">int</span>[], <span style="color:#0a8;font-weight:bold">int</span>, <span style="color:#0a8;font-weight:bold">int</span>);
+pivot_t randomized_partition(<span style="color:#0a8;font-weight:bold">int</span>[], <span style="color:#0a8;font-weight:bold">int</span>, <span style="color:#0a8;font-weight:bold">int</span>);
+
+<span style="color:#088;font-weight:bold">void</span> quicksort(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#080;font-weight:bold">if</span> (p &lt; r - <span style="color:#00D">1</span>) {
+        pivot_t pivot = randomized_partition(A, p, r);
+        quicksort(A, p, pivot.q);
+        quicksort(A, pivot.t, r);
+    }
+}
+
+pivot_t randomized_partition(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> i = rand() % (r - p) + p,
+        tmp;
+
+    EXCHANGE(A[i], A[r-<span style="color:#00D">1</span>]);
+
+    <span style="color:#080;font-weight:bold">return</span> partition(A, p, r);
+}
+
+pivot_t partition(<span style="color:#0a8;font-weight:bold">int</span> A[], <span style="color:#0a8;font-weight:bold">int</span> p, <span style="color:#0a8;font-weight:bold">int</span> r) {
+    <span style="color:#0a8;font-weight:bold">int</span> x = A[r - <span style="color:#00D">1</span>],
+        q = p,
+        t,
+        tmp;
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = p; i &lt; r - <span style="color:#00D">1</span>; i++) {
+        <span style="color:#080;font-weight:bold">if</span> (A[i] &lt; x) {
+            EXCHANGE(A[q], A[i]);
+            q++;
+        }
+    }
+
+    <span style="color:#080;font-weight:bold">for</span> (t = q; t &lt; r &amp;&amp; A[t] == x; t++);
+
+    <span style="color:#080;font-weight:bold">for</span> (<span style="color:#0a8;font-weight:bold">int</span> i = r - <span style="color:#00D">1</span>; i &gt;= t; i--) {
+        <span style="color:#080;font-weight:bold">if</span> (A[i] == x) {
+            EXCHANGE(A[t], A[i]);
+            t++;
+        }
+    }
+
+    pivot_t result = {q, t};
+    <span style="color:#080;font-weight:bold">return</span> result;
+}
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise C.1.14 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise C.1.14</h1>
+<blockquote>
+<p>$\star$ By differentiating the entropy function $H(\lambda)$, show that it
+achieves its maximum value at $\lambda = 1/2$. What is $H(1/2)$?</p>
+</blockquote>
+
+<p>Phew, it took me a while to figure out that I've forgotten calculus:</p>
+
+<p>$$ H(\lambda) = -\lambda\lg{\lambda} - (1 - \lambda)\lg(1 - \lambda) \\
+   \begin{align}
+     H'(\lambda) &amp;= -\lg{\lambda} - \frac{\lambda 1}{\lambda \ln2} + \lg(1 - \lambda) - \frac{(1-\lambda)}{(1-\lambda)(-1)\ln2} \\
+           &amp;= \lg\frac{1 - \lambda}{\lambda} - \lg{e} + \lg{e} \\
+           &amp;= \lg\frac{1 - \lambda}{\lambda}
+   \end{align} $$</p>
+
+<p>Let's find a critical point:</p>
+
+<p>$$ H'(\lambda) = 0 \\
+   \Downarrow \\
+   \lg\frac{1 - \lambda}{\lambda} = 0 \\
+   \Downarrow \\
+   \frac{1-\lambda}{\lambda} = 1 \\
+   \Downarrow \\
+   \lambda = 1/2 $$</p>
+
+<p>Because $H'(1/4) = \lg{3} &gt; 0$ and $H'(3/4) = \lg(1/3) &lt; 0$, we know that it is a maxima.</p>
+
+<p>$$ H(1/2) = - \lg(1/2)/2 -\lg(1/2)/2 = - \lg{1/2} = 1 $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

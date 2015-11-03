@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 11.1.4 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 11.1.4</h1>
+<blockquote>
+<p>$\star$ We wish to implement a dictionary by using direct addressing on a
+<em>huge</em> array. At the start, the array entries may contain garbage, and
+initializing the entire array is impractical because of its size. Describe a
+scheme for implementing a direct-address dictionary on a huge array. Each
+stored object should use $\O(1)$ space; the operations <code>SEARCH</code>, <code>INSERT</code>,
+and <code>DELETE</code> should take $\O(1)$ time. (<i>Hint:</i> Use an additional
+array, treated somewhat like a stack whose size is the number of keys
+actually stored in the dictionary, to help determine whether a given entry
+in the huge array is valid or not.)</p>
+</blockquote>
+
+<p>I don't really understand why this is an exercise - it's far to tricky for the
+common good. Anyhow.</p>
+
+<p>As the hint suggests, we use an addition stack. Each stack item will contain a
+pointer in the huge array. Each cell in the huge array will contain the index
+of the stack item.</p>
+
+<p>When we <code>INSERT</code> a new item, we push the pointer address in the huge array on
+the stack and set the value of that cell to the stack index.</p>
+
+<p>When we <code>SEARCH</code>, we get the value in the array. If it is a valid stack index
+(that is, if the value is $n$, the stack has at most $n$ items) and the value
+at that position of the stack is the original pointer, then we have a match.
+Otherwise, we don't.</p>
+
+<p>When we <code>DELETE</code> there would be a hole in the stack. We can fix it by moving
+the top item to the hole and updating the value in the huge array.</p>
+
+<p>If we need satellite data, we can keep it in a parallel stack that we also
+modify on those operations.</p>
+
+<p>There is an elaboration on this algorithm in the Instructor's Manual.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

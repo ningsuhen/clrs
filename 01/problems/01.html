@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 1.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 1.1</h1>
+<h2>Comparison of running times</h2>
+
+<blockquote>
+<p>For each function $ f(n) $ and time $ t $ in the following table, determine
+the largest size $ n $ of a problem that can be solved in time $ t $,
+assuming that the algorithm to solve the problem takes $ f(n) $
+microseconds.</p>
+</blockquote>
+
+<table class="table table-bordered table-striped table-compact">
+<thead>
+<tr>
+<th style="text-align: center"></th>
+<th style="text-align: right">1 second</th>
+<th style="text-align: right">1 minute</th>
+<th style="text-align: right">1 hour</th>
+<th style="text-align: right">1 day</th>
+<th style="text-align: right">1 month</th>
+<th style="text-align: right">1 year</th>
+<th style="text-align: right">1 century</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center">$ \lg{n}   $</td>
+<td style="text-align: right">$ 2^{10^6}    $</td>
+<td style="text-align: right">$ 2^{6 \cdot 10^7}    $</td>
+<td style="text-align: right">$ 2^{36 \cdot 10^8} $</td>
+<td style="text-align: right">$ 2^{864 \cdot 10^8}  $</td>
+<td style="text-align: right">$ 2^{25920 \cdot 10^8} $</td>
+<td style="text-align: right">$ 2^{315360 \cdot 10^8}  $</td>
+<td style="text-align: right">$ 2^{31556736 \cdot 10^8}      $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ \sqrt{n} $</td>
+<td style="text-align: right">$ 10^{12}      $</td>
+<td style="text-align: right">$ 36 \cdot 10^{14}     $</td>
+<td style="text-align: right">$ 1296 \cdot 10^{16} $</td>
+<td style="text-align: right">$ 746496 \cdot 10^{16} $</td>
+<td style="text-align: right">$ 6718464 \cdot 10^{18} $</td>
+<td style="text-align: right">$ 994519296 \cdot 10^{18} $</td>
+<td style="text-align: right">$ 995827586973696 \cdot 10^{16} $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n        $</td>
+<td style="text-align: right">$ 10^6         $</td>
+<td style="text-align: right">$ 6 \cdot 10^7         $</td>
+<td style="text-align: right">$ 36 \cdot 10^{8}    $</td>
+<td style="text-align: right">$ 864 \cdot 10^{8}     $</td>
+<td style="text-align: right">$ 2592 \cdot 10^{9}     $</td>
+<td style="text-align: right">$ 31536 \cdot 10^{9}      $</td>
+<td style="text-align: right">$ 31556736 \cdot 10^{8}         $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n\lg{n}  $</td>
+<td style="text-align: right">$ 62746         $</td>
+<td style="text-align: right">$ 2801417               $</td>
+<td style="text-align: right">$ 133378058           $</td>
+<td style="text-align: right">$ 2755147513            $</td>
+<td style="text-align: right">$ 71870856404            $</td>
+<td style="text-align: right">$ 797633893349             $</td>
+<td style="text-align: right">$ 68654697441062                 $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n^2     $</td>
+<td style="text-align: right">$ 1000          $</td>
+<td style="text-align: right">$ 7745                  $</td>
+<td style="text-align: right">$ 60000               $</td>
+<td style="text-align: right">$ 293938                $</td>
+<td style="text-align: right">$ 1609968                $</td>
+<td style="text-align: right">$ 5615692                  $</td>
+<td style="text-align: right">$ 56175382                       $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n^3     $</td>
+<td style="text-align: right">$ 100           $</td>
+<td style="text-align: right">$ 391                   $</td>
+<td style="text-align: right">$ 1532                $</td>
+<td style="text-align: right">$ 4420                  $</td>
+<td style="text-align: right">$ 13736                  $</td>
+<td style="text-align: right">$ 31593                    $</td>
+<td style="text-align: right">$ 146677                         $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ 2^n     $</td>
+<td style="text-align: right">$ 19            $</td>
+<td style="text-align: right">$ 25                    $</td>
+<td style="text-align: right">$ 31                  $</td>
+<td style="text-align: right">$ 36                    $</td>
+<td style="text-align: right">$ 41                     $</td>
+<td style="text-align: right">$ 44                       $</td>
+<td style="text-align: right">$ 51                             $</td>
+</tr>
+<tr>
+<td style="text-align: center">$ n!       $</td>
+<td style="text-align: right">$ 9             $</td>
+<td style="text-align: right">$ 11                    $</td>
+<td style="text-align: right">$ 12                  $</td>
+<td style="text-align: right">$ 13                    $</td>
+<td style="text-align: right">$ 15                     $</td>
+<td style="text-align: right">$ 16                       $</td>
+<td style="text-align: right">$ 17                             $</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

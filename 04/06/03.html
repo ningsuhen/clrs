@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 4.6.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 4.6.3</h1>
+<blockquote>
+<p>$\star$ Show that case 3 of the master method is overstated, in the sense
+that the regularity condition $af(n/b) \le cf(n)$ for some constant $c &lt; 1$
+implies that there exists a constant $\epsilon &gt; 0$ such that
+$f(n) = \Omega(n^{\log_b{a}+\epsilon})$.</p>
+</blockquote>
+
+<p>$$ af(n/b) \le cf(n) \\
+   \alpha f(n/b) \le f(n), \quad \alpha = a/c \\
+   \alpha f(n) \le f(nb) \\
+   \alpha^i f(1) \le f(b^i) \\
+   n = b^i \Rightarrow i = \log_{b}n \Rightarrow f(n) \ge \alpha^{\log_b{n}}f(1) = n^{\log_{b}\alpha} \\
+   \alpha &gt; a \Rightarrow \alpha = a + d \quad (c &lt; 1, d &gt; 0) \\
+   \Rightarrow f(n) = n^{\log_b{a} + log_b{d}} = n^{\log_b{a}+\epsilon} \quad (\epsilon = \log_{b}d) $$</p>
+
+<p>I did not think this up. I had <a href="http://math.stackexchange.com/questions/510897/why-does-afn-b-cfn-for-c-1-imply-that-fn-omegan-log-ba-ep">some help</a> at StackExchange.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 6.1 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 6.1</h1>
+<h2>Building a heap using insertion</h2>
+
+<blockquote>
+<p>We can build a heap by repeatedly calling <code>MAX-HEAP-INSERT</code> to insert the
+elements into the heap. Consider the following variation of the
+<code>BUILD-MAX-HEAP</code> procedure.</p>
+
+<pre><code>BUILD-MAX-HEAP'(A)
+  A.heap-size = 1
+  for i = 2 to A.length
+      MAX-HEAP-INSERT(A, A[i])
+</code></pre>
+
+<ol>
+<li>Do the procedures <code>BUILD-MAX-HEAP</code> and <code>BUILD-MAX-HEAP'</code> always create the
+same heap when run on the same input array? Prove that they do, or provide
+a counterexample.</li>
+<li>Show that in the worst case, <code>BUILD-MAX-HEAP'</code> requires $\Theta(n\lg{n})$
+time to build a $n$-element heap.</li>
+</ol>
+</blockquote>
+
+<h3>Same heaps?</h3>
+
+<p>No. They produce different heaps. This is illustrated with $\langle 1, 2, 3, 4,
+5, 6 \rangle$. Results are shown below.</p>
+
+<h3>Complexity</h3>
+
+<p><code>MAX-HEAP-INSERT</code> is a $\Theta(\lg{n})$ operation in the worst case and it gets
+called $n - 1$ times. <code>MAX-HEAP-INSERT</code> might need to pull each element up to
+the beginning of the heap, that is, $\lg{k}$ operations whatever $k$ currently
+is. The worst case happens when the array is sorted. Thus the complexity is:</p>
+
+<p>$$ \sum_{i=2}^{n}\lg{i} = \lg(n!) = \Theta(n\lg{n})$$</p>
+
+<p>The above is due to <a href="../../03/02/03.html">exercise 3.2.3</a>.</p>
+  <hr />
+  <h3>Python runner output</h3>
+  <pre>sh: python3: command not found
+</pre>
+  <hr />
+  <h3>Python code</h3>
+  <div class="CodeRay">
+  <div class="code"><pre><span style="color:#777">##############################################################################</span>
+<span style="color:#777"># DATA STRUCTURES</span>
+<span style="color:#777">##############################################################################</span>
+
+<span style="color:#080;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">heap</span>:
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">__init__</span>(<span style="color:#069">self</span>, items, size = <span style="color:#069">None</span>):
+        <span style="color:#069">self</span>.items = items
+        <span style="color:#069">self</span>.heap_size = size <span style="color:#080;font-weight:bold">or</span> <span style="color:#369;font-weight:bold">len</span>(items)
+
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">__getitem__</span>(<span style="color:#069">self</span>, key):
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#069">self</span>.items[key]
+
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">__setitem__</span>(<span style="color:#069">self</span>, key, value):
+        <span style="color:#069">self</span>.items[key] = value
+
+    <span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">__len__</span>(<span style="color:#069">self</span>):
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#369;font-weight:bold">len</span>(<span style="color:#069">self</span>.items)
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">left</span>(i):
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#00D">2</span> * i + <span style="color:#00D">1</span>
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">right</span>(i):
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#00D">2</span> * i + <span style="color:#00D">2</span>
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">parent</span>(i):
+    <span style="color:#080;font-weight:bold">return</span> (i - <span style="color:#00D">1</span>) // <span style="color:#00D">2</span>
+
+<span style="color:#777">##############################################################################</span>
+<span style="color:#777"># Standard BUILD-MAX-HEAP</span>
+<span style="color:#777">##############################################################################</span>
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">max_heapify</span>(A, i):
+    l = left(i)
+    r = right(i)
+    <span style="color:#080;font-weight:bold">if</span> l &lt; A.heap_size <span style="color:#080;font-weight:bold">and</span> A[l] &gt; A[i]:
+        largest = l
+    <span style="color:#080;font-weight:bold">else</span>:
+        largest = i
+    <span style="color:#080;font-weight:bold">if</span> r &lt; A.heap_size <span style="color:#080;font-weight:bold">and</span> A[r] &gt; A[largest]:
+        largest = r
+
+    <span style="color:#080;font-weight:bold">if</span> largest != i:
+        A[i], A[largest] = A[largest], A[i]
+        max_heapify(A, largest)
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">build_max_heap</span>(A):
+    A.heap_size = <span style="color:#369;font-weight:bold">len</span>(A)
+    <span style="color:#080;font-weight:bold">for</span> i <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(<span style="color:#369;font-weight:bold">len</span>(A) // <span style="color:#00D">2</span>, -<span style="color:#00D">1</span>, -<span style="color:#00D">1</span>):
+        max_heapify(A, i)
+
+<span style="color:#777">##############################################################################</span>
+<span style="color:#777"># Exercise BUILD-MAX-HEAP'</span>
+<span style="color:#777">##############################################################################</span>
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">heap_increase_key</span>(A, i, key):
+    <span style="color:#080;font-weight:bold">if</span> key &lt; A[i]:
+        <span style="color:#080;font-weight:bold">raise</span> <span style="color:#C00;font-weight:bold">Exception</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">new key is smaller than current key</span><span style="color:#710">&quot;</span></span>)
+    A[i] = key
+    <span style="color:#080;font-weight:bold">while</span> i &gt; <span style="color:#00D">0</span> <span style="color:#080;font-weight:bold">and</span> A[parent(i)] &lt; A[i]:
+        A[i], A[parent(i)] = A[parent(i)], A[i]
+        i = parent(i)
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">max_heap_insert</span>(A, key):
+    A.heap_size += <span style="color:#00D">1</span>
+    A[A.heap_size - <span style="color:#00D">1</span>] = <span style="color:#369;font-weight:bold">float</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">-inf</span><span style="color:#710">&quot;</span></span>)
+    heap_increase_key(A, A.heap_size - <span style="color:#00D">1</span>, key)
+
+<span style="color:#080;font-weight:bold">def</span> <span style="color:#06B;font-weight:bold">build_max_heap2</span>(A):
+    A.heap_size = <span style="color:#00D">1</span>
+    <span style="color:#080;font-weight:bold">for</span> i <span style="color:#080;font-weight:bold">in</span> <span style="color:#369;font-weight:bold">range</span>(<span style="color:#00D">1</span>, <span style="color:#369;font-weight:bold">len</span>(A)):
+        max_heap_insert(A, A[i])
+</pre></div>
+</div>
+
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

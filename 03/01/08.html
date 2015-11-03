@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exercise 3.1.8 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Exercise 3.1.8</h1>
+<blockquote>
+<p>We can extend our notation to the case of two parameters $n$ and $m$ that
+can go to infinity independently at different rates. For a given function
+$g(n, m)$ we denote $O(g(n, m))$ the set of functions:</p>
+
+<p>$$ \begin{align}
+     O(g(n, m) = \lbrace f(n, m):
+       &amp;\text{there exist positive constants } c, n_0, \text{ and } m_0 \\
+       &amp;\text{such that } 0 \leq f(n, m) \leq cg(n, m) \\
+       &amp;\text{for all } n \geq n_0 \text{ or } m \geq m_0.
+   \end{align} $$</p>
+
+<p>Give corresponding definitions for $\Omega(g(n, m))$ and $\Theta(g(n, m))$.</p>
+</blockquote>
+
+<p>In the University of Sofia, we woud have writen that tersely.</p>
+
+<p>$$ \begin{align}
+     \Omega(g(n, m) = \lbrace f(n, m):
+       &amp;\text{there exist positive constants } c, n_0, \text{ and } m_0 \\
+       &amp;\text{such that } 0 \leq cg(n, m) \leq f(n, m) \\
+       &amp;\text{for all } n \geq n_0 \text{ or } m \geq m_0.
+   \end{align} $$</p>
+
+<p>$$ \begin{align}
+     \Theta(g(n, m) = \lbrace f(n, m):
+       &amp;\text{there exist positive constants } c_1, c_2, n_0, \text{ and } m_0 \\
+       &amp;\text{such that } 0 \leq c_1g(n, m) \leq f(n, m) \leq c_2g(n, m) \\
+       &amp;\text{for all } n \geq n_0 \text{ or } m \geq m_0.
+   \end{align} $$</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>

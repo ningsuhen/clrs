@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Problem 10.3 </title>
+    <meta charset="utf-8">
+    
+      <base href="">
+    
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../css/ita.css">
+    <script type="application/javascript" src="../../js/jquery.js"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        messageStyle: 'none',
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: true
+        },
+        TeX: {
+          Macros: {
+            E: "\\mathrm{E}",
+            O: "\\mathcal{O}",
+            o: "\\mathcal{o}",
+            Var: "\\mathrm{Var}",
+          },
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+      });
+    </script>
+    <script type="application/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <ul class="nav">
+          <li><a class="brand">Introduction to Algorithms</a></li>
+          <li><a href="../../index.html">Exercise index</a></li>
+          <li><a href="../../about.html">About this site</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container">
+      <h1>Problem 10.3</h1>
+<h2>Searching a sorted compact list</h2>
+
+<blockquote>
+<p><a href="../03/04.html">Exercise 10.3-4</a> asked how we might maintain an $n$-element list compactly in
+the first $n$ positions of an array. We shall assume that the keys are
+distinct and that the compact list is also sorted, that is, <code>key[i] &lt;
+key[next[i]]</code> for all $i = 1, 2, \ldots, n$ such that <code>next[i] ≠ NIL</code>. We
+will also assume that we have a variable $L$ that contains the index of the
+first element on the list. Under these assumptions, you will show that we
+can use the following randomized algorithm to search the list in
+$\O(\sqrt{n})$ expected time.</p>
+
+<pre><code>COMPACT-LIST-SEARCH(L, n, k)
+  i = L
+  while i ≠ ␀ and key[i] &lt; k
+      j = RANDOM(1, n)
+      if key[i] &lt; key[j] and key[j] ≤ k
+          i = j
+          if key[i] == k
+              return i
+      i = next[i]
+  if i == ␀ or key[i] &gt; k
+      return ␀
+</code></pre>
+
+<p>If we ignore lines 3-7 of the procedure, we have an ordinary algorithm for
+searching a sorted linked list, in which index $i$ points to each position
+of the list in turn. The search terminates once the index $i$ "falls off"
+the end of the list or once <code>key[i] ≥ k</code>. In the latter case, if <code>key[i] =
+k</code>, clearly we have found a key with value $k$. If, however, <code>key[i] &gt; k</code>,
+then we will never find a key with the value $k$, and so terminating the
+search was the right thing to do.</p>
+
+<p>Lines 3-7 attempt to skip ahead to a randomly chosen position $j$. Such a
+skip benefits us if <code>key[j]</code> is larger than <code>key[i]</code> and no larger than $k$;
+in such a case, $j$ marks a position in the list that $i$ would have to
+reach during an ordinary list search. Because the list is compact, we know
+that in any choice of $j$ between $1$ and $n$ indexes some object in the
+list rather than a slot on the free list.</p>
+
+<p>Instead of analyzing the performance of <code>COMPACT-LIST-SEARCH</code> directly, we
+shall analyze a related algorithm, <code>COMPACT-LIST-SEARCH'</code>, which executes
+two separate loops. This algorithm takes an additional parameter $t$ which
+determines an upper bound on the number of iterations of the first loop.</p>
+
+<pre><code>COMPACT-LIST-SEARCH(L, n, k)
+  i = L
+  for q = 1 to t
+      j = RANDOM(1, n)
+      if key[i] &lt; key[j] and key[j] ≤ k
+          i = j
+          if key[i] == k
+              return i
+  while i ≠ ␀ and key[i] &lt; k
+      i = next[i]
+  if i == ␀ or key[i] &gt; k
+      return ␀
+  else
+      return i
+</code></pre>
+
+<p>To compare the execution of the algorithms <code>COMPACT-LIST-SEARCH(L, n, k)</code>
+and <code>COMPACT-LIST-SEARCH(L, n, k, t)</code>, assume that the sequence of integers
+returned by the calls of <code>RANDOM(1, n)</code> is the same for both algorithms.</p>
+
+<ol type="a">
+  <li>Suppose that <code>COMPACT-LIST-SEARCH(L, n, k)</code> takes $t$
+  iterations of the <strong>while</strong> loop of lines 2-8. Argue that
+  <code>COMPACT-LIST-SEARCH'(L, n, k, t)</code> returns the same answer and
+  that total number of iterations of both the <strong>for</strong> and
+  <strong>while</strong> loops within <code>COMPACT-LIST-SEARCH'</code> is
+  at least $t$.
+</li>
+</ol>
+
+<p>In the call <code>COMPACT-LIST-SEARCH'(L, n, k, t)</code>, let $X_t$ be the random
+variable that describes the distance in the linked list (that is, through
+the chain of <em>next</em> pointers) from position $i$ in the desired key $k$ after
+$t$ iterations of the <strong>for</strong> loop of lines 2-7 have occurred.</p>
+
+<ol type="a" start="2">
+  <li>Argue that the expected running time of <code>COMPACT-LIST-SEARCH'(L,
+  n, k, t)</code> is $\O(t + \E[X_t])$.
+  </li>
+<li>Show that $\E[X_t] \le \sum_{r=1}^n(1 - r/n)^t$. (<i>Hint:</i> Use
+  equation (C.25).)
+  </li>
+<li>Show that $\sum_{r=0}^{n-1} r^t \le n^{t+1}/(t + 1)$.
+  </li>
+<li>Prove that $\E[X_t] \le n/(t+1)$.
+  </li>
+<li>Show that <code>COMPACT-LIST-SEARCH'(L, n, k, t)</code> runs in $\O(t
+  + n/t)$ expected time.
+  </li>
+<li>Conclude that <code>COMPACT-LIST-SEARCH</code> runs in $\O(\sqrt{n})$
+  expected time.
+  </li>
+<li>Why do we assume that all keys are distinct in
+  <code>COMPACT-LIST-SEARCH</code>? Argue that random skips do not
+  necessarily help asymptotically when the list contains repeated key
+  values.
+</li>
+</ol>
+</blockquote>
+
+<p>This is a very interesting problem.</p>
+
+<p>First, let's note that <code>COMPACT-LIST-SEARCH</code> a number of iterations, less or
+equal to those of <code>COMPACT-LIST-SEARCH'</code>. If the first version found the
+element on a random skip-ahead in $t$ iterations, so will the second version.
+If not, the last $k$ iterations only advanced the pointer until the result was
+found. Furthermore, none of the last $t - k$ iterations made a skip-ahead (by
+the definition of $k$. Since the second version does not advance inbetween
+skip-aheads, it has to perform $k$ additional iterations of its <strong>while</strong> loop
+until the result is found.</p>
+
+<p>Note also, that the first version minimizes the number of iterations. That is,
+$t$ is picked in an optimal way.</p>
+
+<p>Let's move on to the math. The expected running time of <code>COMPACT-LIST-SEARCH'</code>
+is indeed $\O(t + \E[X_t])$, since it either finds the element in $t$
+skip-aheads, or it has to move forward a number of times, equal to the
+distance to $X_t$. Note that if the key is not present, this distance will
+either be the successor of that key or the last element of the array, so the
+analysis still holds.</p>
+
+<p>Let's find the value of the expectation. The probability of having a distance
+at least $r$ is the probability less than $r$. The probability of having
+distance less than $k$ when $t = 1$ is $(n-r)/n$, thus:</p>
+
+<p>$$ \Pr\{X_t \ge r\} = \bigg(\frac{n - r}{n}\bigg)^t
+                      = \bigg(1 - \frac{r}{n}\bigg)^t$$</p>
+
+<p>That is, one of the <code>RANDOM</code> calls should advance to the desired distance,
+while the rest should advance to elements before it.</p>
+
+<p>Using the (C.25), we get:</p>
+
+<p>$$ \E[X_t] = \sum_{r=1}^{\infty} \Pr\{X_t \ge r\}
+           = \sum_{r=1}^n \Pr\{X_t \ge r\}
+           = \sum_{r=1}^n \bigg(1 - \frac{r}{n}\bigg)^t $$</p>
+
+<p>The probability of getting distance, larger than $n$ is 0, so that's why we
+can bound the sum index to $n$.</p>
+
+<p>We can show (d) by approximating the sum with an integral with (A.11):</p>
+
+<p>$$ \sum_{r=0}^{n-1} r^t \le \int_0^n x^t dx = \frac{n^{t+1}}{t+1} $$</p>
+
+<p>This lets us give an upper bound on the expectation:</p>
+
+<p>$$ \begin{align}
+   \E[X_t] &amp;= \sum_{r=1}^n \bigg(1 - \frac{r}{n}\bigg)^t \\
+           &amp;= \sum_{r=0}^{n-1} \bigg(\frac{r}{n}\bigg)^t \\
+           &amp;= \frac{1}{n^t} \sum_{r=0}^{n-1} r^t \\
+           &amp;\le \frac{1}{n^t} \cdot \frac{n^{t+1}}{t + 1} \\
+           &amp;= \frac{n}{t+1}
+   \end{align} $$</p>
+
+<p>The expected running time of <code>COMPACT-LIST-SEARCH'(L, n, k, t)</code> is thus:</p>
+
+<p>$$ \O(t + \E[X_t]) = \O(t + n/(t+1)) = \O(t + n/t) $$</p>
+
+<p>Since <code>COMPACT-LIST-SEARCH</code> minimizes this running time, we need to find the
+minimum of $t + n/t$. The first derivative is $1 - n/t^2$ which is zero at
+$\sqrt{n}$ and this is a local minimum. It's also the minimum in the interval
+$[1,n]$.</p>
+
+<p>This makes the expected running time of the first version of the algorithm
+$\O(\sqrt{n})$.</p>
+
+<p>As for duplicates, we won't be able to conclude (c) if there are duplicates.
+The algorithm is able to skip ahead only if the value found by <code>RANDOM</code> is
+greater than the current. For example, if we have a list of <code>0</code>s and we're
+looking for a <code>1</code>, the algorithm will still need to iterate to the end of the
+list, since it will not skip-ahead at all.</p>
+
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-2564866-3', 'skanev.com');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
